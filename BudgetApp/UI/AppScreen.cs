@@ -20,7 +20,7 @@ namespace BudgetApp.UI
         {
             UserAccount tempUserAccount = new UserAccount();
 
-            tempUserAccount.FullName = Validator.Convert<string>("your passcode.").ToLower();
+            tempUserAccount.FullName = Validator.Convert<string>("your name.").ToLower();
             tempUserAccount.Passcode = Convert.ToInt32(Utilities.GetSecretInput("Enter your passcode."));
 
             return tempUserAccount;

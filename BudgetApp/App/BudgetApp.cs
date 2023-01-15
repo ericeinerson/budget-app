@@ -128,7 +128,7 @@ namespace BudgetApp.App
 
         public void BudgetSummary()
         {
-            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmountselectedAccount.Balance}", true);
+            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmount(selectedAccount.Balance)}", true);
         }
 
         public void Incomes()
