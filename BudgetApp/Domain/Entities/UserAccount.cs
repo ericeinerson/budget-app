@@ -3,9 +3,12 @@ namespace BudgetApp.Domain.Entities
 {
 	public class UserAccount
 	{
-		public UserAccount()
-		{
-		}
+		public int Id { get; set; }
+		public int Passcode { get; set; }
+		public string FullName { get; set; }
+		public decimal Balance { get; set; }
+		public int TotalLogin { get; set; }
+		public bool IsLocked { get; set; }
 	}
 }
 
