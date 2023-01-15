@@ -1,14 +1,24 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Entities.Interfaces;
+using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 
 namespace BudgetApp.App
 {
-	public class BudgetApp : IUserLogin
+	public class BudgetApp : IUserLogin, IUserAccountActions
 	{
 		private List<UserAccount> userAccountList;
 		private UserAccount selectedAccount;
+
+        public void Run()
+        {
+            AppScreen.Welcome();
+            CheckUserPasscode();
+            AppScreen.WelcomeCustomer(selectedAccount.FullName);
+            AppScreen.DisplayAppMenu();
+            ProcessMenuOption();
+        }
 
         public void InitializeData()
 		{
@@ -86,9 +96,49 @@ namespace BudgetApp.App
                 }
             }
         }
-        public void Welcome()
+        private void ProcessMenuOption()
         {
-            Console.WriteLine($"Welcome back, {selectedAccount.FullName}");
+            switch(Validator.Convert<int>("an option."))
+            {
+                case (int)AppMenu.BudgetSummary:
+                    Console.WriteLine("Checking budget summary");
+                    break;
+                case (int)AppMenu.PreviousMonths:
+                    Console.WriteLine("Checking previous months");
+                    break;
+                case (int)AppMenu.Incomes:
+                    Console.WriteLine("Managing incomes");
+                    break;
+                case (int)AppMenu.CategorizedExpenses:
+                    Console.WriteLine("Managing expenses ");
+                    break;
+                case (int)AppMenu.Wishlist:
+                    Console.WriteLine("Checking budget summary");
+                    break;
+                case (int)AppMenu.Logout:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.",true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid option.",false);
+                    break;
+            }
+        }
+
+        public void BudgetSummary()
+        {
+            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmountselectedAccount.Balance}", true);
+        }
+
+        public void Incomes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CategorizedExpenses()
+        {
+            throw new NotImplementedException();
         }
     }
 }

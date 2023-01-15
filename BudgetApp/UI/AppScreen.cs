@@ -37,8 +37,32 @@ namespace BudgetApp.UI
             Console.Clear();
             Utilities.PrintMessage("Your account is locked. Please go to the admin to unlock your account. Thank you.", true);
 
-            Utilities.PressEnterToContinue();
             Environment.Exit(1);
+        }
+
+        internal static void WelcomeCustomer(string fullName)
+        {
+            Console.WriteLine($"Welcome back, {fullName}");
+            Utilities.PressEnterToContinue();
+        }
+
+        internal static void DisplayAppMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("-------My Budget App Menu-------");
+            Console.WriteLine("1. Budget Summary               ");
+            Console.WriteLine("2. Previous Months              ");
+            Console.WriteLine("3. Incomes                      ");
+            Console.WriteLine("4. Categorized Expenses         ");
+            Console.WriteLine("5. Wishlist/Future              ");
+            Console.WriteLine("6. Logout                       ");
+        }
+
+        internal static void LogoutProgress()
+        {
+            Console.WriteLine("Thank you for using My Budget App.");
+            Utilities.PrintDotAnimation();
+            Console.Clear();
         }
     }
 }

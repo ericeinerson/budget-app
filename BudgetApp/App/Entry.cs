@@ -7,12 +7,9 @@ namespace BudgetApp.App
 	{
         static void Main(string[] args)
         {
-            AppScreen.Welcome();
             BudgetApp budgetApp = new BudgetApp();
             budgetApp.InitializeData();
-            budgetApp.CheckUserPasscode();
-            budgetApp.Welcome();
-            Utilities.PressEnterToContinue();
+            budgetApp.Run();
         }
     }
 }

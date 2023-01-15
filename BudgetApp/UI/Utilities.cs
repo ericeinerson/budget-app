@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace BudgetApp.UI
 {
 	public static class Utilities
 	{
+        private static CultureInfo culture = new CultureInfo("EN-US");
+
         public static string GetSecretInput(string prompt)
         {
             bool isPrompt = true;
@@ -86,6 +89,11 @@ namespace BudgetApp.UI
         {
             Console.WriteLine("\n\nPress enter to continue...\n");
             Console.ReadLine();
+        }
+
+        public static string FormatAmount(decimal amt)
+        {
+            return String.Format(culture, "{0:C2}", amt);
         }
     }
 }
