@@ -3,9 +3,7 @@ namespace BudgetApp.App
 {
 	public class Entry
 	{
-		public Entry()
-		{
-		}
+		
 	}
 }
 
