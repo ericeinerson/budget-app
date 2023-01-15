@@ -1,18 +1,17 @@
 ﻿using System;
+using BudgetApp.UI;
+
 namespace BudgetApp.App
 {
 	public class BudgetApp
 	{
 		static void Main(string[] args)
 		{
-            Console.Clear();
-			Console.Title = "My Budget App";
-			Console.ForegroundColor = ConsoleColor.Cyan;
+			AppScreen.Welcome();
+			string username = Validator.Convert<string>("your card number");
+			Console.WriteLine($"Your card number is {username}");
 
-
-            Console.WriteLine("\n\n------------Welcome to My Budget App------------\n\n");
-			Console.WriteLine("\n\nPress enter to continue...\n");
-			Console.ReadLine();
+			Utilities.PressEnterToContinue();
 		}
 	}
 }
