@@ -12,11 +12,17 @@
     <None Remove="Properties\" />
     <None Remove="App\" />
     <None Remove="Domain\" />
+    <None Remove="Domain\Entities\" />
+    <None Remove="Domain\Enums\" />
+    <None Remove="Domain\Entities\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
     <Folder Include="Properties\" />
     <Folder Include="App\" />
     <Folder Include="Domain\" />
+    <Folder Include="Domain\Entities\" />
+    <Folder Include="Domain\Enums\" />
+    <Folder Include="Domain\Entities\Interfaces\" />
   </ItemGroup>
 </Project>
