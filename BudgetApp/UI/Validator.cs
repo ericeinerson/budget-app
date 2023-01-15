@@ -28,7 +28,7 @@ namespace BudgetApp.UI
 				}
 				catch
 				{
-					Console.WriteLine("Invalid input. Try again");
+					Utilities.PrintMessage("Invalid input. Try again", false);
 				}
 			}
 			return default;
