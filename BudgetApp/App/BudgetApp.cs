@@ -8,8 +8,8 @@ namespace BudgetApp.App
 		static void Main(string[] args)
 		{
 			AppScreen.Welcome();
-			string username = Validator.Convert<string>("your card number");
-			Console.WriteLine($"Your card number is {username}");
+			int passcode = Validator.Convert<int>("your passcode");
+			Console.WriteLine($"Your passcode is {passcode}");
 
 			Utilities.PressEnterToContinue();
 		}
