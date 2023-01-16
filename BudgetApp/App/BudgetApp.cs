@@ -6,7 +6,7 @@ using BudgetApp.UI;
 
 namespace BudgetApp.App
 {
-	public class BudgetApp : IUserLogin, IUserAccountActions
+	public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
 	{
 		private List<UserAccount> userAccountList;
 		private UserAccount selectedAccount;
@@ -101,7 +101,7 @@ namespace BudgetApp.App
             switch(Validator.Convert<int>("an option."))
             {
                 case (int)AppMenu.BudgetSummary:
-                    Console.WriteLine("Checking budget summary");
+                    BudgetSummary();
                     break;
                 case (int)AppMenu.PreviousMonths:
                     Console.WriteLine("Checking previous months");
@@ -137,6 +137,50 @@ namespace BudgetApp.App
         }
 
         public void CategorizedExpenses()
+        {
+            var expense_amt = Validator.Convert<decimal>("expense amount");
+
+            Console.WriteLine("\nProcessing expense");
+            Utilities.PrintDotAnimation();
+            Console.WriteLine("");
+
+            if(expense_amt <= 0)
+            {
+                Utilities.PrintMessage("Amount needs to be greater than zero. Try again.", false);
+                return;
+            }
+
+            if(PreviewUpdate(expense_amt) == false)
+            {
+                Utilities.PrintMessage("You have cancelled your action", false);
+                return;
+            }
+        }
+
+        private bool PreviewUpdate(decimal amount)
+        {
+            Console.WriteLine("\nSummary");
+            Console.WriteLine("-------");
+            Console.WriteLine($"{Utilities.FormatAmount(amount)}\n\n");
+            Console.WriteLine("");
+
+            int opt = Validator.Convert<int>("1 to confirm");
+            return opt.Equals(1);
+        }
+
+        public void InsertUpdate(UpdateType _updateType, decimal _updateAmount, string _description)
+        {
+            var update = new BudgetUpdate()
+            {
+                UpdateId = Utilities.GetUpdateId(),
+                UpdateAmount = _updateAmount,
+                UpdateType = _updateType,
+                Description = _description,
+                UpdateDate = DateTime.Now.Date.ToString("dd/MM/yyyy")
+            };
+        }
+
+        public void ViewUpdate()
         {
             throw new NotImplementedException();
         }

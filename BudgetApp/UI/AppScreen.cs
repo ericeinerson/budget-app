@@ -5,6 +5,8 @@ namespace BudgetApp.UI
 {
 	public class AppScreen
 	{
+        internal const string cur = "$";
+
 		internal static void Welcome()
         {
             Console.Clear();
