@@ -1,5 +1,6 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
+using BudgetApp.App;
 
 namespace BudgetApp.UI
 {
@@ -58,6 +59,54 @@ namespace BudgetApp.UI
             Console.WriteLine("4. Categorized Expenses         ");
             Console.WriteLine("5. Wishlist/Future              ");
             Console.WriteLine("6. Logout                       ");
+            Console.WriteLine("7. Update Balance               ");
+
+        }
+
+        internal static void DisplayExpenseOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an expense to update. \n\n");
+
+            Console.WriteLine("1. Rent/Utilities           6.Medical      ");
+            Console.WriteLine("2. Credit Cards             7.Insurance    ");
+            Console.WriteLine("3. Food/General             8.Subscriptions");
+            Console.WriteLine("4. Loans                    9.Gym          ");
+            Console.WriteLine("5. Gas                      10.Other       ");
+            Console.WriteLine("11. Return To Main Menu     12.Exit App    ");
+
+        }
+
+        internal static void DisplayIncomeOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an income to update. \n\n");
+
+            Console.WriteLine("1. Paychecks             ");
+            Console.WriteLine("2. Taxes                 ");
+            Console.WriteLine("3. Other                 ");
+            Console.WriteLine("4. Return To Main Menu   ");
+            Console.WriteLine("5. Exit App              ");
+        }
+
+        internal static void DisplayExpenseSummary()
+        {
+            //Add console table in to display expenses
+        }
+
+        internal static void DisplayIncomeSummary()
+        {
+            //Add console table in to display incomes
+        }
+
+        internal static void DisplayBudgetSummary()
+        {
+            //Add console table in to display budget summary
+        }
+
+        internal static void ViewActivity()
+        {
+            //Add console table in to display past expenses, incomes, and updates
         }
 
         internal static void LogoutProgress()
@@ -65,6 +114,25 @@ namespace BudgetApp.UI
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
             Console.Clear();
+            Console.WriteLine("Would you like to exit the app (Y/N)?");
+            string response = string.Empty;
+
+            while (response != "Y" || response != "N") {
+
+                response = Console.ReadLine()!;
+
+                if (response == "Y")
+                {
+                    Environment.Exit(1);
+                }
+                else if (response == "N")
+                {
+                    break;
+
+                }
+                Utilities.PrintMessage("Invalid entry. Try again", false, true);
+                continue;
+            }
         }
     }
 }

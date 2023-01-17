@@ -8,7 +8,8 @@ namespace BudgetApp.Domain.Enums
 		Incomes,
 		CategorizedExpenses,
 		Wishlist,
-		Logout
+		Logout,
+		UpdateBalance
 	}
 }
 

@@ -8,14 +8,35 @@ namespace BudgetApp.App
 {
 	public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
 	{
-		private List<UserAccount> userAccountList;
-		private UserAccount selectedAccount;
+		private List<UserAccount>? userAccountList;
+		private UserAccount? selectedAccount;
+        private List<BudgetUpdate>? _listOfUpdates;
+        //private Dictionary<Expenses, decimal> _expenses = new Dictionary<Expenses, decimal>()
+        //{
+        //    { Expenses.RentAndUtilities,0 },
+        //    { Expenses.FoodAndGeneral,0 },
+        //    { Expenses.CreditCards,0 },
+        //    { Expenses.Loans,0 },
+        //    { Expenses.Insurance,0 },
+        //    { Expenses.Gas,0 },
+        //    { Expenses.Medical,0 },
+        //    { Expenses.Subscriptions,0 },
+        //    { Expenses.Gym,0 },
+        //    { Expenses.Other,0 }
 
+        //};
+        private decimal _amountNeeded;
+        private decimal _currentBalance;
+        private decimal _estimatedIncome = 9000.00M;
+        private decimal _difference;
+        private decimal _sumOfAllExpenses = 9233.98M;
+        
+        
         public void Run()
         {
             AppScreen.Welcome();
             CheckUserPasscode();
-            AppScreen.WelcomeCustomer(selectedAccount.FullName);
+            AppScreen.WelcomeCustomer(selectedAccount!.FullName!);
             AppScreen.DisplayAppMenu();
             ProcessMenuOption();
         }
@@ -31,7 +52,9 @@ namespace BudgetApp.App
 					Passcode = 0991,
 					Balance = 0,
 					IsLocked = false,
-					TotalLogin = 0
+					TotalLogin = 0,
+                    TotalExpenses = 0,
+                    TotalIncomes = 0
 				},
                 new UserAccount
                 {
@@ -40,7 +63,9 @@ namespace BudgetApp.App
                     Passcode = 8374,
                     Balance = 0,
                     IsLocked = true,
-                    TotalLogin = 0
+                    TotalLogin = 0,
+                    TotalExpenses = 0,
+                    TotalIncomes = 0
                 },
                 new UserAccount
                 {
@@ -49,9 +74,13 @@ namespace BudgetApp.App
                     Passcode = 1111,
                     Balance = 0,
                     IsLocked = false,
-                    TotalLogin = 0
+                    TotalLogin = 0,
+                    TotalExpenses = 0,
+                    TotalIncomes = 0
                 }
             };
+
+            _listOfUpdates = new List<BudgetUpdate>();
 		}
         public void CheckUserPasscode()
         {
@@ -60,7 +89,7 @@ namespace BudgetApp.App
             {
                 UserAccount inputAccount = AppScreen.UserLoginForm();
                 AppScreen.LoginProgress();
-                foreach(UserAccount account in userAccountList)
+                foreach(UserAccount account in userAccountList!)
                 {
                     selectedAccount = account;
                     if (inputAccount.FullName.ToLower().Equals(selectedAccount.FullName.ToLower()))
@@ -120,15 +149,32 @@ namespace BudgetApp.App
                     Utilities.PrintMessage("You have successfully logged out.",true);
                     Run();
                     break;
+                case (int)AppMenu.UpdateBalance:
+                    UpdateBalance();
+                    break;
                 default:
                     Utilities.PrintMessage("Invalid option.",false);
                     break;
             }
+            AppScreen.DisplayAppMenu();
+            ProcessMenuOption();
+        }
+
+        public void UpdateBalance()
+        {
+            Console.WriteLine("Please enter your balance");
+            _currentBalance = Validator.Convert<decimal>("current balance");
+            Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
+
         }
 
         public void BudgetSummary()
         {
-            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmount(selectedAccount.Balance)}", true);
+            _amountNeeded = _sumOfAllExpenses;
+            _difference = _currentBalance + _estimatedIncome - _amountNeeded;
+            Console.WriteLine(_amountNeeded);
+
+            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmount(_difference)}", true);
         }
 
         public void Incomes()
@@ -155,6 +201,8 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("You have cancelled your action", false);
                 return;
             }
+
+            InsertUpdate(UpdateType.Expense, expense_amt, "");
         }
 
         private bool PreviewUpdate(decimal amount)
@@ -178,6 +226,8 @@ namespace BudgetApp.App
                 Description = _description,
                 UpdateDate = DateTime.Now.Date.ToString("dd/MM/yyyy")
             };
+
+            _listOfUpdates!.Add(update);
         }
 
         public void ViewUpdate()

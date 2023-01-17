@@ -57,9 +57,9 @@ namespace BudgetApp.UI
             }
             return input.ToString();
         }
+        
 
-
-        public static void PrintMessage(string msg, bool success)
+        public static void PrintMessage(string msg, bool success, bool next = false)
         {
             if (success)
             {
@@ -72,7 +72,10 @@ namespace BudgetApp.UI
 
             Console.WriteLine(msg);
             Console.ForegroundColor = ConsoleColor.Cyan;
-            PressEnterToContinue();
+            if (next == false)
+            {
+                PressEnterToContinue();
+            }
         }
 
         public static string GetUserInput(string prompt)
