@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BudgetApp.Domain.Enums
 {
-	public enum Expenses
+	public enum ExpenseType
 	{
 		RentAndUtilities = 1,
 		CreditCards,

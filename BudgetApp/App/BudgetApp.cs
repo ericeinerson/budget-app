@@ -38,7 +38,7 @@ namespace BudgetApp.App
             CheckUserPasscode();
             AppScreen.WelcomeCustomer(selectedAccount!.FullName!);
             AppScreen.DisplayAppMenu();
-            ProcessMenuOption();
+            ProcessAppMenuOption();
         }
 
         public void InitializeData()
@@ -125,7 +125,7 @@ namespace BudgetApp.App
                 }
             }
         }
-        private void ProcessMenuOption()
+        private void ProcessAppMenuOption()
         {
             switch(Validator.Convert<int>("an option."))
             {
@@ -157,7 +157,19 @@ namespace BudgetApp.App
                     break;
             }
             AppScreen.DisplayAppMenu();
-            ProcessMenuOption();
+            ProcessAppMenuOption();
+        }
+
+        private ExpenseType ProcessExpenseMenuOption()
+        {
+            switch(Validator.Convert<int>("an option"))
+            {
+                case 1:
+                     return ExpenseType.RentAndUtilities;
+                    break;
+                default:
+                    return ExpenseType.Other;
+            }
         }
 
         public void UpdateBalance()
@@ -185,6 +197,9 @@ namespace BudgetApp.App
         public void CategorizedExpenses()
         {
             var expense_amt = Validator.Convert<decimal>("expense amount");
+            ExpenseType expense_type = ProcessExpenseMenuOption();
+
+            //put in calculation here
 
             Console.WriteLine("\nProcessing expense");
             Utilities.PrintDotAnimation();
