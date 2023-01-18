@@ -211,6 +211,31 @@ namespace BudgetApp.App
             }
         }
 
+        private void ProcessExpenseUpdateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Pay All/Remaining");
+                    break;
+                case 2:
+                    Console.WriteLine("Pay Partial");
+                    break;
+                case 3:
+                    Console.WriteLine("Enter new amount");
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessExpenseUpdateOption();
+                    break;
+            }
+        }
+
         public void UpdateBalance()
         {
             Console.WriteLine("Please enter your balance");
@@ -246,7 +271,12 @@ namespace BudgetApp.App
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
             ExpenseType expense_type = ExpenseType.Other;
+
             ProcessExpenseMenuOption();
+
+            AppScreen.DisplayExpenseUpdateOptions();
+            ProcessExpenseUpdateOption();
+            Utilities.PressEnterToContinue();
             var expense_amt = Validator.Convert<decimal>("expense amount");
 
             //put in calculation here

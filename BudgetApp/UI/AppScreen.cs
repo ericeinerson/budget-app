@@ -77,6 +77,18 @@ namespace BudgetApp.UI
 
         }
 
+        internal static void DisplayExpenseUpdateOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an update option. \n\n");
+
+            Console.WriteLine("1. Pay All/Remaining                        ");
+            Console.WriteLine("2. Pay Partial                              ");
+            Console.WriteLine("3. Enter new amount                         ");
+            Console.WriteLine("4. Logout                                   ");
+
+        }
+
         internal static void DisplayIncomeOptions()
         {
             Console.Clear();
