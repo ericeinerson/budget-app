@@ -15,6 +15,7 @@
     <None Remove="Domain\Entities\" />
     <None Remove="Domain\Enums\" />
     <None Remove="Domain\Entities\Interfaces\" />
+    <None Remove="ConsoleTables" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -24,5 +25,8 @@
     <Folder Include="Domain\Entities\" />
     <Folder Include="Domain\Enums\" />
     <Folder Include="Domain\Entities\Interfaces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ConsoleTables" Version="2.4.2" />
   </ItemGroup>
 </Project>
