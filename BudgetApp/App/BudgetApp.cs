@@ -11,20 +11,6 @@ namespace BudgetApp.App
 		private List<UserAccount>? userAccountList;
 		private UserAccount? selectedAccount;
         private List<BudgetUpdate>? _listOfUpdates;
-        private Dictionary<ExpenseType, decimal> _expenses = new Dictionary<ExpenseType, decimal>
-        {
-            { ExpenseType.RentAndUtilities,14 },
-            { ExpenseType.FoodAndGeneral,15 },
-            { ExpenseType.CreditCards,0 },
-            { ExpenseType.Loans,0 },
-            { ExpenseType.Insurance,0 },
-            { ExpenseType.Gas,0 },
-            { ExpenseType.Medical,0 },
-            { ExpenseType.Subscriptions,0 },
-            { ExpenseType.Gym,0 },
-            { ExpenseType.Other,16 }
-
-        };
 
         private decimal _amountNeeded;
         private decimal _currentBalance;
@@ -54,7 +40,11 @@ namespace BudgetApp.App
 					IsLocked = false,
 					TotalLogin = 0,
                     TotalExpenses = 0,
-                    TotalIncomes = 0
+                    TotalIncomes = 0,
+                    ExpenseCategories = new Dictionary<string, decimal>
+                    {
+                        { "other", 0 }
+                    }
 				},
                 new UserAccount
                 {
@@ -65,7 +55,11 @@ namespace BudgetApp.App
                     IsLocked = true,
                     TotalLogin = 0,
                     TotalExpenses = 0,
-                    TotalIncomes = 0
+                    TotalIncomes = 0,
+                    ExpenseCategories = new Dictionary<string, decimal>
+                    {
+                        { "other", 0 }
+                    }
                 },
                 new UserAccount
                 {
@@ -76,7 +70,11 @@ namespace BudgetApp.App
                     IsLocked = false,
                     TotalLogin = 0,
                     TotalExpenses = 0,
-                    TotalIncomes = 0
+                    TotalIncomes = 0,
+                    ExpenseCategories = new Dictionary<string, decimal>
+                    {
+                        { "other", 0 }
+                    }
                 }
             };
 
@@ -160,54 +158,90 @@ namespace BudgetApp.App
             ProcessAppMenuOption();
         }
 
-        private ExpenseType ProcessExpenseMenuOption()
+        private void ProcessExpenseMenuOption()
         {
-            switch(Validator.Convert<int>("an option"))
+            decimal monthlyExpenseAmount = 0;
+
+            switch(Validator.Convert<int>("an expense to add"))
             {
                 case 1:
-                    return ExpenseType.RentAndUtilities;
+                    Console.WriteLine("Please enter monthly expense amount");
+
+                    monthlyExpenseAmount = Validator.Convert<decimal>("expense amount");
+
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("rent_utilities"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("rent_utilities", monthlyExpenseAmount);
+                        Utilities.PrintMessage($"Your monthly budget for rent and utilities is {Utilities.FormatAmount(selectedAccount.ExpenseCategories["rent_utilities"])}",true);
+                    }
                     break;
                 case 2:
-                    return ExpenseType.CreditCards;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("credit_cards"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("credit_cards", monthlyExpenseAmount);
+                    }
                     break;
                 case 3:
-                    return ExpenseType.FoodAndGeneral;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("food_general"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("food_general", monthlyExpenseAmount);
+                    }
                     break;
                 case 4:
-                    return ExpenseType.Loans;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("loans"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("loans", monthlyExpenseAmount);
+                    }
                     break;
                 case 5:
-                    return ExpenseType.Gas;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("gas"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("gas", monthlyExpenseAmount);
+                    }
                     break;
                 case 6:
-                    return ExpenseType.Medical;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("medical"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("medical", monthlyExpenseAmount);
+                    }
                     break;
                 case 7:
-                    return ExpenseType.Insurance;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("insurance"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("insurance", monthlyExpenseAmount);
+                    }
                     break;
                 case 8:
-                    return ExpenseType.Subscriptions;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("subscriptions"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("subscriptions", monthlyExpenseAmount);
+                    }
                     break;
                 case 9:
-                    return ExpenseType.Gym;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("gym"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("gym", monthlyExpenseAmount);
+                    }
                     break;
                 case 10:
-                    return ExpenseType.Other;
+                    if (!selectedAccount.ExpenseCategories.ContainsKey("other"))
+                    {
+                        selectedAccount.ExpenseCategories.Add("other", monthlyExpenseAmount);
+                    }
                     break;
                 case 11:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
-                    return ExpenseType.Undefined;
                     break;
                 case 12:
                     AppScreen.DisplayAppMenu();
                     ProcessAppMenuOption();
-                    return ExpenseType.Undefined;
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again",false);
-                    return ProcessExpenseMenuOption();
+                    ProcessExpenseMenuOption();
+                    break;
             }
         }
 
@@ -262,7 +296,7 @@ namespace BudgetApp.App
         {
             _sumOfAllExpenses = 0;
 
-            foreach(KeyValuePair<ExpenseType,decimal> expense in _expenses)
+            foreach(KeyValuePair<string,decimal> expense in selectedAccount.ExpenseCategories)
             {
                 _sumOfAllExpenses += expense.Value;
             }
@@ -270,7 +304,6 @@ namespace BudgetApp.App
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
-            ExpenseType expense_type = ExpenseType.Other;
 
             ProcessExpenseMenuOption();
 

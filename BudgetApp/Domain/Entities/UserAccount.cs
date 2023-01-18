@@ -1,4 +1,6 @@
 ﻿using System;
+using BudgetApp.Domain.Enums;
+
 namespace BudgetApp.Domain.Entities
 {
 	public class UserAccount
@@ -10,6 +12,7 @@ namespace BudgetApp.Domain.Entities
 		public int TotalLogin { get; set; }
 		public bool IsLocked { get; set; }
 		public decimal TotalExpenses { get; set; }
+		public Dictionary<string, decimal>? ExpenseCategories { get; set; }
 		public decimal TotalIncomes { get; set; }
 	}
 }
