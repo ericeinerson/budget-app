@@ -68,12 +68,12 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an expense to update. \n\n");
 
-            Console.WriteLine("1. Rent/Utilities           6.Medical      ");
-            Console.WriteLine("2. Credit Cards             7.Insurance    ");
-            Console.WriteLine("3. Food/General             8.Subscriptions");
-            Console.WriteLine("4. Loans                    9.Gym          ");
-            Console.WriteLine("5. Gas                      10.Other       ");
-            Console.WriteLine("11. Return To Main Menu     12.Exit App    ");
+            Console.WriteLine("1. Rent/Utilities           6. Medical      ");
+            Console.WriteLine("2. Credit Cards             7. Insurance    ");
+            Console.WriteLine("3. Food/General             8. Subscriptions");
+            Console.WriteLine("4. Loans                    9. Gym          ");
+            Console.WriteLine("5. Gas                      10. Other       ");
+            Console.WriteLine("11. Logout                  12. App Menu    ");
 
         }
 

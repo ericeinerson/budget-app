@@ -11,27 +11,27 @@ namespace BudgetApp.App
 		private List<UserAccount>? userAccountList;
 		private UserAccount? selectedAccount;
         private List<BudgetUpdate>? _listOfUpdates;
-        //private Dictionary<Expenses, decimal> _expenses = new Dictionary<Expenses, decimal>()
-        //{
-        //    { Expenses.RentAndUtilities,0 },
-        //    { Expenses.FoodAndGeneral,0 },
-        //    { Expenses.CreditCards,0 },
-        //    { Expenses.Loans,0 },
-        //    { Expenses.Insurance,0 },
-        //    { Expenses.Gas,0 },
-        //    { Expenses.Medical,0 },
-        //    { Expenses.Subscriptions,0 },
-        //    { Expenses.Gym,0 },
-        //    { Expenses.Other,0 }
+        private Dictionary<ExpenseType, decimal> _expenses = new Dictionary<ExpenseType, decimal>
+        {
+            { ExpenseType.RentAndUtilities,14 },
+            { ExpenseType.FoodAndGeneral,15 },
+            { ExpenseType.CreditCards,0 },
+            { ExpenseType.Loans,0 },
+            { ExpenseType.Insurance,0 },
+            { ExpenseType.Gas,0 },
+            { ExpenseType.Medical,0 },
+            { ExpenseType.Subscriptions,0 },
+            { ExpenseType.Gym,0 },
+            { ExpenseType.Other,16 }
 
-        //};
+        };
+
         private decimal _amountNeeded;
         private decimal _currentBalance;
         private decimal _estimatedIncome = 9000.00M;
         private decimal _difference;
-        private decimal _sumOfAllExpenses = 9233.98M;
-        
-        
+        private decimal _sumOfAllExpenses = 0;
+
         public void Run()
         {
             AppScreen.Welcome();
@@ -40,7 +40,7 @@ namespace BudgetApp.App
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
-
+        
         public void InitializeData()
 		{
 			userAccountList = new List<UserAccount>
@@ -139,7 +139,7 @@ namespace BudgetApp.App
                     Console.WriteLine("Managing incomes");
                     break;
                 case (int)AppMenu.CategorizedExpenses:
-                    Console.WriteLine("Managing expenses ");
+                    CategorizedExpenses();
                     break;
                 case (int)AppMenu.Wishlist:
                     Console.WriteLine("Checking budget summary");
@@ -165,10 +165,49 @@ namespace BudgetApp.App
             switch(Validator.Convert<int>("an option"))
             {
                 case 1:
-                     return ExpenseType.RentAndUtilities;
+                    return ExpenseType.RentAndUtilities;
+                    break;
+                case 2:
+                    return ExpenseType.CreditCards;
+                    break;
+                case 3:
+                    return ExpenseType.FoodAndGeneral;
+                    break;
+                case 4:
+                    return ExpenseType.Loans;
+                    break;
+                case 5:
+                    return ExpenseType.Gas;
+                    break;
+                case 6:
+                    return ExpenseType.Medical;
+                    break;
+                case 7:
+                    return ExpenseType.Insurance;
+                    break;
+                case 8:
+                    return ExpenseType.Subscriptions;
+                    break;
+                case 9:
+                    return ExpenseType.Gym;
+                    break;
+                case 10:
+                    return ExpenseType.Other;
+                    break;
+                case 11:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    return ExpenseType.Undefined;
+                    break;
+                case 12:
+                    AppScreen.DisplayAppMenu();
+                    ProcessAppMenuOption();
+                    return ExpenseType.Undefined;
                     break;
                 default:
-                    return ExpenseType.Other;
+                    Utilities.PrintMessage("Invalid Option. Try again",false);
+                    return ProcessExpenseMenuOption();
             }
         }
 
@@ -196,8 +235,19 @@ namespace BudgetApp.App
 
         public void CategorizedExpenses()
         {
+            _sumOfAllExpenses = 0;
+
+            foreach(KeyValuePair<ExpenseType,decimal> expense in _expenses)
+            {
+                _sumOfAllExpenses += expense.Value;
+            }
+            Console.WriteLine($"\nSum of expenses: {_sumOfAllExpenses}");
+
+            Utilities.PressEnterToContinue();
+            AppScreen.DisplayExpenseOptions();
+            ExpenseType expense_type = ExpenseType.Other;
+            ProcessExpenseMenuOption();
             var expense_amt = Validator.Convert<decimal>("expense amount");
-            ExpenseType expense_type = ProcessExpenseMenuOption();
 
             //put in calculation here
 
@@ -210,7 +260,7 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("Amount needs to be greater than zero. Try again.", false);
                 return;
             }
-
+            
             if(PreviewUpdate(expense_amt) == false)
             {
                 Utilities.PrintMessage("You have cancelled your action", false);

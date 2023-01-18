@@ -12,7 +12,8 @@ namespace BudgetApp.Domain.Enums
 		Medical,
 		Subscriptions,
 		Gym,
-		Other
+		Other,
+		Undefined
 	}
 }
 
