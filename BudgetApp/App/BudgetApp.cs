@@ -340,6 +340,23 @@ namespace BudgetApp.App
 
             Console.WriteLine($"The monthly amount for {key} is {Utilities.FormatAmount(selectedAccount.ExpenseCategories[key])}");
         }
+
+        private void PayPartialExpense(string key, decimal amount)
+        {
+            decimal newAmount = selectedAccount.ExpenseCategories[key] - amount;
+
+            selectedAccount.ExpenseCategories[key] -= amount;
+            Utilities.PrintMessage($"You have successfully paid {amount} towards {key}. Your remaining expense amount is {Utilities.FormatAmount(newAmount)}", true);
+        }
+
+        private decimal PayFullExpense(string key)
+        {
+            decimal payment = selectedAccount.ExpenseCategories[key];
+            selectedAccount.ExpenseCategories[key] = 0;
+            Utilities.PrintMessage($"You have successfully paid off {key}.", true);
+            return payment;
+        }
+
         private int ProcessExpenseUpdateOption()
         {
             switch (Validator.Convert<int>("an option"))
@@ -396,7 +413,7 @@ namespace BudgetApp.App
         {
             _sumOfAllExpenses = 0;
 
-            foreach(KeyValuePair<string,decimal> expense in selectedAccount.ExpenseCategories)
+            foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
             {
                 _sumOfAllExpenses += expense.Value;
             }
@@ -410,12 +427,18 @@ namespace BudgetApp.App
 
             int expenseUpdateOption = ProcessExpenseUpdateOption();
 
+
             switch (expenseUpdateOption)
             {
                 case 1:
-                    //method to pay full amount
+                    decimal payOff = PayFullExpense(chosenExpense);
+                    ProcessExpense(payOff);
+                    break;
                 case 2:
-                    //method to pay a partial amount
+                    var expense_amt = Validator.Convert<decimal>("expense amount");
+                    PayPartialExpense(chosenExpense, expense_amt);
+                    ProcessExpense(expense_amt);
+                    break;
                 case 3:
                     UpdateMonthlyExpenseAmount(chosenExpense);
                     break;
@@ -424,21 +447,23 @@ namespace BudgetApp.App
             }
 
             Utilities.PressEnterToContinue();
-            var expense_amt = Validator.Convert<decimal>("expense amount");
 
             //put in calculation here
+        }
 
+        private void ProcessExpense(decimal expense_amt)
+        {
             Console.WriteLine("\nProcessing expense");
             Utilities.PrintDotAnimation();
             Console.WriteLine("");
 
-            if(expense_amt <= 0)
+            if (expense_amt <= 0)
             {
                 Utilities.PrintMessage("Amount needs to be greater than zero. Try again.", false);
                 return;
             }
-            
-            if(PreviewUpdate(expense_amt) == false)
+
+            if (PreviewUpdate(expense_amt) == false)
             {
                 Utilities.PrintMessage("You have cancelled your action", false);
                 return;
