@@ -158,114 +158,214 @@ namespace BudgetApp.App
             ProcessAppMenuOption();
         }
 
-        private void ProcessExpenseMenuOption()
+        private string ChooseMonthlyExpense()
         {
-            decimal monthlyExpenseAmount = 0;
-
             switch(Validator.Convert<int>("an expense to add"))
             {
                 case 1:
-                    Console.WriteLine("Please enter monthly expense amount");
-
-                    monthlyExpenseAmount = Validator.Convert<decimal>("expense amount");
-
                     if (!selectedAccount.ExpenseCategories.ContainsKey("rent_utilities"))
                     {
-                        selectedAccount.ExpenseCategories.Add("rent_utilities", monthlyExpenseAmount);
-                        Utilities.PrintMessage($"Your monthly budget for rent and utilities is {Utilities.FormatAmount(selectedAccount.ExpenseCategories["rent_utilities"])}",true);
+                        selectedAccount.ExpenseCategories.Add("rent_utilities", 0);
                     }
-                    break;
+                    return "rent_utilities";
                 case 2:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("credit_cards"))
                     {
-                        selectedAccount.ExpenseCategories.Add("credit_cards", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("credit_cards", 0);
                     }
-                    break;
+                    return "credit_cards";
                 case 3:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("food_general"))
                     {
-                        selectedAccount.ExpenseCategories.Add("food_general", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("food_general", 0);
                     }
-                    break;
+                    return "food_general";
                 case 4:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("loans"))
                     {
-                        selectedAccount.ExpenseCategories.Add("loans", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("loans", 0);
                     }
-                    break;
+                    return "loans";
                 case 5:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("gas"))
                     {
-                        selectedAccount.ExpenseCategories.Add("gas", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("gas", 0);
                     }
-                    break;
+                    return "gas";
                 case 6:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("medical"))
                     {
-                        selectedAccount.ExpenseCategories.Add("medical", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("medical", 0);
                     }
-                    break;
+                    return "medical";
                 case 7:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("insurance"))
                     {
-                        selectedAccount.ExpenseCategories.Add("insurance", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("insurance", 0);
                     }
-                    break;
+                    return "insurance";
                 case 8:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("subscriptions"))
                     {
-                        selectedAccount.ExpenseCategories.Add("subscriptions", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("subscriptions", 0);
                     }
-                    break;
-                case 9:
+                    return "subscriptions";
                     if (!selectedAccount.ExpenseCategories.ContainsKey("gym"))
                     {
-                        selectedAccount.ExpenseCategories.Add("gym", monthlyExpenseAmount);
+                        selectedAccount.ExpenseCategories.Add("gym", 0);
                     }
-                    break;
+                    return "gym";
                 case 10:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("other"))
-                    {
-                        selectedAccount.ExpenseCategories.Add("other", monthlyExpenseAmount);
-                    }
-                    break;
+                    return ProcessOtherExpense();
+                    
                 case 11:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
-                    break;
+                    return string.Empty;
                 case 12:
                     AppScreen.DisplayAppMenu();
                     ProcessAppMenuOption();
-                    break;
+                    return string.Empty;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again",false);
-                    ProcessExpenseMenuOption();
-                    break;
+                    ChooseMonthlyExpense();
+                    return string.Empty;
             }
         }
 
-        private void ProcessExpenseUpdateOption()
+        public string ProcessOtherExpense()
+        {
+            Console.WriteLine("Would you like to add a new category (Y/N)?\n");
+            string otherCategory = string.Empty;
+            string newCategory = string.Empty;
+
+            while (true)
+            {
+                otherCategory = Console.ReadLine();
+                if (otherCategory == "Y")
+                {
+                    newCategory = Utilities.GetUserInput("new category");
+
+                    if (!selectedAccount.ExpenseCategories.ContainsKey(newCategory))
+                    {
+                        selectedAccount.ExpenseCategories.Add(newCategory, 0);
+                    }
+
+                    Utilities.PrintMessage($"You have added {newCategory} to your list of expenses", true);
+
+                    Console.WriteLine("Expense categories:\n");
+
+                    foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
+                    {
+                        Console.WriteLine(expense.Key);
+                    }
+                    return newCategory;
+                }
+                else if (otherCategory == "N")
+                {
+                    Console.WriteLine("Would you like to use an existing other category (Y/N)?\n");
+
+                    while (true)
+                    {
+                        otherCategory = Console.ReadLine();
+
+                        if (otherCategory == "Y")
+                        {
+                            while (true)
+                            {
+                                Console.WriteLine("Choose from the categories below:\n");
+                                foreach (KeyValuePair<string, decimal> category in selectedAccount.ExpenseCategories)
+                                {
+                                    Console.WriteLine(category.Key);
+                                }
+
+                                newCategory = Utilities.GetUserInput("other category name to be used");
+
+                                if (selectedAccount.ExpenseCategories.ContainsKey(newCategory))
+                                {
+                                    return newCategory;
+                                }
+                                else if (newCategory == "q")
+                                {
+                                    AppScreen.LogoutProgress();
+                                    Utilities.PrintMessage("You have successfully logged out.", true);
+                                    Run();
+                                }
+                                else
+                                {
+                                    Utilities.PrintMessage("Invalid input. Try again or press q to logout", false);
+                                    continue;
+                                }
+                            }
+
+                        }
+                        else if (otherCategory == "N")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Utilities.PrintMessage("Invalid input. Try again", false, true);
+                            Console.WriteLine("Enter Y/N");
+
+                            continue;
+                        }
+                    }
+                    break;
+                }
+                else
+                {
+                    Utilities.PrintMessage("Invalid input. Please try again", false, true);
+                    Console.WriteLine("Enter Y/N");
+                    continue;
+                }
+            }
+
+            if (!selectedAccount.ExpenseCategories.ContainsKey("other"))
+            {
+                selectedAccount.ExpenseCategories.Add("other", 0);
+            }
+            Console.WriteLine("You have chosen other");
+            return "other";
+        }
+
+        private void UpdateMonthlyExpenseAmount(string key)
+        {
+            decimal monthlyExpenseAmount = 0;
+
+            monthlyExpenseAmount = Validator.Convert<decimal>("monthly expense amount");
+
+            selectedAccount.ExpenseCategories[key] = monthlyExpenseAmount;
+
+            Console.WriteLine($"The monthly amount for {key} is {Utilities.FormatAmount(selectedAccount.ExpenseCategories[key])}");
+        }
+        private int ProcessExpenseUpdateOption()
         {
             switch (Validator.Convert<int>("an option"))
             {
                 case 1:
                     Console.WriteLine("Pay All/Remaining");
+                    return 1;
                     break;
                 case 2:
                     Console.WriteLine("Pay Partial");
+                    return 2;
                     break;
                 case 3:
-                    Console.WriteLine("Enter new amount");
+                    Console.WriteLine("You have chosen to update an expense\n\n");
+                    return 3;
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
+                    return 4;
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
                     ProcessExpenseUpdateOption();
+                    return 0;
                     break;
             }
         }
@@ -304,11 +404,25 @@ namespace BudgetApp.App
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
-
-            ProcessExpenseMenuOption();
+            string chosenExpense = ChooseMonthlyExpense();
 
             AppScreen.DisplayExpenseUpdateOptions();
-            ProcessExpenseUpdateOption();
+
+            int expenseUpdateOption = ProcessExpenseUpdateOption();
+
+            switch (expenseUpdateOption)
+            {
+                case 1:
+                    //method to pay full amount
+                case 2:
+                    //method to pay a partial amount
+                case 3:
+                    UpdateMonthlyExpenseAmount(chosenExpense);
+                    break;
+                default:
+                    break;
+            }
+
             Utilities.PressEnterToContinue();
             var expense_amt = Validator.Convert<decimal>("expense amount");
 
