@@ -101,6 +101,18 @@ namespace BudgetApp.UI
             Console.WriteLine("5. Exit App              ");
         }
 
+        internal static void DisplayWishlistOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a wishlist option. \n\n");
+
+            Console.WriteLine("1. View Wishlist               ");
+            Console.WriteLine("2. Add Wishlist Item           ");
+            Console.WriteLine("3. Make Wishlist Expense       ");
+            Console.WriteLine("4. Logout                      ");
+
+        }
+
         internal static void DisplayExpenseSummary()
         {
             //Add console table in to display expenses

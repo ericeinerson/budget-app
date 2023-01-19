@@ -16,6 +16,8 @@ namespace BudgetApp.App
         private decimal _currentBalance;
         private decimal _estimatedIncome = 9000.00M;
         private decimal _difference;
+        private decimal _sumOfAllMonthlyExpenses = 0;
+        private decimal _sumOfAllWishlistExpenses = 0;
         private decimal _sumOfAllExpenses = 0;
 
         public void Run()
@@ -29,21 +31,34 @@ namespace BudgetApp.App
         
         public void InitializeData()
 		{
-			userAccountList = new List<UserAccount>
-			{
-				new UserAccount
-				{
-					Id = 1,
-					FullName = "Eric Einerson",
-					Passcode = 0991,
-					Balance = 0,
-					IsLocked = false,
-					TotalLogin = 0,
+            userAccountList = new List<UserAccount>
+            {
+                new UserAccount
+                {
+                    Id = 1,
+                    FullName = "Eric Einerson",
+                    Passcode = 0991,
+                    Balance = 0,
+                    IsLocked = false,
+                    TotalLogin = 0,
                     TotalExpenses = 0,
                     TotalIncomes = 0,
                     ExpenseCategories = new Dictionary<string, decimal>
                     {
                         { "other", 0 }
+                    },
+                    Wishlist = new Wishlist
+                    {
+                        Items = new List<WishlistItem>
+                        {
+                            new WishlistItem
+                            {
+                                Item = "Breath of the Wild",
+                                Cost = 60.00M,
+                                Id = 1,
+                                Priority = 1
+                            }
+                        }
                     }
 				},
                 new UserAccount
@@ -140,7 +155,7 @@ namespace BudgetApp.App
                     CategorizedExpenses();
                     break;
                 case (int)AppMenu.Wishlist:
-                    Console.WriteLine("Checking budget summary");
+                    ManageWishList();
                     break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
@@ -364,26 +379,21 @@ namespace BudgetApp.App
                 case 1:
                     Console.WriteLine("Pay All/Remaining");
                     return 1;
-                    break;
                 case 2:
                     Console.WriteLine("Pay Partial");
                     return 2;
-                    break;
                 case 3:
                     Console.WriteLine("You have chosen to update an expense\n\n");
                     return 3;
-                    break;
                 case 4:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
                     return 4;
-                    break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
                     ProcessExpenseUpdateOption();
                     return 0;
-                    break;
             }
         }
 
@@ -409,15 +419,83 @@ namespace BudgetApp.App
             throw new NotImplementedException();
         }
 
+        public void ManageWishList()
+        {
+            AppScreen.DisplayWishlistOptions();
+            ProcessWishlistOption();
+        }
+
+        public void ProcessWishlistOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("View Wishlist");
+                    foreach(WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}\n");
+                    }
+                    Utilities.PressEnterToContinue();
+                    break;
+                case 2:
+                    Console.WriteLine("Add Wishlist Item");
+                    string newItemName = Utilities.GetUserInput("item name");
+                    decimal newItemCost = Validator.Convert<decimal>("item cost");
+                    int newItemPriority = Validator.Convert<int>("item priority");
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        if(newItemPriority <= item.Priority)
+                        {
+                            item.Priority++;
+                            Utilities.PrintMessage($"{item.Item}'s new priority is {item.Priority}", true);
+                        }
+                    }
+                    selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = selectedAccount.Wishlist.Items.Count+1 });
+
+                    break;
+                case 3:
+                    Console.WriteLine("Make Wishlist Expense");
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}, Id: {item.Id}\n");
+                    }
+                    int wishListItemId = Validator.Convert<int>("wishlist id");
+
+                    try
+                    {
+                        WishlistItem selectedItem = selectedAccount.Wishlist.Items.Find(item => item.Id == wishListItemId);
+                        _sumOfAllWishlistExpenses += selectedItem.Cost;
+                        Utilities.PrintMessage($"Success. Your new wishlist balance is {Utilities.FormatAmount(_sumOfAllWishlistExpenses)}", true);
+                    }
+                    catch
+                    {
+                        Utilities.PrintMessage("Invalid input. Please try again.", false);
+                        ProcessWishlistOption();
+                    }
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
+
         public void CategorizedExpenses()
         {
-            _sumOfAllExpenses = 0;
-
+            
             foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
             {
-                _sumOfAllExpenses += expense.Value;
+                _sumOfAllMonthlyExpenses += expense.Value;
             }
-            Console.WriteLine($"\nSum of expenses: {_sumOfAllExpenses}");
+
+            Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_sumOfAllMonthlyExpenses)}\n");
+
+            Console.WriteLine($"\nSum of monthly expenses plus wishlist:{Utilities.FormatAmount(_sumOfAllMonthlyExpenses + _sumOfAllWishlistExpenses)}");
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
@@ -443,12 +521,11 @@ namespace BudgetApp.App
                     UpdateMonthlyExpenseAmount(chosenExpense);
                     break;
                 default:
+                    ProcessExpenseUpdateOption();
                     break;
             }
 
             Utilities.PressEnterToContinue();
-
-            //put in calculation here
         }
 
         private void ProcessExpense(decimal expense_amt)
