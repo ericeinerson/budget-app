@@ -454,17 +454,25 @@ namespace BudgetApp.App
 
                     break;
                 case 3:
-                    Console.WriteLine("Make Wishlist Expense");
+                    Console.WriteLine("Pay For Wishlist Item");
                     foreach (WishlistItem item in selectedAccount.Wishlist.Items)
                     {
                         Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}, Id: {item.Id}\n");
                     }
-                    int wishListItemId = Validator.Convert<int>("wishlist id");
 
+                    int wishListItemId = Validator.Convert<int>("wishlist id");
                     try
                     {
                         WishlistItem selectedItem = selectedAccount.Wishlist.Items.Find(item => item.Id == wishListItemId);
                         _sumOfAllWishlistExpenses += selectedItem.Cost;
+                        foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                        {
+                            if (item.Priority > selectedItem.Priority)
+                            {
+                                item.Priority--;
+                            }
+                        }
+                        selectedAccount.Wishlist.Items.Remove(selectedItem);
                         Utilities.PrintMessage($"Success. Your new wishlist balance is {Utilities.FormatAmount(_sumOfAllWishlistExpenses)}", true);
                     }
                     catch
@@ -472,6 +480,7 @@ namespace BudgetApp.App
                         Utilities.PrintMessage("Invalid input. Please try again.", false);
                         ProcessWishlistOption();
                     }
+                    
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
@@ -487,7 +496,8 @@ namespace BudgetApp.App
 
         public void CategorizedExpenses()
         {
-            
+            _sumOfAllMonthlyExpenses = 0;
+
             foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
             {
                 _sumOfAllMonthlyExpenses += expense.Value;
