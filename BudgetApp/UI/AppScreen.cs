@@ -118,9 +118,41 @@ namespace BudgetApp.UI
             //Add console table in to display expenses
         }
 
-        internal static void DisplayIncomeSummary()
+        internal static void DisplayIncomeMenu()
         {
-            //Add console table in to display incomes
+            Console.Clear();
+            Console.WriteLine("Select an income option. \n\n");
+
+            Console.WriteLine("1. View Incomes               ");
+            Console.WriteLine("2. Add an Income              ");
+            Console.WriteLine("3. Update an Income           ");
+            Console.WriteLine("4. Logout                     ");
+
+        }
+
+        internal static void DisplayRateOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an income rate option. \n\n");
+
+            Console.WriteLine("1. Weekly                     ");
+            Console.WriteLine("2. Biweekly                   ");
+            Console.WriteLine("3. Monthly                    ");
+            Console.WriteLine("4. Yearly                     ");
+            Console.WriteLine("5. Logout                     ");
+
+        }
+
+        internal static void DisplayIncomeUpdateOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an income update option. \n\n");
+
+            Console.WriteLine("1. Name                     ");
+            Console.WriteLine("2. Amount                   ");
+            Console.WriteLine("3. Rate                    ");
+            Console.WriteLine("4. Logout                     ");
+
         }
 
         internal static void DisplayBudgetSummary()

@@ -1,8 +1,13 @@
 ﻿using System;
 namespace BudgetApp.Domain.Enums
 {
-	public enum Rates
+	public enum Rate
 	{
+		Weekly = 1,
+		Biweekly,
+		Monthly,
+		Yearly,
+		Other
 	}
 }
 

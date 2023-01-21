@@ -15,6 +15,7 @@ namespace BudgetApp.Domain.Entities
 		public Dictionary<string, decimal>? ExpenseCategories { get; set; }
 		public decimal TotalIncomes { get; set; }
 		public Wishlist Wishlist {get;set;}
+		public List<Income> IncomeCategories { get; set; }
 	}
 }
 

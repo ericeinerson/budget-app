@@ -6,10 +6,10 @@ using BudgetApp.UI;
 
 namespace BudgetApp.App
 {
-	public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
-	{
-		private List<UserAccount>? userAccountList;
-		private UserAccount? selectedAccount;
+    public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
+    {
+        private List<UserAccount>? userAccountList;
+        private UserAccount? selectedAccount;
         private List<BudgetUpdate>? _listOfUpdates;
 
         private decimal _amountNeeded;
@@ -19,6 +19,14 @@ namespace BudgetApp.App
         private decimal _sumOfAllMonthlyExpenses = 0;
         private decimal _sumOfAllWishlistExpenses = 0;
         private decimal _sumOfAllExpenses = 0;
+        private decimal _sumOfAllIncomes = 0;
+        private decimal _sumOfAllWeeklyIncomes = 0;
+        private decimal _sumOfAllBiweeklyIncomes = 0;
+        private decimal _sumOfAllMonthlyIncomes = 0;
+        private decimal _sumOfAllYearlyIncomes = 0;
+        private int _incomeIdCounter = 2;
+        private int _wishlistIdCounter = 1;
+
 
         public void Run()
         {
@@ -28,9 +36,9 @@ namespace BudgetApp.App
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
-        
+
         public void InitializeData()
-		{
+        {
             userAccountList = new List<UserAccount>
             {
                 new UserAccount
@@ -59,8 +67,26 @@ namespace BudgetApp.App
                                 Priority = 1
                             }
                         }
+                    },
+                    IncomeCategories = new List<Income>
+                    {
+                        new Income
+                        {
+                            IncomeName = "paycheck",
+                            Amount = 1000.00M,
+                            Rate = Rate.Biweekly,
+                            Id = 1
+                        },
+                        new Income
+                        {
+                            IncomeName = "taxes",
+                            Amount = 1000.00M,
+                            Rate = Rate.Yearly,
+                            Id = 2
+                        }
                     }
-				},
+
+                },
                 new UserAccount
                 {
                     Id = 1,
@@ -94,7 +120,7 @@ namespace BudgetApp.App
             };
 
             _listOfUpdates = new List<BudgetUpdate>();
-		}
+        }
         public void CheckUserPasscode()
         {
             bool isCorrectLogin = false;
@@ -102,7 +128,7 @@ namespace BudgetApp.App
             {
                 UserAccount inputAccount = AppScreen.UserLoginForm();
                 AppScreen.LoginProgress();
-                foreach(UserAccount account in userAccountList!)
+                foreach (UserAccount account in userAccountList!)
                 {
                     selectedAccount = account;
                     if (inputAccount.FullName.ToLower().Equals(selectedAccount.FullName.ToLower()))
@@ -113,7 +139,7 @@ namespace BudgetApp.App
                         {
                             selectedAccount = account;
 
-                            if(selectedAccount.IsLocked || selectedAccount.TotalLogin > 3)
+                            if (selectedAccount.IsLocked || selectedAccount.TotalLogin > 3)
                             {
                                 AppScreen.PrintLockScreen();
                             }
@@ -140,16 +166,16 @@ namespace BudgetApp.App
         }
         private void ProcessAppMenuOption()
         {
-            switch(Validator.Convert<int>("an option."))
+            switch (Validator.Convert<int>("an option."))
             {
                 case (int)AppMenu.BudgetSummary:
                     BudgetSummary();
                     break;
                 case (int)AppMenu.PreviousMonths:
-                    Console.WriteLine("Checking previous months");
+                    Console.WriteLine("Feature needs to be built after database is connected to keep track of archived records of financials");
                     break;
                 case (int)AppMenu.Incomes:
-                    Console.WriteLine("Managing incomes");
+                    ManageIncome();
                     break;
                 case (int)AppMenu.CategorizedExpenses:
                     CategorizedExpenses();
@@ -159,14 +185,14 @@ namespace BudgetApp.App
                     break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.",true);
+                    Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
                     break;
                 case (int)AppMenu.UpdateBalance:
                     UpdateBalance();
                     break;
                 default:
-                    Utilities.PrintMessage("Invalid option.",false);
+                    Utilities.PrintMessage("Invalid option.", false);
                     break;
             }
             AppScreen.DisplayAppMenu();
@@ -175,7 +201,7 @@ namespace BudgetApp.App
 
         private string ChooseMonthlyExpense()
         {
-            switch(Validator.Convert<int>("an expense to add"))
+            switch (Validator.Convert<int>("an expense to add"))
             {
                 case 1:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("rent_utilities"))
@@ -232,7 +258,7 @@ namespace BudgetApp.App
                     return "gym";
                 case 10:
                     return ProcessOtherExpense();
-                    
+
                 case 11:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
@@ -243,7 +269,7 @@ namespace BudgetApp.App
                     ProcessAppMenuOption();
                     return string.Empty;
                 default:
-                    Utilities.PrintMessage("Invalid Option. Try again",false);
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
                     ChooseMonthlyExpense();
                     return string.Empty;
             }
@@ -416,7 +442,7 @@ namespace BudgetApp.App
 
         public void Incomes()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("will implement this later");
         }
 
         public void ManageWishList()
@@ -431,26 +457,27 @@ namespace BudgetApp.App
             {
                 case 1:
                     Console.WriteLine("View Wishlist");
-                    foreach(WishlistItem item in selectedAccount.Wishlist.Items)
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
                     {
-                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}\n");
+                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}, Id: {item.Id}\n");
                     }
                     Utilities.PressEnterToContinue();
                     break;
                 case 2:
                     Console.WriteLine("Add Wishlist Item");
+                    _wishlistIdCounter++;
                     string newItemName = Utilities.GetUserInput("item name");
                     decimal newItemCost = Validator.Convert<decimal>("item cost");
                     int newItemPriority = Validator.Convert<int>("item priority");
                     foreach (WishlistItem item in selectedAccount.Wishlist.Items)
                     {
-                        if(newItemPriority <= item.Priority)
+                        if (newItemPriority <= item.Priority)
                         {
                             item.Priority++;
                             Utilities.PrintMessage($"{item.Item}'s new priority is {item.Priority}", true);
                         }
                     }
-                    selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = selectedAccount.Wishlist.Items.Count+1 });
+                    selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = _wishlistIdCounter });
 
                     break;
                 case 3:
@@ -480,7 +507,7 @@ namespace BudgetApp.App
                         Utilities.PrintMessage("Invalid input. Please try again.", false);
                         ProcessWishlistOption();
                     }
-                    
+
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
@@ -586,7 +613,168 @@ namespace BudgetApp.App
 
         public void ViewUpdate()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("This method will allow users to view past expenses/incomes");
+        }
+
+        public void ManageIncome()
+        {
+            _sumOfAllWeeklyIncomes = 0;
+            _sumOfAllBiweeklyIncomes = 0;
+            _sumOfAllMonthlyIncomes = 0;
+            _sumOfAllYearlyIncomes = 0;
+
+            foreach (Income income in selectedAccount.IncomeCategories)
+            {
+                switch (income.Rate)
+                {
+                    case Rate.Weekly:
+                        _sumOfAllWeeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        _sumOfAllBiweeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Monthly:
+                        _sumOfAllMonthlyIncomes += income.Amount;
+                        break;
+                    case Rate.Yearly:
+                        _sumOfAllYearlyIncomes += income.Amount;
+                        break;
+                }
+            }
+            Console.WriteLine($"\nSum of weekly incomes: {Utilities.FormatAmount(_sumOfAllWeeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of biweekly incomes: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of monthly incomes: {Utilities.FormatAmount(_sumOfAllMonthlyIncomes)}\n");
+            Console.WriteLine($"\nSum of yearly incomes: {Utilities.FormatAmount(_sumOfAllYearlyIncomes)}\n");
+
+            Utilities.PressEnterToContinue();
+            AppScreen.DisplayIncomeMenu();
+
+            ProcessIncomeUpdateOption();
+
+            Utilities.PressEnterToContinue();
+        }
+
+        private void ProcessIncomeUpdateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("View Incomes");
+                    ViewIncome();
+                    break;
+                case 2:
+                    Console.WriteLine("Add new income");
+                    AddNewIncome();
+                    break;
+                case 3:
+                    Console.WriteLine("Update an income\n\n");
+                    UpdateIncome();
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessExpenseUpdateOption();
+                    break;
+            }
+        }
+
+        private void ViewIncome()
+        {
+            foreach (Income i in selectedAccount.IncomeCategories)
+            {
+                Console.WriteLine($"Income: {i.IncomeName}, Amount: {Utilities.FormatAmount(i.Amount)}, Frequency/Rate: {i.Rate}, Id: {i.Id}");
+            }
+            Utilities.PressEnterToContinue();
+        }
+
+        private void AddNewIncome()
+        {
+            _incomeIdCounter++;
+            string incomeName = Utilities.GetUserInput("income name");
+            decimal incomeAmount = Validator.Convert<decimal>("income amount");
+            AppScreen.DisplayRateOptions();
+            Rate incomeRate = ProcessIncomeRateOption();
+            selectedAccount.IncomeCategories.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
+            Console.WriteLine("New income summary:\n");
+            Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
+
+        }
+
+        private Rate ProcessIncomeRateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Weekly");
+                    return Rate.Weekly;
+                case 2:
+                    Console.WriteLine("Biweekly");
+                    return Rate.Biweekly;
+                case 3:
+                    Console.WriteLine("Monthly");
+                    return Rate.Monthly;
+                case 4:
+                    Console.WriteLine("Yearly");
+                    return Rate.Yearly;
+                case 5:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    return Rate.Other;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessExpenseUpdateOption();
+                    return Rate.Other;
+            }
+        }
+
+        private void UpdateIncome()
+        {
+            int selectedIncomeId = Validator.Convert<int>("Enter Id of income to update");
+            try
+            {
+                selectedAccount.IncomeCategories.Find(i=>i.Id == selectedIncomeId);
+            }
+            catch
+            {
+                Utilities.PrintMessage("Id could not be found. Please try again.", false);
+                UpdateIncome();
+            }
+            AppScreen.DisplayIncomeUpdateOptions();
+            ProcessIncomeChangeOption(selectedIncomeId);
+        }
+
+        private void ProcessIncomeChangeOption(int id)
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Name");
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).IncomeName = Utilities.GetUserInput("new name");
+                    break;
+                case 2:
+                    Console.WriteLine("Amount");
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Amount = Validator.Convert<decimal>("new amount");
+                    break;
+                case 3:
+                    Console.WriteLine("Rate");
+                    AppScreen.DisplayRateOptions();
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Rate = ProcessIncomeRateOption();
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessExpenseUpdateOption();
+                    break;
+            }
         }
     }
 }
