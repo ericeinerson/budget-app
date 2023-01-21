@@ -54,7 +54,7 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("-------My Budget App Menu-------");
             Console.WriteLine("1. Budget Summary               ");
-            Console.WriteLine("2. Previous Months              ");
+            Console.WriteLine("2. Instructions/App Description ");
             Console.WriteLine("3. Incomes                      ");
             Console.WriteLine("4. Categorized Expenses         ");
             Console.WriteLine("5. Wishlist/Future              ");
