@@ -4,7 +4,7 @@ namespace BudgetApp.Domain.Enums
 	public enum AppMenu
 	{
 		BudgetSummary = 1,
-		PreviousMonths,
+		Instructions,
 		Incomes,
 		CategorizedExpenses,
 		Wishlist,

@@ -93,7 +93,7 @@ namespace BudgetApp.App
                     FullName = "Pickle Rick",
                     Passcode = 8374,
                     Balance = 0,
-                    IsLocked = true,
+                    IsLocked = false,
                     TotalLogin = 0,
                     TotalExpenses = 0,
                     TotalIncomes = 0,
@@ -151,17 +151,18 @@ namespace BudgetApp.App
                             }
                         }
                     }
-                    if (isCorrectLogin == false)
-                    {
-                        Utilities.PrintMessage("\nInvalid name or passcode", false);
-                        selectedAccount.IsLocked = selectedAccount.TotalLogin == 3;
-                        if (selectedAccount.IsLocked)
-                        {
-                            AppScreen.PrintLockScreen();
-                        }
-                    }
-                    Console.Clear();
+                   
                 }
+                if (isCorrectLogin == false)
+                {
+                    Utilities.PrintMessage("\nInvalid name or passcode", false);
+                    selectedAccount.IsLocked = selectedAccount.TotalLogin == 3;
+                    if (selectedAccount.IsLocked)
+                    {
+                        AppScreen.PrintLockScreen();
+                    }
+                }
+                Console.Clear();
             }
         }
         private void ProcessAppMenuOption()
@@ -171,8 +172,9 @@ namespace BudgetApp.App
                 case (int)AppMenu.BudgetSummary:
                     BudgetSummary();
                     break;
-                case (int)AppMenu.PreviousMonths:
-                    Console.WriteLine("Feature needs to be built after database is connected to keep track of archived records of financials");
+                case (int)AppMenu.Instructions:
+                    DisplayInstructions();
+                    Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.Incomes:
                     ManageIncome();
@@ -197,6 +199,15 @@ namespace BudgetApp.App
             }
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
+        }
+
+        private void DisplayInstructions()
+        {
+            Console.WriteLine("Welcome to My Budget App! This app allows you to create your own budget, including keeping track" +
+                " of your incomes, expenses, and a wishlist for future purchases. Each menu item should have its own options that" +
+                " you can select from. Some menu items even interact with one another (i.e. wishlist feeds into expenses). Finally," +
+                " you can update your current balance of money and view your budget summary between incomes, expenses, and your" +
+                " wishlist.");
         }
 
         private string ChooseMonthlyExpense()
