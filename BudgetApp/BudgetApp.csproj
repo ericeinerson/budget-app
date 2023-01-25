@@ -16,6 +16,9 @@
     <None Remove="Domain\Enums\" />
     <None Remove="Domain\Entities\Interfaces\" />
     <None Remove="ConsoleTables" />
+    <None Remove="Microsoft.Extensions.Configuration" />
+    <None Remove="Microsoft.Extensions.Configuration.FileExtensions" />
+    <None Remove="Microsoft.Extensions.Configuration.Json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
@@ -28,5 +31,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ConsoleTables" Version="2.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
   </ItemGroup>
 </Project>
