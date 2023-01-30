@@ -3,20 +3,30 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Entities.Interfaces;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
+using BudgetApp.Domain;
 
 namespace BudgetApp.App
 {
-	public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
-	{
-		private List<UserAccount>? userAccountList;
-		private UserAccount? selectedAccount;
+    public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
+    {
+        private List<UserAccount>? userAccountList;
+        protected UserAccount? selectedAccount;
         private List<BudgetUpdate>? _listOfUpdates;
 
         private decimal _amountNeeded;
         private decimal _currentBalance;
         private decimal _estimatedIncome = 9000.00M;
         private decimal _difference;
-        private decimal _sumOfAllExpenses = 0;
+        private decimal _sumOfAllWishlistExpenses = 0;
+        private decimal _sumOfAllIncomes = 0;
+        private decimal _sumOfAllWeeklyIncomes = 0;
+        private decimal _sumOfAllBiweeklyIncomes = 0;
+        private decimal _sumOfAllMonthlyIncomes = 0;
+        private decimal _sumOfAllYearlyIncomes = 0;
+        private int _incomeIdCounter = 2;
+        private int _wishlistIdCounter = 1;
+        public decimal SumOfAllExpenses { get; set; }
+        private decimal _sumOfAllMonthlyExpenses = 0;
 
         public void Run()
         {
@@ -26,33 +36,65 @@ namespace BudgetApp.App
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
-        
+
+        #region Initialize Data
         public void InitializeData()
-		{
-			userAccountList = new List<UserAccount>
-			{
-				new UserAccount
-				{
-					Id = 1,
-					FullName = "Eric Einerson",
-					Passcode = 0991,
-					Balance = 0,
-					IsLocked = false,
-					TotalLogin = 0,
+        {
+            userAccountList = new List<UserAccount>
+            {
+                new UserAccount
+                {
+                    Id = 1,
+                    FullName = "Eric Einerson",
+                    Passcode = 0991,
+                    Balance = 0,
+                    IsLocked = false,
+                    TotalLogin = 0,
                     TotalExpenses = 0,
                     TotalIncomes = 0,
                     ExpenseCategories = new Dictionary<string, decimal>
                     {
                         { "other", 0 }
+                    },
+                    Wishlist = new Wishlist
+                    {
+                        Items = new List<WishlistItem>
+                        {
+                            new WishlistItem
+                            {
+                                Item = "Breath of the Wild",
+                                Cost = 60.00M,
+                                Id = 1,
+                                Priority = 1
+                            }
+                        }
+                    },
+                    IncomeCategories = new List<Income>
+                    {
+                        new Income
+                        {
+                            IncomeName = "paycheck",
+                            Amount = 1000.00M,
+                            Rate = Rate.Biweekly,
+                            Id = 1
+                        },
+                        new Income
+                        {
+                            IncomeName = "taxes",
+                            Amount = 1000.00M,
+                            Rate = Rate.Yearly,
+                            Id = 2
+                        }
                     }
-				},
+
+                },
                 new UserAccount
                 {
                     Id = 1,
                     FullName = "Pickle Rick",
                     Passcode = 8374,
                     Balance = 0,
-                    IsLocked = true,
+                    IsLocked = false,
                     TotalLogin = 0,
                     TotalExpenses = 0,
                     TotalIncomes = 0,
@@ -77,9 +119,12 @@ namespace BudgetApp.App
                     }
                 }
             };
+            #endregion
 
             _listOfUpdates = new List<BudgetUpdate>();
-		}
+        }
+
+        #region Check Passcode
         public void CheckUserPasscode()
         {
             bool isCorrectLogin = false;
@@ -87,7 +132,7 @@ namespace BudgetApp.App
             {
                 UserAccount inputAccount = AppScreen.UserLoginForm();
                 AppScreen.LoginProgress();
-                foreach(UserAccount account in userAccountList!)
+                foreach (UserAccount account in userAccountList!)
                 {
                     selectedAccount = account;
                     if (inputAccount.FullName.ToLower().Equals(selectedAccount.FullName.ToLower()))
@@ -98,7 +143,7 @@ namespace BudgetApp.App
                         {
                             selectedAccount = account;
 
-                            if(selectedAccount.IsLocked || selectedAccount.TotalLogin > 3)
+                            if (selectedAccount.IsLocked || selectedAccount.TotalLogin > 3)
                             {
                                 AppScreen.PrintLockScreen();
                             }
@@ -110,57 +155,322 @@ namespace BudgetApp.App
                             }
                         }
                     }
-                    if (isCorrectLogin == false)
-                    {
-                        Utilities.PrintMessage("\nInvalid name or passcode", false);
-                        selectedAccount.IsLocked = selectedAccount.TotalLogin == 3;
-                        if (selectedAccount.IsLocked)
-                        {
-                            AppScreen.PrintLockScreen();
-                        }
-                    }
-                    Console.Clear();
+
                 }
+                if (isCorrectLogin == false)
+                {
+                    Utilities.PrintMessage("\nInvalid name or passcode", false);
+                    selectedAccount.IsLocked = selectedAccount.TotalLogin == 3;
+                    if (selectedAccount.IsLocked)
+                    {
+                        AppScreen.PrintLockScreen();
+                    }
+                }
+                Console.Clear();
             }
         }
-        private void ProcessAppMenuOption()
+        #endregion
+
+        #region Process Menu Option
+        protected void ProcessAppMenuOption()
         {
-            switch(Validator.Convert<int>("an option."))
+            switch (Validator.Convert<int>("an option."))
             {
                 case (int)AppMenu.BudgetSummary:
                     BudgetSummary();
                     break;
-                case (int)AppMenu.PreviousMonths:
-                    Console.WriteLine("Checking previous months");
+                case (int)AppMenu.Instructions:
+                    DisplayInstructions();
+                    Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.Incomes:
-                    Console.WriteLine("Managing incomes");
+                    ManageIncome();
                     break;
                 case (int)AppMenu.CategorizedExpenses:
                     CategorizedExpenses();
                     break;
                 case (int)AppMenu.Wishlist:
-                    Console.WriteLine("Checking budget summary");
+                    ManageWishList();
                     break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.",true);
+                    Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
                     break;
                 case (int)AppMenu.UpdateBalance:
                     UpdateBalance();
                     break;
                 default:
-                    Utilities.PrintMessage("Invalid option.",false);
+                    Utilities.PrintMessage("Invalid option.", false);
                     break;
             }
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
+        #endregion
+
+        #region Budget Summary
+        public void BudgetSummary()
+        {
+            _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
+            _sumOfAllIncomes = CalculateIncomesForThisMonth();
+
+            _amountNeeded = _sumOfAllMonthlyExpenses;
+
+            _difference = _currentBalance + _sumOfAllIncomes - _amountNeeded;
+
+            Console.WriteLine(_amountNeeded);
+
+            Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_difference)}", true);
+        }
+
+        private decimal CalculateIncomesForThisMonth()
+        {
+            _sumOfAllIncomes = 0;
+
+            _sumOfAllWeeklyIncomes = 0;
+            _sumOfAllBiweeklyIncomes = 0;
+            _sumOfAllMonthlyIncomes = 0;
+            _sumOfAllYearlyIncomes = 0;
+
+            CalculateIncomesForEachRate();
+
+            _sumOfAllIncomes = _sumOfAllMonthlyIncomes;
+
+            return _sumOfAllIncomes;
+        }
+
+        private void CalculateIncomesForEachRate()
+        {
+            foreach (Income income in selectedAccount.IncomeCategories)
+            {
+                switch (income.Rate)
+                {
+                    case Rate.Weekly:
+                        _sumOfAllWeeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        _sumOfAllBiweeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Monthly:
+                        _sumOfAllMonthlyIncomes += income.Amount;
+                        break;
+                    case Rate.Yearly:
+                        _sumOfAllYearlyIncomes += income.Amount;
+                        break;
+                }
+            }
+        }
+        #endregion
+
+        #region Instructions
+        private void DisplayInstructions()
+        {
+            Console.WriteLine("Welcome to My Budget App! This app allows you to create your own budget, including keeping track" +
+                " of your incomes, expenses, and a wishlist for future purchases. Each menu item should have its own options that" +
+                " you can select from. Some menu items even interact with one another (i.e. wishlist feeds into expenses). Finally," +
+                " you can update your current balance of money and view your budget summary between incomes, expenses, and your" +
+                " wishlist.");
+        }
+        #endregion
+
+        #region Income
+        public void ManageIncome()
+        {
+            CalculateIncomesForEachRate();
+
+            Console.WriteLine($"\nSum of weekly incomes: {Utilities.FormatAmount(_sumOfAllWeeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of biweekly incomes: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of monthly incomes: {Utilities.FormatAmount(_sumOfAllMonthlyIncomes)}\n");
+            Console.WriteLine($"\nSum of yearly incomes: {Utilities.FormatAmount(_sumOfAllYearlyIncomes)}\n");
+
+            Utilities.PressEnterToContinue();
+            AppScreen.DisplayIncomeMenu();
+
+            ProcessIncomeUpdateOption();
+
+            Utilities.PressEnterToContinue();
+        }
+
+        private void ProcessIncomeUpdateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("View Incomes");
+                    ViewIncome();
+                    break;
+                case 2:
+                    Console.WriteLine("Add new income");
+                    AddNewIncome();
+                    break;
+                case 3:
+                    Console.WriteLine("Update an income\n\n");
+                    UpdateIncome();
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessIncomeUpdateOption();
+                    break;
+            }
+        }
+
+        private void ViewIncome()
+        {
+            foreach (Income i in selectedAccount.IncomeCategories)
+            {
+                Console.WriteLine($"Income: {i.IncomeName}, Amount: {Utilities.FormatAmount(i.Amount)}, Frequency/Rate: {i.Rate}, Id: {i.Id}");
+            }
+            Utilities.PressEnterToContinue();
+        }
+
+        private void AddNewIncome()
+        {
+            _incomeIdCounter++;
+            string incomeName = Utilities.GetUserInput("income name");
+            decimal incomeAmount = Validator.Convert<decimal>("income amount");
+            AppScreen.DisplayRateOptions();
+            Rate incomeRate = ProcessIncomeRateOption();
+            selectedAccount.IncomeCategories.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
+            Console.WriteLine("New income summary:\n");
+            Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
+
+        }
+
+        private Rate ProcessIncomeRateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Weekly");
+                    return Rate.Weekly;
+                case 2:
+                    Console.WriteLine("Biweekly");
+                    return Rate.Biweekly;
+                case 3:
+                    Console.WriteLine("Monthly");
+                    return Rate.Monthly;
+                case 4:
+                    Console.WriteLine("Yearly");
+                    return Rate.Yearly;
+                case 5:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    return Rate.Other;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessIncomeUpdateOption();
+                    return Rate.Other;
+            }
+        }
+
+        private void UpdateIncome()
+        {
+            int selectedIncomeId = Validator.Convert<int>("Enter Id of income to update");
+            try
+            {
+                selectedAccount.IncomeCategories.Find(i => i.Id == selectedIncomeId);
+            }
+            catch
+            {
+                Utilities.PrintMessage("Id could not be found. Please try again.", false);
+                UpdateIncome();
+            }
+            AppScreen.DisplayIncomeUpdateOptions();
+            ProcessIncomeChangeOption(selectedIncomeId);
+        }
+
+        private void ProcessIncomeChangeOption(int id)
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Name");
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).IncomeName = Utilities.GetUserInput("new name");
+                    break;
+                case 2:
+                    Console.WriteLine("Amount");
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Amount = Validator.Convert<decimal>("new amount");
+                    break;
+                case 3:
+                    Console.WriteLine("Rate");
+                    AppScreen.DisplayRateOptions();
+                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Rate = ProcessIncomeRateOption();
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessIncomeUpdateOption();
+                    break;
+            }
+        }
+        #endregion
+
+        #region Expenses
+        public void CategorizedExpenses()
+        {
+            _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
+
+            Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_sumOfAllMonthlyExpenses)}\n");
+
+            Console.WriteLine($"\nSum of monthly expenses plus wishlist:{Utilities.FormatAmount(_sumOfAllMonthlyExpenses + _sumOfAllWishlistExpenses)}");
+
+            Utilities.PressEnterToContinue();
+            AppScreen.DisplayExpenseOptions();
+            string chosenExpense = ChooseMonthlyExpense();
+
+            AppScreen.DisplayExpenseUpdateOptions();
+
+            int expenseUpdateOption = ProcessExpenseUpdateOption();
+
+
+            switch (expenseUpdateOption)
+            {
+                case 1:
+                    decimal payOff = PayFullExpense(chosenExpense);
+                    ProcessExpense(payOff);
+                    break;
+                case 2:
+                    var expense_amt = Validator.Convert<decimal>("expense amount");
+                    PayPartialExpense(chosenExpense, expense_amt);
+                    ProcessExpense(expense_amt);
+                    break;
+                case 3:
+                    UpdateMonthlyExpenseAmount(chosenExpense);
+                    break;
+                default:
+                    ProcessExpenseUpdateOption();
+                    break;
+            }
+
+            Utilities.PressEnterToContinue();
+        }
+
+        private decimal CalculateTotalExpenses()
+        {
+            _sumOfAllMonthlyExpenses = 0;
+
+            foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
+            {
+                _sumOfAllMonthlyExpenses += expense.Value;
+            }
+
+            return _sumOfAllMonthlyExpenses;
+        }
 
         private string ChooseMonthlyExpense()
         {
-            switch(Validator.Convert<int>("an expense to add"))
+            switch (Validator.Convert<int>("an expense to add"))
             {
                 case 1:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("rent_utilities"))
@@ -217,7 +527,7 @@ namespace BudgetApp.App
                     return "gym";
                 case 10:
                     return ProcessOtherExpense();
-                    
+
                 case 11:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
@@ -228,9 +538,34 @@ namespace BudgetApp.App
                     ProcessAppMenuOption();
                     return string.Empty;
                 default:
-                    Utilities.PrintMessage("Invalid Option. Try again",false);
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
                     ChooseMonthlyExpense();
                     return string.Empty;
+            }
+        }
+
+        private int ProcessExpenseUpdateOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("Pay All/Remaining");
+                    return 1;
+                case 2:
+                    Console.WriteLine("Pay Partial");
+                    return 2;
+                case 3:
+                    Console.WriteLine("You have chosen to update an expense\n\n");
+                    return 3;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    return 4;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessExpenseUpdateOption();
+                    return 0;
             }
         }
 
@@ -330,6 +665,22 @@ namespace BudgetApp.App
             return "other";
         }
 
+        private decimal PayFullExpense(string key)
+        {
+            decimal payment = selectedAccount.ExpenseCategories[key];
+            selectedAccount.ExpenseCategories[key] = 0;
+            Utilities.PrintMessage($"You have successfully paid off {key}.", true);
+            return payment;
+        }
+
+        private void PayPartialExpense(string key, decimal amount)
+        {
+            decimal newAmount = selectedAccount.ExpenseCategories[key] - amount;
+
+            selectedAccount.ExpenseCategories[key] -= amount;
+            Utilities.PrintMessage($"You have successfully paid {amount} towards {key}. Your remaining expense amount is {Utilities.FormatAmount(newAmount)}", true);
+        }
+
         private void UpdateMonthlyExpenseAmount(string key)
         {
             decimal monthlyExpenseAmount = 0;
@@ -340,105 +691,20 @@ namespace BudgetApp.App
 
             Console.WriteLine($"The monthly amount for {key} is {Utilities.FormatAmount(selectedAccount.ExpenseCategories[key])}");
         }
-        private int ProcessExpenseUpdateOption()
+
+        private void ProcessExpense(decimal expense_amt)
         {
-            switch (Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    Console.WriteLine("Pay All/Remaining");
-                    return 1;
-                    break;
-                case 2:
-                    Console.WriteLine("Pay Partial");
-                    return 2;
-                    break;
-                case 3:
-                    Console.WriteLine("You have chosen to update an expense\n\n");
-                    return 3;
-                    break;
-                case 4:
-                    AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.", true);
-                    Run();
-                    return 4;
-                    break;
-                default:
-                    Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessExpenseUpdateOption();
-                    return 0;
-                    break;
-            }
-        }
-
-        public void UpdateBalance()
-        {
-            Console.WriteLine("Please enter your balance");
-            _currentBalance = Validator.Convert<decimal>("current balance");
-            Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
-
-        }
-
-        public void BudgetSummary()
-        {
-            _amountNeeded = _sumOfAllExpenses;
-            _difference = _currentBalance + _estimatedIncome - _amountNeeded;
-            Console.WriteLine(_amountNeeded);
-
-            Utilities.PrintMessage($"Your future balance is {Utilities.FormatAmount(_difference)}", true);
-        }
-
-        public void Incomes()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CategorizedExpenses()
-        {
-            _sumOfAllExpenses = 0;
-
-            foreach(KeyValuePair<string,decimal> expense in selectedAccount.ExpenseCategories)
-            {
-                _sumOfAllExpenses += expense.Value;
-            }
-            Console.WriteLine($"\nSum of expenses: {_sumOfAllExpenses}");
-
-            Utilities.PressEnterToContinue();
-            AppScreen.DisplayExpenseOptions();
-            string chosenExpense = ChooseMonthlyExpense();
-
-            AppScreen.DisplayExpenseUpdateOptions();
-
-            int expenseUpdateOption = ProcessExpenseUpdateOption();
-
-            switch (expenseUpdateOption)
-            {
-                case 1:
-                    //method to pay full amount
-                case 2:
-                    //method to pay a partial amount
-                case 3:
-                    UpdateMonthlyExpenseAmount(chosenExpense);
-                    break;
-                default:
-                    break;
-            }
-
-            Utilities.PressEnterToContinue();
-            var expense_amt = Validator.Convert<decimal>("expense amount");
-
-            //put in calculation here
-
             Console.WriteLine("\nProcessing expense");
             Utilities.PrintDotAnimation();
             Console.WriteLine("");
 
-            if(expense_amt <= 0)
+            if (expense_amt <= 0)
             {
                 Utilities.PrintMessage("Amount needs to be greater than zero. Try again.", false);
                 return;
             }
-            
-            if(PreviewUpdate(expense_amt) == false)
+
+            if (PreviewUpdate(expense_amt) == false)
             {
                 Utilities.PrintMessage("You have cancelled your action", false);
                 return;
@@ -446,8 +712,102 @@ namespace BudgetApp.App
 
             InsertUpdate(UpdateType.Expense, expense_amt, "");
         }
+        #endregion
 
-        private bool PreviewUpdate(decimal amount)
+        #region Wishlist
+        public void ManageWishList()
+        {
+            AppScreen.DisplayWishlistOptions();
+            ProcessWishlistOption();
+        }
+
+        public void ProcessWishlistOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    Console.WriteLine("View Wishlist");
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}, Id: {item.Id}\n");
+                    }
+                    Utilities.PressEnterToContinue();
+                    break;
+                case 2:
+                    Console.WriteLine("Add Wishlist Item");
+                    _wishlistIdCounter++;
+                    string newItemName = Utilities.GetUserInput("item name");
+                    decimal newItemCost = Validator.Convert<decimal>("item cost");
+                    int newItemPriority = Validator.Convert<int>("item priority");
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        if (newItemPriority <= item.Priority)
+                        {
+                            item.Priority++;
+                            Utilities.PrintMessage($"{item.Item}'s new priority is {item.Priority}", true);
+                        }
+                    }
+                    selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = _wishlistIdCounter });
+
+                    break;
+                case 3:
+                    Console.WriteLine("Pay For Wishlist Item");
+                    foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                    {
+                        Console.WriteLine($"Item: {item.Item}, Cost: {Utilities.FormatAmount(item.Cost)}, Priority: {item.Priority}, Id: {item.Id}\n");
+                    }
+
+                    int wishListItemId = Validator.Convert<int>("wishlist id");
+                    try
+                    {
+                        WishlistItem selectedItem = selectedAccount.Wishlist.Items.Find(item => item.Id == wishListItemId);
+                        _sumOfAllWishlistExpenses += selectedItem.Cost;
+                        foreach (WishlistItem item in selectedAccount.Wishlist.Items)
+                        {
+                            if (item.Priority > selectedItem.Priority)
+                            {
+                                item.Priority--;
+                            }
+                        }
+                        selectedAccount.Wishlist.Items.Remove(selectedItem);
+                        Utilities.PrintMessage($"Success. Your new wishlist balance is {Utilities.FormatAmount(_sumOfAllWishlistExpenses)}", true);
+                    }
+                    catch
+                    {
+                        Utilities.PrintMessage("Invalid input. Please try again.", false);
+                        ProcessWishlistOption();
+                    }
+
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
+        #endregion
+
+        #region Update Balance
+        public void UpdateBalance()
+        {
+            Console.WriteLine("Please enter your balance");
+            _currentBalance = Validator.Convert<decimal>("current balance");
+            Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
+
+        }
+        #endregion
+
+        public void Incomes()
+        {
+            Console.WriteLine("will implement this later");
+        }
+
+        protected bool PreviewUpdate(decimal amount)
         {
             Console.WriteLine("\nSummary");
             Console.WriteLine("-------");
@@ -474,7 +834,7 @@ namespace BudgetApp.App
 
         public void ViewUpdate()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("This method will allow users to view past expenses/incomes");
         }
     }
 }

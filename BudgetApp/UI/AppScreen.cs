@@ -54,7 +54,7 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("-------My Budget App Menu-------");
             Console.WriteLine("1. Budget Summary               ");
-            Console.WriteLine("2. Previous Months              ");
+            Console.WriteLine("2. Instructions/App Description ");
             Console.WriteLine("3. Incomes                      ");
             Console.WriteLine("4. Categorized Expenses         ");
             Console.WriteLine("5. Wishlist/Future              ");
@@ -101,14 +101,54 @@ namespace BudgetApp.UI
             Console.WriteLine("5. Exit App              ");
         }
 
+        internal static void DisplayWishlistOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a wishlist option. \n\n");
+
+            Console.WriteLine("1. View Wishlist               ");
+            Console.WriteLine("2. Add Wishlist Item           ");
+            Console.WriteLine("3. Make Wishlist Expense       ");
+            Console.WriteLine("4. Logout                      ");
+        }
+
         internal static void DisplayExpenseSummary()
         {
             //Add console table in to display expenses
         }
 
-        internal static void DisplayIncomeSummary()
+        internal static void DisplayIncomeMenu()
         {
-            //Add console table in to display incomes
+            Console.Clear();
+            Console.WriteLine("Select an income option. \n\n");
+
+            Console.WriteLine("1. View Incomes               ");
+            Console.WriteLine("2. Add an Income              ");
+            Console.WriteLine("3. Update an Income           ");
+            Console.WriteLine("4. Logout                     ");
+        }
+
+        internal static void DisplayRateOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an income rate option. \n\n");
+
+            Console.WriteLine("1. Weekly                     ");
+            Console.WriteLine("2. Biweekly                   ");
+            Console.WriteLine("3. Monthly                    ");
+            Console.WriteLine("4. Yearly                     ");
+            Console.WriteLine("5. Logout                     ");
+        }
+
+        internal static void DisplayIncomeUpdateOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an income update option. \n\n");
+
+            Console.WriteLine("1. Name                     ");
+            Console.WriteLine("2. Amount                   ");
+            Console.WriteLine("3. Rate                    ");
+            Console.WriteLine("4. Logout                     ");
         }
 
         internal static void DisplayBudgetSummary()
