@@ -110,7 +110,6 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Add Wishlist Item           ");
             Console.WriteLine("3. Make Wishlist Expense       ");
             Console.WriteLine("4. Logout                      ");
-
         }
 
         internal static void DisplayExpenseSummary()
@@ -127,7 +126,6 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Add an Income              ");
             Console.WriteLine("3. Update an Income           ");
             Console.WriteLine("4. Logout                     ");
-
         }
 
         internal static void DisplayRateOptions()
@@ -140,7 +138,6 @@ namespace BudgetApp.UI
             Console.WriteLine("3. Monthly                    ");
             Console.WriteLine("4. Yearly                     ");
             Console.WriteLine("5. Logout                     ");
-
         }
 
         internal static void DisplayIncomeUpdateOptions()
@@ -152,7 +149,6 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Amount                   ");
             Console.WriteLine("3. Rate                    ");
             Console.WriteLine("4. Logout                     ");
-
         }
 
         internal static void DisplayBudgetSummary()
