@@ -54,7 +54,11 @@ namespace BudgetApp.App
                     TotalIncomes = 0,
                     ExpenseCategories = new Dictionary<string, decimal>
                     {
-                        { "other", 0 }
+                        { "other", 0 },
+                        { "rent_utilities", 2000 },
+                        {"food_general", 300 },
+                        {"gas", 100 },
+                        {"subscriptions", 85 }
                     },
                     Wishlist = new Wishlist
                     {
@@ -212,6 +216,7 @@ namespace BudgetApp.App
         #region Budget Summary
         public void BudgetSummary()
         {
+
             _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
             _sumOfAllIncomes = CalculateIncomesForThisMonth();
 
@@ -221,46 +226,11 @@ namespace BudgetApp.App
 
             Console.WriteLine(_amountNeeded);
 
+            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_amountNeeded)}", true, true);
+            Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_sumOfAllIncomes)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_difference)}", true);
         }
 
-        private decimal CalculateIncomesForThisMonth()
-        {
-            _sumOfAllIncomes = 0;
-
-            _sumOfAllWeeklyIncomes = 0;
-            _sumOfAllBiweeklyIncomes = 0;
-            _sumOfAllMonthlyIncomes = 0;
-            _sumOfAllYearlyIncomes = 0;
-
-            CalculateIncomesForEachRate();
-
-            _sumOfAllIncomes = _sumOfAllMonthlyIncomes;
-
-            return _sumOfAllIncomes;
-        }
-
-        private void CalculateIncomesForEachRate()
-        {
-            foreach (Income income in selectedAccount.IncomeCategories)
-            {
-                switch (income.Rate)
-                {
-                    case Rate.Weekly:
-                        _sumOfAllWeeklyIncomes += income.Amount;
-                        break;
-                    case Rate.Biweekly:
-                        _sumOfAllBiweeklyIncomes += income.Amount;
-                        break;
-                    case Rate.Monthly:
-                        _sumOfAllMonthlyIncomes += income.Amount;
-                        break;
-                    case Rate.Yearly:
-                        _sumOfAllYearlyIncomes += income.Amount;
-                        break;
-                }
-            }
-        }
         #endregion
 
         #region Instructions
@@ -290,6 +260,28 @@ namespace BudgetApp.App
             ProcessIncomeUpdateOption();
 
             Utilities.PressEnterToContinue();
+        }
+
+        void CalculateIncomesForEachRate()
+        {
+            foreach (Income income in selectedAccount.IncomeCategories)
+            {
+                switch (income.Rate)
+                {
+                    case Rate.Weekly:
+                        _sumOfAllWeeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        _sumOfAllBiweeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Monthly:
+                        _sumOfAllMonthlyIncomes += income.Amount;
+                        break;
+                    case Rate.Yearly:
+                        _sumOfAllYearlyIncomes += income.Amount;
+                        break;
+                }
+            }
         }
 
         private void ProcessIncomeUpdateOption()
@@ -334,6 +326,14 @@ namespace BudgetApp.App
             _incomeIdCounter++;
             string incomeName = Utilities.GetUserInput("income name");
             decimal incomeAmount = Validator.Convert<decimal>("income amount");
+            int monthDeposited = Validator.Convert<int>("month of each deposit");
+            int dayDeposited = Validator.Convert<int>("day of each deposit");
+            DateTime dateDeposited = new DateTime(DateTime.Now.Year, monthDeposited, dayDeposited);
+
+            string dateDepositedStr = new DateTime().ToString($"MMMM-dd");
+
+            Utilities.PrintMessage($"Your new income details: {dateDepositedStr}", true);
+
             AppScreen.DisplayRateOptions();
             Rate incomeRate = ProcessIncomeRateOption();
             selectedAccount.IncomeCategories.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
@@ -413,6 +413,23 @@ namespace BudgetApp.App
                     ProcessIncomeUpdateOption();
                     break;
             }
+
+        }
+
+        decimal CalculateIncomesForThisMonth()
+        {
+            _sumOfAllIncomes = 0;
+
+            _sumOfAllWeeklyIncomes = 0;
+            _sumOfAllBiweeklyIncomes = 0;
+            _sumOfAllMonthlyIncomes = 0;
+            _sumOfAllYearlyIncomes = 0;
+
+            CalculateIncomesForEachRate();
+
+            _sumOfAllIncomes = _sumOfAllMonthlyIncomes;
+
+            return _sumOfAllIncomes;
         }
         #endregion
 
