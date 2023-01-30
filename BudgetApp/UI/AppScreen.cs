@@ -151,6 +151,18 @@ namespace BudgetApp.UI
             Console.WriteLine("4. Logout                     ");
         }
 
+        internal static void BudgetSummaryOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an option to summarize. \n\n"  );
+
+            Console.WriteLine("1. Budget Summary At Future Date     ");
+            Console.WriteLine("2. Budget Summary For Current Month  ");
+            Console.WriteLine("3. View Past Transactions            ");
+            Console.WriteLine("4. Logout                            ");
+            Console.WriteLine("5. App Menu                          ");
+        }
+
         internal static void DisplayBudgetSummary()
         {
             //Add console table in to display budget summary
