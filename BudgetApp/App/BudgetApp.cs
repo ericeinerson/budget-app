@@ -21,12 +21,16 @@ namespace BudgetApp.App
         private decimal _sumOfAllIncomes = 0;
         private decimal _sumOfAllWeeklyIncomes = 0;
         private decimal _sumOfAllBiweeklyIncomes = 0;
+        private decimal _sumOfAllBiweeklyIncomesThisMonth = 0;
+        private decimal _sumOfAllBiweeklyIncomesThisYear = 0;
+        private decimal _sumOfAllBiweeklyIncomesOther = 0;
         private decimal _sumOfAllMonthlyIncomes = 0;
         private decimal _sumOfAllYearlyIncomes = 0;
         private int _incomeIdCounter = 2;
         private int _wishlistIdCounter = 1;
         public decimal SumOfAllExpenses { get; set; }
         private decimal _sumOfAllMonthlyExpenses = 0;
+        private decimal payRatePerHour = 15.00M;
 
         public void Run()
         {
@@ -80,6 +84,8 @@ namespace BudgetApp.App
                             IncomeName = "paycheck",
                             Amount = 1000.00M,
                             Rate = Rate.Biweekly,
+                            Day = 5,
+                            Month = 1,
                             Id = 1
                         },
                         new Income
@@ -216,19 +222,151 @@ namespace BudgetApp.App
         #region Budget Summary
         public void BudgetSummary()
         {
-
+            
             _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
-            _sumOfAllIncomes = CalculateIncomesForThisMonth();
 
+            _sumOfAllBiweeklyIncomesOther = payRatePerHour * 40 * 2 * CalculatePay(TimeRange.Other);
+            _sumOfAllIncomes = CalculateIncomesForThisMonth() + _sumOfAllBiweeklyIncomesThisMonth;
             _amountNeeded = _sumOfAllMonthlyExpenses;
-
             _difference = _currentBalance + _sumOfAllIncomes - _amountNeeded;
 
-            Console.WriteLine(_amountNeeded);
+            AppScreen.DisplayBudgetSummaryOptions();
+            ProcessBudgetSummaryMenu();
+
+        }
+
+        private void ProcessBudgetSummaryMenu()
+        {
+            switch(Validator.Convert<int>("a budget summary option"))
+            {
+                case 1:
+                    ShowBudgetForOtherTimeRange();
+                    break;
+                case 2:
+                    ShowBudgetForCurrentMonthAndYear();
+                    break;
+                case 3:
+                    ShowPreviousTransactions();
+                    break;
+                case 4:
+                    AppScreen.LogoutProgress();
+                    Utilities.PrintMessage("You have successfully logged out.", true);
+                    Run();
+                    break;
+                case 5:
+                    AppScreen.DisplayAppMenu();
+                    ProcessAppMenuOption();
+                    break;
+            }
+        }
+
+        public decimal CalculatePay(TimeRange timeRange)
+        {
+            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+            DateTime startTimeSpan;
+            DateTime endTimeSpan;
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
+            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+            DateTime currentPayPeriod = firstPayPeriod;
+            int payPeriodCounter = 0;
+            decimal pay = payRatePerHour;
+
+            switch (timeRange)
+            {
+                case TimeRange.Month:
+                    startTimeSpan = currentMonthStart;
+                    endTimeSpan = currentMonthEnd;
+                    break;
+                case TimeRange.Year:
+                    startTimeSpan = currentYearStart;
+                    endTimeSpan = currentYearEnd;
+                    break;
+                case TimeRange.Other:
+                    startTimeSpan = new DateTime(2023, 02, 12);
+                    endTimeSpan = new DateTime(2023, 02, 12);
+                    CalculatePay(endTimeSpan);
+                    break;
+                default:
+                    startTimeSpan = DateTime.MaxValue;
+                    endTimeSpan = DateTime.MinValue;
+                    break;
+            }
+
+            while(currentPayPeriod < startTimeSpan)
+            {
+                currentPayPeriod = currentPayPeriod.AddDays(14);
+            }
+
+            while (currentPayPeriod < endTimeSpan)
+            {
+                payPeriodCounter++;
+                currentPayPeriod = currentPayPeriod.AddDays(14);
+               
+            }
+
+            pay *= (40 * 2 * payPeriodCounter);
+            return pay;
+        }
+
+        public decimal CalculatePay(DateTime endTimeSpan)
+        {
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
+            DateTime currentPayPeriod = firstPayPeriod;
+            decimal pay = payRatePerHour;
+            int payPeriodCounter = 0;
+
+            while (currentPayPeriod < DateTime.Now)
+            {
+                currentPayPeriod = currentPayPeriod.AddDays(14);
+            }
+
+            while (currentPayPeriod < endTimeSpan)
+            {
+                payPeriodCounter++;
+                currentPayPeriod = currentPayPeriod.AddDays(14);
+            }
+
+            pay *= (40 * 2 * payPeriodCounter);
+            return pay;
+        }
+
+        private void ShowBudgetForOtherTimeRange()
+        {
+            int otherYear;
+            int otherMonth;
+            int otherDay;
+
+            Console.WriteLine("Enter the date you'd like to check your budget at");
+            
+            otherYear = Validator.Convert<int>("year (YYYY)");
+            otherMonth = Validator.Convert<int>("month (MM)");
+            otherDay = Validator.Convert<int>("day (dd)");
+
+            DateTime otherDate = new DateTime(otherYear, otherMonth, otherDay);
+            decimal income = CalculatePay(otherDate);
 
             Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_amountNeeded)}", true, true);
-            Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_sumOfAllIncomes)}", true, true);
+            Utilities.PrintMessage($"Income total through {otherDate.ToString("yyyy, MMMM, dd")}: {Utilities.FormatAmount(income)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_difference)}", true);
+        }
+
+        private void ShowBudgetForCurrentMonthAndYear()
+        {
+            _sumOfAllBiweeklyIncomesThisMonth = CalculatePay(TimeRange.Month);
+            _sumOfAllBiweeklyIncomesThisYear = CalculatePay(TimeRange.Year);
+            decimal _differenceThisMonth = _sumOfAllBiweeklyIncomesThisMonth - _amountNeeded;
+
+            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_amountNeeded)}", true, true);
+            Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomesThisMonth)}", true, true);
+            Utilities.PrintMessage($"Income total for this year: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomesThisYear)}", true, true);
+            Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_differenceThisMonth)}", true);
+        }
+
+        private void ShowPreviousTransactions()
+        {
+
         }
 
         #endregion
@@ -422,6 +560,7 @@ namespace BudgetApp.App
 
             _sumOfAllWeeklyIncomes = 0;
             _sumOfAllBiweeklyIncomes = 0;
+            
             _sumOfAllMonthlyIncomes = 0;
             _sumOfAllYearlyIncomes = 0;
 
@@ -537,6 +676,7 @@ namespace BudgetApp.App
                         selectedAccount.ExpenseCategories.Add("subscriptions", 0);
                     }
                     return "subscriptions";
+                case 9:
                     if (!selectedAccount.ExpenseCategories.ContainsKey("gym"))
                     {
                         selectedAccount.ExpenseCategories.Add("gym", 0);
