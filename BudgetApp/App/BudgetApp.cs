@@ -18,6 +18,10 @@ namespace BudgetApp.App
         private decimal _estimatedIncome = 9000.00M;
         private decimal _difference;
         private decimal _sumOfAllWishlistExpenses = 0;
+        private decimal _weeklyExpenses = 0;
+        private decimal _biweeklyExpenses = 0;
+        private decimal _monthlyExpenses = 0;
+        private decimal _yearlyExpenses = 0;
         private decimal allIncomes = 0;
         private decimal weeklyIncomes = 0;
         private decimal biweeklyIncomes = 0;
@@ -30,6 +34,7 @@ namespace BudgetApp.App
         private int _wishlistIdCounter = 1;
         public decimal SumOfAllExpenses { get; set; }
         private decimal _sumOfAllMonthlyExpenses = 0;
+        private int expenseId = 0;
 
         public void Run()
         {
@@ -62,6 +67,45 @@ namespace BudgetApp.App
                         {"food_general", 300 },
                         {"gas", 100 },
                         {"subscriptions", 85 }
+                    },
+                    ExpenseList = new List<Expense>
+                    {
+                        new Expense
+                        {
+                            ExpenseName = "rent_utilities",
+                            Amount = 2000.00M,
+                            Day = 1,
+                            Month = 1,
+                            Rate = Rate.Monthly,
+                            Id = 1
+                        },
+                        new Expense
+                        {
+                            ExpenseName = "credit_cards",
+                            Amount = 400.00M,
+                            Day = 3,
+                            Month = 1,
+                            Rate = Rate.Monthly,
+                            Id = 1
+                        },
+                        new Expense
+                        {
+                            ExpenseName = "gas",
+                            Amount = 125.00M,
+                            Day = 1,
+                            Month = 1,
+                            Rate = Rate.Monthly,
+                            Id = 1
+                        },
+                        new Expense
+                        {
+                            ExpenseName = "subscriptions",
+                            Amount = 100.00M,
+                            Day = 10,
+                            Month = 1,
+                            Rate = Rate.Monthly,
+                            Id = 1
+                        }
                     },
                     Wishlist = new Wishlist
                     {
@@ -248,17 +292,8 @@ namespace BudgetApp.App
         #region Budget Summary
         public void BudgetSummary()
         {
-            
-            _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
-
-            allIncomes = CalculateIncomesForThisMonth() + biweeklyIncomeThisMonth;
-            Console.WriteLine(allIncomes);
-            amountNeededPerMonth = _sumOfAllMonthlyExpenses;
-            _difference = _currentBalance + allIncomes - amountNeededPerMonth;
-
             AppScreen.DisplayBudgetSummaryOptions();
             ProcessBudgetSummaryMenu();
-
         }
 
         private void ProcessBudgetSummaryMenu()
@@ -266,10 +301,10 @@ namespace BudgetApp.App
             switch(Validator.Convert<int>("a budget summary option"))
             {
                 case 1:
-                    ShowBudgetForOtherTimeRange();
+                    ShowBudgetForCurrentMonthAndYear();
                     break;
                 case 2:
-                    ShowBudgetForCurrentMonthAndYear();
+                    ShowBudgetForOtherTimeRange();
                     break;
                 case 3:
                     ShowPreviousTransactions();
@@ -353,6 +388,73 @@ namespace BudgetApp.App
             return pay;
         }
 
+        public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense)
+        {
+            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+            DateTime startTimeSpan;
+            DateTime endTimeSpan;
+
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
+            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+
+            DateTime currentPayPeriod = firstPayPeriod;
+            int payPeriodCounter = 0;
+            int daysBetweenIntervals = 0;
+            decimal pay = expense.Amount;
+
+            switch (expense.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenIntervals = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenIntervals = 14;
+                    break;
+                case Rate.Monthly:
+                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    break;
+                case Rate.Yearly:
+                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+                    break;
+            }
+            switch (timeRange)
+            {
+                case TimeRange.Month:
+                    startTimeSpan = currentMonthStart.AddMilliseconds(-1);
+                    endTimeSpan = currentMonthEnd;
+                    break;
+                case TimeRange.Year:
+                    startTimeSpan = currentYearStart.AddMilliseconds(-1);
+                    endTimeSpan = currentYearEnd;
+                    break;
+                case TimeRange.Other:
+                    startTimeSpan = DateTime.MinValue;
+                    endTimeSpan = DateTime.MinValue;
+                    CalculatePay(endTimeSpan);
+                    break;
+                default:
+                    startTimeSpan = DateTime.MaxValue;
+                    endTimeSpan = DateTime.MinValue;
+                    break;
+            }
+
+            while (currentPayPeriod < startTimeSpan)
+            {
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            while (currentPayPeriod < endTimeSpan)
+            {
+                payPeriodCounter++;
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            pay *= payPeriodCounter;
+            return pay;
+        }
+
         public decimal CalculatePay(DateTime endTimeSpan)
         {
             DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
@@ -395,8 +497,10 @@ namespace BudgetApp.App
 
         private void ShowBudgetForCurrentMonthAndYear()
         {
-            decimal _incomeThisMonth = CalculateIncomesForThisMonth();
-            decimal _expensesThisMonth = _sumOfAllMonthlyExpenses;
+            decimal _incomeThisMonth = CalculateIncomesForTimePeriod(TimeRange.Month);
+            decimal _expensesThisMonth = CalculateExpensesForTimePeriod(TimeRange.Month);
+            decimal _incomeThisYear = CalculateIncomesForTimePeriod(TimeRange.Year);
+            decimal _expensesThisYear = CalculateExpensesForTimePeriod(TimeRange.Year);
             decimal _differenceThisMonth = _incomeThisMonth - _expensesThisMonth;
 
             Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_expensesThisMonth)}", true, true);
@@ -443,6 +547,11 @@ namespace BudgetApp.App
 
         void CalculateIncomesForEachRate()
         {
+            weeklyIncomes = 0;
+            biweeklyIncomes = 0;
+            monthlyIncomes = 0;
+            yearlyIncomes = 0;
+
             foreach (Income income in selectedAccount.IncomeList)
             {
                 switch (income.Rate)
@@ -514,14 +623,14 @@ namespace BudgetApp.App
             Utilities.PrintMessage($"Your new income details: {dateDepositedStr}", true);
 
             AppScreen.DisplayRateOptions();
-            Rate incomeRate = ProcessIncomeRateOption();
+            Rate incomeRate = ProcessRateOption();
             selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
             Console.WriteLine("New income summary:\n");
             Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
 
         }
 
-        private Rate ProcessIncomeRateOption()
+        private Rate ProcessRateOption()
         {
             switch (Validator.Convert<int>("an option"))
             {
@@ -580,7 +689,7 @@ namespace BudgetApp.App
                 case 3:
                     Console.WriteLine("Rate");
                     AppScreen.DisplayRateOptions();
-                    selectedAccount.IncomeList.Find(i => i.Id == id).Rate = ProcessIncomeRateOption();
+                    selectedAccount.IncomeList.Find(i => i.Id == id).Rate = ProcessRateOption();
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
@@ -595,36 +704,51 @@ namespace BudgetApp.App
 
         }
 
-        decimal CalculateIncomesForThisMonth()
+        decimal CalculateIncomesForTimePeriod(TimeRange timeRange)
         {
             allIncomes = 0;
-            weeklyIncomes = 0;
-            biweeklyIncomes = 0;
-            monthlyIncomes = 0;
-            yearlyIncomes = 0;
-
+            
             foreach (Income income in selectedAccount.IncomeList)
             {
-                monthlyIncomes += CalculateIncomeByRateAndTime(TimeRange.Month, income);
+                allIncomes += CalculateIncomeByRateAndTime(timeRange, income);
             }
 
             CalculateIncomesForEachRate();
 
-            return monthlyIncomes;
+            return allIncomes;
         }
+
+        decimal CalculateExpensesForTimePeriod(TimeRange timeRange)
+        {
+            
+            SumOfAllExpenses = 0;
+
+            foreach (Expense expense in selectedAccount.ExpenseList)
+            {
+                SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense);
+            }
+
+            CalculateExpensesForEachRate();
+
+            return SumOfAllExpenses;
+        }
+
+
         #endregion
 
         #region Expenses
         public void CategorizedExpenses()
         {
-            _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
+            CalculateExpensesForEachRate();
 
-            Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_sumOfAllMonthlyExpenses)}\n");
-
-            Console.WriteLine($"\nSum of monthly expenses plus wishlist:{Utilities.FormatAmount(_sumOfAllMonthlyExpenses + _sumOfAllWishlistExpenses)}");
+            Console.WriteLine($"\nSum of weekly expenses: {Utilities.FormatAmount(_weeklyExpenses)}\n");
+            Console.WriteLine($"\nSum of biweekly expenses: {Utilities.FormatAmount(_biweeklyExpenses)}\n");
+            Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_monthlyExpenses)}\n");
+            Console.WriteLine($"\nSum of yearly expenses: {Utilities.FormatAmount(_yearlyExpenses)}\n");
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
+
             string chosenExpense = ChooseMonthlyExpense();
 
             AppScreen.DisplayExpenseUpdateOptions();
@@ -666,62 +790,81 @@ namespace BudgetApp.App
             return _sumOfAllMonthlyExpenses;
         }
 
-        private string ChooseMonthlyExpense()
+        public string ChooseMonthlyExpense()
         {
-            switch (Validator.Convert<int>("an expense to add"))
+
+            switch (Validator.Convert<int>("an expense to update or add"))
             {
                 case 1:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("rent_utilities"))
+                    if (!selectedAccount.ExpenseList.Any(e=>e.ExpenseName == "rent_utilities"))
                     {
-                        selectedAccount.ExpenseCategories.Add("rent_utilities", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("rent_utilities"));
                     }
                     return "rent_utilities";
                 case 2:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("credit_cards"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "credit_cards"))
                     {
-                        selectedAccount.ExpenseCategories.Add("credit_cards", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("credit_cards"));
                     }
                     return "credit_cards";
                 case 3:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("food_general"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "food_general"))
                     {
-                        selectedAccount.ExpenseCategories.Add("food_general", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("food_general"));
                     }
                     return "food_general";
                 case 4:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("loans"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "loans"))
                     {
-                        selectedAccount.ExpenseCategories.Add("loans", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("loans"));
                     }
                     return "loans";
                 case 5:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("gas"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "gas"))
                     {
-                        selectedAccount.ExpenseCategories.Add("gas", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("gas"));
                     }
                     return "gas";
                 case 6:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("medical"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "medical"))
                     {
-                        selectedAccount.ExpenseCategories.Add("medical", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("medical"));
                     }
                     return "medical";
                 case 7:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("insurance"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "insurance"))
                     {
-                        selectedAccount.ExpenseCategories.Add("insurance", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("insurance"));
                     }
                     return "insurance";
                 case 8:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("subscriptions"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "subscriptions"))
                     {
-                        selectedAccount.ExpenseCategories.Add("subscriptions", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("subscriptions"));
                     }
                     return "subscriptions";
                 case 9:
-                    if (!selectedAccount.ExpenseCategories.ContainsKey("gym"))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "gym"))
                     {
-                        selectedAccount.ExpenseCategories.Add("gym", 0);
+                        Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense("gym"));
                     }
                     return "gym";
                 case 10:
@@ -741,6 +884,28 @@ namespace BudgetApp.App
                     ChooseMonthlyExpense();
                     return string.Empty;
             }
+        }
+
+        public Expense ConstructExpense(string expenseName = "")
+        {
+            Expense expense = new Expense();
+            string name = expenseName;
+            decimal amount = Validator.Convert<decimal>("expense amount");
+            int id = expenseId;
+            expenseId++;
+            int day = Validator.Convert<int>("day expense is withdrawn");
+            int month = Validator.Convert<int>("month expense is withdrawn. Enter 1 as default if this is a monthly expense");
+            AppScreen.DisplayRateOptions();
+            Rate rate = ProcessRateOption();
+
+            expense.ExpenseName = name;
+            expense.Amount = amount;
+            expense.Id = id;
+            expense.Day = day;
+            expense.Month = month;
+            expense.Rate = rate;
+
+            return expense;
         }
 
         private int ProcessExpenseUpdateOption()
@@ -781,18 +946,20 @@ namespace BudgetApp.App
                 {
                     newCategory = Utilities.GetUserInput("new category");
 
-                    if (!selectedAccount.ExpenseCategories.ContainsKey(newCategory))
+                    if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == newCategory))
                     {
-                        selectedAccount.ExpenseCategories.Add(newCategory, 0);
+                        Utilities.PrintMessage("Enter the following information to add to list:", true);
+
+                        selectedAccount.ExpenseList.Add(ConstructExpense(newCategory));
                     }
 
                     Utilities.PrintMessage($"You have added {newCategory} to your list of expenses", true);
 
                     Console.WriteLine("Expense categories:\n");
 
-                    foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
+                    foreach (Expense expense in selectedAccount.ExpenseList)
                     {
-                        Console.WriteLine(expense.Key);
+                        Console.WriteLine(expense.ExpenseName);
                     }
                     return newCategory;
                 }
@@ -809,14 +976,14 @@ namespace BudgetApp.App
                             while (true)
                             {
                                 Console.WriteLine("Choose from the categories below:\n");
-                                foreach (KeyValuePair<string, decimal> category in selectedAccount.ExpenseCategories)
+                                foreach (Expense category in selectedAccount.ExpenseList)
                                 {
-                                    Console.WriteLine(category.Key);
+                                    Console.WriteLine(category.ExpenseName);
                                 }
 
                                 newCategory = Utilities.GetUserInput("other category name to be used");
 
-                                if (selectedAccount.ExpenseCategories.ContainsKey(newCategory))
+                                if (selectedAccount.ExpenseList.Any(e=>e.ExpenseName == newCategory))
                                 {
                                     return newCategory;
                                 }
@@ -856,39 +1023,43 @@ namespace BudgetApp.App
                 }
             }
 
-            if (!selectedAccount.ExpenseCategories.ContainsKey("other"))
+            if (!selectedAccount.ExpenseList.Any(e=>e.ExpenseName == "other"))
             {
-                selectedAccount.ExpenseCategories.Add("other", 0);
+                selectedAccount.ExpenseList.Add(ConstructExpense("other"));
             }
             Console.WriteLine("You have chosen other");
             return "other";
         }
 
-        private decimal PayFullExpense(string key)
+        private decimal PayFullExpense(string expenseName)
         {
-            decimal payment = selectedAccount.ExpenseCategories[key];
-            selectedAccount.ExpenseCategories[key] = 0;
-            Utilities.PrintMessage($"You have successfully paid off {key}.", true);
+            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+            decimal payment = expense.Amount;
+            expense.Amount = 0;
+            Utilities.PrintMessage($"You have successfully paid off {expenseName}.", true);
             return payment;
         }
 
-        private void PayPartialExpense(string key, decimal amount)
+        private void PayPartialExpense(string expenseName, decimal payment)
         {
-            decimal newAmount = selectedAccount.ExpenseCategories[key] - amount;
+            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+            decimal newAmount = expense.Amount - payment;
 
-            selectedAccount.ExpenseCategories[key] -= amount;
-            Utilities.PrintMessage($"You have successfully paid {amount} towards {key}. Your remaining expense amount is {Utilities.FormatAmount(newAmount)}", true);
+            expense.Amount -= payment;
+            Utilities.PrintMessage($"You have successfully paid {payment} towards {expenseName}. Your remaining expense amount is {Utilities.FormatAmount(newAmount)}", true);
         }
 
-        private void UpdateMonthlyExpenseAmount(string key)
+        private void UpdateMonthlyExpenseAmount(string expenseName)
         {
+            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+
             decimal monthlyExpenseAmount = 0;
 
             monthlyExpenseAmount = Validator.Convert<decimal>("monthly expense amount");
 
-            selectedAccount.ExpenseCategories[key] = monthlyExpenseAmount;
+            expense.Amount = monthlyExpenseAmount;
 
-            Console.WriteLine($"The monthly amount for {key} is {Utilities.FormatAmount(selectedAccount.ExpenseCategories[key])}");
+            Console.WriteLine($"The monthly amount for {expenseName} is {Utilities.FormatAmount(monthlyExpenseAmount)}");
         }
 
         private void ProcessExpense(decimal expense_amt)
@@ -910,6 +1081,32 @@ namespace BudgetApp.App
             }
 
             InsertTransaction(TransactionType.Expense, expense_amt, "");
+        }
+        void CalculateExpensesForEachRate()
+        {
+            _weeklyExpenses = 0;
+            _biweeklyExpenses = 0;
+            _monthlyExpenses = 0;
+            _yearlyExpenses = 0;
+
+            foreach (Expense expense in selectedAccount.ExpenseList)
+            { 
+                switch (expense.Rate)
+                {
+                    case Rate.Weekly:
+                        _weeklyExpenses += expense.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        _biweeklyExpenses += expense.Amount;
+                        break;
+                    case Rate.Monthly:
+                        _monthlyExpenses += expense.Amount;
+                        break;
+                    case Rate.Yearly:
+                        _yearlyExpenses += expense.Amount;
+                        break;
+                }
+            }
         }
         #endregion
 
@@ -1042,7 +1239,7 @@ namespace BudgetApp.App
 
         public void InsertTransaction(TransactionType _updateType, decimal _updateAmount, string description)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Need to implement Insert Transaction");
         }
 
         public void ViewTransaction()

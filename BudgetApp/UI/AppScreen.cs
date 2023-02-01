@@ -86,6 +86,7 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Pay Partial                              ");
             Console.WriteLine("3. Enter new amount                         ");
             Console.WriteLine("4. Logout                                   ");
+            Console.WriteLine("5. Add to expense list                      ");
 
         }
 
@@ -131,7 +132,7 @@ namespace BudgetApp.UI
         internal static void DisplayRateOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an income rate option. \n\n");
+            Console.WriteLine("Select a rate option. \n\n");
 
             Console.WriteLine("1. Weekly                     ");
             Console.WriteLine("2. Biweekly                   ");
@@ -154,10 +155,10 @@ namespace BudgetApp.UI
         internal static void DisplayBudgetSummaryOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an option to summarize. \n\n           ");
+            Console.WriteLine("Select an option. \n\n                        ");
 
-            Console.WriteLine("1. Budget Summary At Specified Future Date    ");
-            Console.WriteLine("2. Budget Summary For Current Month And Year  ");
+            Console.WriteLine("1. Budget Summary For Current Month And Year  ");
+            Console.WriteLine("2. Budget Summary At Specified Future Date    ");
             Console.WriteLine("3. View Previous Transactions                 ");
             Console.WriteLine("4. Logout                                     ");
             Console.WriteLine("5. App Menu                                   ");
