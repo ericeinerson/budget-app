@@ -7,30 +7,29 @@ using BudgetApp.Domain;
 
 namespace BudgetApp.App
 {
-    public class BudgetApp : IUserLogin, IUserAccountActions, IUpdate
+    public class BudgetApp : IUserLogin, IUserAccountActions, ITransaction
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount? selectedAccount;
-        private List<BudgetUpdate>? _listOfUpdates;
+        private List<Transaction>? _listOfTransactions;
 
-        private decimal _amountNeeded;
+        private decimal amountNeededPerMonth;
         private decimal _currentBalance;
         private decimal _estimatedIncome = 9000.00M;
         private decimal _difference;
         private decimal _sumOfAllWishlistExpenses = 0;
-        private decimal _sumOfAllIncomes = 0;
-        private decimal _sumOfAllWeeklyIncomes = 0;
-        private decimal _sumOfAllBiweeklyIncomes = 0;
-        private decimal _sumOfAllBiweeklyIncomesThisMonth = 0;
+        private decimal allIncomes = 0;
+        private decimal weeklyIncomes = 0;
+        private decimal biweeklyIncomes = 0;
+        private decimal biweeklyIncomeThisMonth = 0;
         private decimal _sumOfAllBiweeklyIncomesThisYear = 0;
-        private decimal _sumOfAllBiweeklyIncomesOther = 0;
-        private decimal _sumOfAllMonthlyIncomes = 0;
-        private decimal _sumOfAllYearlyIncomes = 0;
+        private decimal payAtSelectedTime = 0;
+        private decimal monthlyIncomes = 0;
+        private decimal yearlyIncomes = 0;
         private int _incomeIdCounter = 2;
         private int _wishlistIdCounter = 1;
         public decimal SumOfAllExpenses { get; set; }
         private decimal _sumOfAllMonthlyExpenses = 0;
-        private decimal payRatePerHour = 15.00M;
 
         public void Run()
         {
@@ -74,10 +73,17 @@ namespace BudgetApp.App
                                 Cost = 60.00M,
                                 Id = 1,
                                 Priority = 1
+                            },
+                            new WishlistItem
+                            {
+                                Item = "Betrayal: Legacy",
+                                Cost = 100.00M,
+                                Id = 2,
+                                Priority = 2
                             }
                         }
                     },
-                    IncomeCategories = new List<Income>
+                    IncomeList = new List<Income>
                     {
                         new Income
                         {
@@ -93,14 +99,34 @@ namespace BudgetApp.App
                             IncomeName = "taxes",
                             Amount = 1000.00M,
                             Rate = Rate.Yearly,
-                            Id = 2
+                            Id = 2,
+                            Day = 12,
+                            Month = 11
+                        },
+                        new Income
+                        {
+                            IncomeName = "freelance",
+                            Amount = 30.00M,
+                            Rate = Rate.Weekly,
+                            Day = 2,
+                            Month = 1,
+                            Id = 3
+                        },
+                        new Income
+                        {
+                            IncomeName = "mow lawn",
+                            Amount = 10.00M,
+                            Rate = Rate.Weekly,
+                            Day = 6,
+                            Month = 1,
+                            Id = 4
                         }
                     }
 
                 },
                 new UserAccount
                 {
-                    Id = 1,
+                    Id = 2,
                     FullName = "Pickle Rick",
                     Passcode = 8374,
                     Balance = 0,
@@ -115,7 +141,7 @@ namespace BudgetApp.App
                 },
                 new UserAccount
                 {
-                    Id = 1,
+                    Id = 3,
                     FullName = "Random User",
                     Passcode = 1111,
                     Balance = 0,
@@ -131,7 +157,7 @@ namespace BudgetApp.App
             };
             #endregion
 
-            _listOfUpdates = new List<BudgetUpdate>();
+            _listOfTransactions = new List<Transaction>();
         }
 
         #region Check Passcode
@@ -225,10 +251,10 @@ namespace BudgetApp.App
             
             _sumOfAllMonthlyExpenses = CalculateTotalExpenses();
 
-            _sumOfAllBiweeklyIncomesOther = payRatePerHour * 40 * 2 * CalculatePay(TimeRange.Other);
-            _sumOfAllIncomes = CalculateIncomesForThisMonth() + _sumOfAllBiweeklyIncomesThisMonth;
-            _amountNeeded = _sumOfAllMonthlyExpenses;
-            _difference = _currentBalance + _sumOfAllIncomes - _amountNeeded;
+            allIncomes = CalculateIncomesForThisMonth() + biweeklyIncomeThisMonth;
+            Console.WriteLine(allIncomes);
+            amountNeededPerMonth = _sumOfAllMonthlyExpenses;
+            _difference = _currentBalance + allIncomes - amountNeededPerMonth;
 
             AppScreen.DisplayBudgetSummaryOptions();
             ProcessBudgetSummaryMenu();
@@ -260,32 +286,50 @@ namespace BudgetApp.App
             }
         }
 
-        public decimal CalculatePay(TimeRange timeRange)
+        public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
         {
             DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
             DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
             DateTime startTimeSpan;
             DateTime endTimeSpan;
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
+
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
             DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+
             DateTime currentPayPeriod = firstPayPeriod;
             int payPeriodCounter = 0;
-            decimal pay = payRatePerHour;
+            int daysBetweenIntervals = 0;
+            decimal pay = income.Amount;
 
+            switch (income.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenIntervals = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenIntervals = 14;
+                    break;
+                case Rate.Monthly:
+                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    break;
+                case Rate.Yearly:
+                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366: 365;
+                    break;
+            }
             switch (timeRange)
             {
                 case TimeRange.Month:
-                    startTimeSpan = currentMonthStart;
+                    startTimeSpan = currentMonthStart.AddMilliseconds(-1);
                     endTimeSpan = currentMonthEnd;
                     break;
                 case TimeRange.Year:
-                    startTimeSpan = currentYearStart;
+                    startTimeSpan = currentYearStart.AddMilliseconds(-1);
                     endTimeSpan = currentYearEnd;
                     break;
                 case TimeRange.Other:
-                    startTimeSpan = new DateTime(2023, 02, 12);
-                    endTimeSpan = new DateTime(2023, 02, 12);
+                    startTimeSpan = DateTime.MinValue;
+                    endTimeSpan = DateTime.MinValue;
                     CalculatePay(endTimeSpan);
                     break;
                 default:
@@ -296,17 +340,16 @@ namespace BudgetApp.App
 
             while(currentPayPeriod < startTimeSpan)
             {
-                currentPayPeriod = currentPayPeriod.AddDays(14);
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
             }
 
             while (currentPayPeriod < endTimeSpan)
             {
                 payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(14);
-               
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
             }
 
-            pay *= (40 * 2 * payPeriodCounter);
+            pay *= payPeriodCounter;
             return pay;
         }
 
@@ -314,7 +357,6 @@ namespace BudgetApp.App
         {
             DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
             DateTime currentPayPeriod = firstPayPeriod;
-            decimal pay = payRatePerHour;
             int payPeriodCounter = 0;
 
             while (currentPayPeriod < DateTime.Now)
@@ -328,8 +370,7 @@ namespace BudgetApp.App
                 currentPayPeriod = currentPayPeriod.AddDays(14);
             }
 
-            pay *= (40 * 2 * payPeriodCounter);
-            return pay;
+            return 10.00M;
         }
 
         private void ShowBudgetForOtherTimeRange()
@@ -347,19 +388,19 @@ namespace BudgetApp.App
             DateTime otherDate = new DateTime(otherYear, otherMonth, otherDay);
             decimal income = CalculatePay(otherDate);
 
-            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_amountNeeded)}", true, true);
+            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(amountNeededPerMonth)}", true, true);
             Utilities.PrintMessage($"Income total through {otherDate.ToString("yyyy, MMMM, dd")}: {Utilities.FormatAmount(income)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_difference)}", true);
         }
 
         private void ShowBudgetForCurrentMonthAndYear()
         {
-            _sumOfAllBiweeklyIncomesThisMonth = CalculatePay(TimeRange.Month);
-            _sumOfAllBiweeklyIncomesThisYear = CalculatePay(TimeRange.Year);
-            decimal _differenceThisMonth = _sumOfAllBiweeklyIncomesThisMonth - _amountNeeded;
+            decimal _incomeThisMonth = CalculateIncomesForThisMonth();
+            decimal _expensesThisMonth = _sumOfAllMonthlyExpenses;
+            decimal _differenceThisMonth = _incomeThisMonth - _expensesThisMonth;
 
-            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_amountNeeded)}", true, true);
-            Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomesThisMonth)}", true, true);
+            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_expensesThisMonth)}", true, true);
+            Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_incomeThisMonth)}", true, true);
             Utilities.PrintMessage($"Income total for this year: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomesThisYear)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_differenceThisMonth)}", true);
         }
@@ -387,10 +428,10 @@ namespace BudgetApp.App
         {
             CalculateIncomesForEachRate();
 
-            Console.WriteLine($"\nSum of weekly incomes: {Utilities.FormatAmount(_sumOfAllWeeklyIncomes)}\n");
-            Console.WriteLine($"\nSum of biweekly incomes: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomes)}\n");
-            Console.WriteLine($"\nSum of monthly incomes: {Utilities.FormatAmount(_sumOfAllMonthlyIncomes)}\n");
-            Console.WriteLine($"\nSum of yearly incomes: {Utilities.FormatAmount(_sumOfAllYearlyIncomes)}\n");
+            Console.WriteLine($"\nSum of weekly incomes: {Utilities.FormatAmount(weeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of biweekly incomes: {Utilities.FormatAmount(biweeklyIncomes)}\n");
+            Console.WriteLine($"\nSum of monthly incomes: {Utilities.FormatAmount(monthlyIncomes)}\n");
+            Console.WriteLine($"\nSum of yearly incomes: {Utilities.FormatAmount(yearlyIncomes)}\n");
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayIncomeMenu();
@@ -402,21 +443,21 @@ namespace BudgetApp.App
 
         void CalculateIncomesForEachRate()
         {
-            foreach (Income income in selectedAccount.IncomeCategories)
+            foreach (Income income in selectedAccount.IncomeList)
             {
                 switch (income.Rate)
                 {
                     case Rate.Weekly:
-                        _sumOfAllWeeklyIncomes += income.Amount;
+                        weeklyIncomes += income.Amount;
                         break;
                     case Rate.Biweekly:
-                        _sumOfAllBiweeklyIncomes += income.Amount;
+                        biweeklyIncomes += income.Amount;
                         break;
                     case Rate.Monthly:
-                        _sumOfAllMonthlyIncomes += income.Amount;
+                        monthlyIncomes += income.Amount;
                         break;
                     case Rate.Yearly:
-                        _sumOfAllYearlyIncomes += income.Amount;
+                        yearlyIncomes += income.Amount;
                         break;
                 }
             }
@@ -452,7 +493,7 @@ namespace BudgetApp.App
 
         private void ViewIncome()
         {
-            foreach (Income i in selectedAccount.IncomeCategories)
+            foreach (Income i in selectedAccount.IncomeList)
             {
                 Console.WriteLine($"Income: {i.IncomeName}, Amount: {Utilities.FormatAmount(i.Amount)}, Frequency/Rate: {i.Rate}, Id: {i.Id}");
             }
@@ -474,7 +515,7 @@ namespace BudgetApp.App
 
             AppScreen.DisplayRateOptions();
             Rate incomeRate = ProcessIncomeRateOption();
-            selectedAccount.IncomeCategories.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
+            selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
             Console.WriteLine("New income summary:\n");
             Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
 
@@ -513,7 +554,7 @@ namespace BudgetApp.App
             int selectedIncomeId = Validator.Convert<int>("Enter Id of income to update");
             try
             {
-                selectedAccount.IncomeCategories.Find(i => i.Id == selectedIncomeId);
+                selectedAccount.IncomeList.Find(i => i.Id == selectedIncomeId);
             }
             catch
             {
@@ -530,16 +571,16 @@ namespace BudgetApp.App
             {
                 case 1:
                     Console.WriteLine("Name");
-                    selectedAccount.IncomeCategories.Find(i => i.Id == id).IncomeName = Utilities.GetUserInput("new name");
+                    selectedAccount.IncomeList.Find(i => i.Id == id).IncomeName = Utilities.GetUserInput("new name");
                     break;
                 case 2:
                     Console.WriteLine("Amount");
-                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Amount = Validator.Convert<decimal>("new amount");
+                    selectedAccount.IncomeList.Find(i => i.Id == id).Amount = Validator.Convert<decimal>("new amount");
                     break;
                 case 3:
                     Console.WriteLine("Rate");
                     AppScreen.DisplayRateOptions();
-                    selectedAccount.IncomeCategories.Find(i => i.Id == id).Rate = ProcessIncomeRateOption();
+                    selectedAccount.IncomeList.Find(i => i.Id == id).Rate = ProcessIncomeRateOption();
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
@@ -556,19 +597,20 @@ namespace BudgetApp.App
 
         decimal CalculateIncomesForThisMonth()
         {
-            _sumOfAllIncomes = 0;
+            allIncomes = 0;
+            weeklyIncomes = 0;
+            biweeklyIncomes = 0;
+            monthlyIncomes = 0;
+            yearlyIncomes = 0;
 
-            _sumOfAllWeeklyIncomes = 0;
-            _sumOfAllBiweeklyIncomes = 0;
-            
-            _sumOfAllMonthlyIncomes = 0;
-            _sumOfAllYearlyIncomes = 0;
+            foreach (Income income in selectedAccount.IncomeList)
+            {
+                monthlyIncomes += CalculateIncomeByRateAndTime(TimeRange.Month, income);
+            }
 
             CalculateIncomesForEachRate();
 
-            _sumOfAllIncomes = _sumOfAllMonthlyIncomes;
-
-            return _sumOfAllIncomes;
+            return monthlyIncomes;
         }
         #endregion
 
@@ -867,7 +909,7 @@ namespace BudgetApp.App
                 return;
             }
 
-            InsertUpdate(UpdateType.Expense, expense_amt, "");
+            InsertTransaction(TransactionType.Expense, expense_amt, "");
         }
         #endregion
 
@@ -959,6 +1001,7 @@ namespace BudgetApp.App
         }
         #endregion
 
+        #region Methods That Need Organizing/Implementing
         public void Incomes()
         {
             Console.WriteLine("will implement this later");
@@ -975,24 +1018,38 @@ namespace BudgetApp.App
             return opt.Equals(1);
         }
 
-        public void InsertUpdate(UpdateType _updateType, decimal _updateAmount, string _description)
+        public void InsertTransaction(long _userAccountId, TransactionType _tranType, decimal _tranAmount, string _desc)
         {
-            var update = new BudgetUpdate()
+            //create a new transaction object
+            var transaction = new Transaction()
             {
-                UpdateId = Utilities.GetUpdateId(),
-                UpdateAmount = _updateAmount,
-                UpdateType = _updateType,
-                Description = _description,
-                UpdateDate = DateTime.Now.Date.ToString("dd/MM/yyyy")
+                TransactionId = Utilities.GetTransactionId(),
+                UserAccountId = _userAccountId,
+                TransactionDate = DateTime.Now,
+                TransactionType = _tranType,
+                TransactionAmount = _tranAmount,
+                Description = _desc
             };
 
-            _listOfUpdates!.Add(update);
+            //add transaction object to the list
+            _listOfTransactions.Add(transaction);
         }
 
-        public void ViewUpdate()
+        public void ViewTransactions()
         {
             Console.WriteLine("This method will allow users to view past expenses/incomes");
         }
+
+        public void InsertTransaction(TransactionType _updateType, decimal _updateAmount, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ViewTransaction()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
 

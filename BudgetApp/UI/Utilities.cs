@@ -7,11 +7,11 @@ namespace BudgetApp.UI
 	public static class Utilities
 	{
         private static CultureInfo culture = new CultureInfo("EN-US");
-        private static long updateId;
+        private static long transactionId;
 
-        public static long GetUpdateId()
+        public static long GetTransactionId()
         {
-            return ++updateId;
+            return ++transactionId;
         }
 
         public static string GetSecretInput(string prompt)
