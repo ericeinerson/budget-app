@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BudgetApp.Domain.Enums
 {
-	public enum UpdateType
+	public enum TransactionType
 	{
 		Expense = 1,
 		Income
