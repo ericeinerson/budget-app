@@ -4,6 +4,8 @@ using BudgetApp.Domain.Entities.Interfaces;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using BudgetApp.Domain;
+using ConsoleTables;
+using System.Reflection.Emit;
 
 namespace BudgetApp.App
 {
@@ -60,14 +62,6 @@ namespace BudgetApp.App
                     TotalLogin = 0,
                     TotalExpenses = 0,
                     TotalIncomes = 0,
-                    ExpenseCategories = new Dictionary<string, decimal>
-                    {
-                        { "other", 0 },
-                        { "rent_utilities", 2000 },
-                        {"food_general", 300 },
-                        {"gas", 100 },
-                        {"subscriptions", 85 }
-                    },
                     ExpenseList = new List<Expense>
                     {
                         new Expense
@@ -307,7 +301,7 @@ namespace BudgetApp.App
                     ShowBudgetForOtherTimeRange();
                     break;
                 case 3:
-                    ShowPreviousTransactions();
+                    ViewTransactions();
                     break;
                 case 4:
                     AppScreen.LogoutProgress();
@@ -363,9 +357,11 @@ namespace BudgetApp.App
                     endTimeSpan = currentYearEnd;
                     break;
                 case TimeRange.Other:
-                    startTimeSpan = DateTime.MinValue;
-                    endTimeSpan = DateTime.MinValue;
-                    CalculatePay(endTimeSpan);
+                    startTimeSpan = DateTime.Now;
+                    int endTimeSpanDay = Validator.Convert<int>("end day");
+                    int endTimeSpanMonth = Validator.Convert<int>("end month");
+                    int endTimeSpanYear = Validator.Convert<int>("end year");
+                    endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
                     break;
                 default:
                     startTimeSpan = DateTime.MaxValue;
@@ -374,6 +370,106 @@ namespace BudgetApp.App
             }
 
             while(currentPayPeriod < startTimeSpan)
+            {
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            while (currentPayPeriod < endTimeSpan)
+            {
+                payPeriodCounter++;
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            pay *= payPeriodCounter;
+            return pay;
+        }
+
+        public decimal CalculateIncomeByRateAndTime(TimeRange timeRange, Income income, DateTime endTime)
+        {
+            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+            DateTime startTimeSpan;
+            DateTime endTimeSpan;
+
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
+            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+
+            DateTime currentPayPeriod = firstPayPeriod;
+            int payPeriodCounter = 0;
+            int daysBetweenIntervals = 0;
+            decimal pay = income.Amount;
+
+            switch (income.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenIntervals = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenIntervals = 14;
+                    break;
+                case Rate.Monthly:
+                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    break;
+                case Rate.Yearly:
+                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+                    break;
+            }
+            
+            startTimeSpan = DateTime.Now;
+            endTimeSpan = endTime;
+
+            while (currentPayPeriod < startTimeSpan)
+            {
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            while (currentPayPeriod < endTimeSpan)
+            {
+                payPeriodCounter++;
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+            }
+
+            pay *= payPeriodCounter;
+            return pay;
+        }
+
+        public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense, DateTime endTime)
+        {
+            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+            DateTime startTimeSpan;
+            DateTime endTimeSpan;
+
+            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
+            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+
+            DateTime currentPayPeriod = firstPayPeriod;
+            int payPeriodCounter = 0;
+            int daysBetweenIntervals = 0;
+            decimal pay = expense.Amount;
+
+            switch (expense.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenIntervals = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenIntervals = 14;
+                    break;
+                case Rate.Monthly:
+                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    break;
+                case Rate.Yearly:
+                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+                    break;
+            }
+
+            startTimeSpan = DateTime.Now;
+            endTimeSpan = endTime;
+
+            while (currentPayPeriod < startTimeSpan)
             {
                 currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
             }
@@ -430,9 +526,11 @@ namespace BudgetApp.App
                     endTimeSpan = currentYearEnd;
                     break;
                 case TimeRange.Other:
-                    startTimeSpan = DateTime.MinValue;
-                    endTimeSpan = DateTime.MinValue;
-                    CalculatePay(endTimeSpan);
+                    startTimeSpan = DateTime.Now;
+                    int endTimeSpanDay = Validator.Convert<int>("end day");
+                    int endTimeSpanMonth = Validator.Convert<int>("end month");
+                    int endTimeSpanYear = Validator.Convert<int>("end year");
+                    endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
                     break;
                 default:
                     startTimeSpan = DateTime.MaxValue;
@@ -455,44 +553,62 @@ namespace BudgetApp.App
             return pay;
         }
 
-        public decimal CalculatePay(DateTime endTimeSpan)
+        public int CalculateTransactionCounter(DateTime endTimeSpan, Rate rate)
         {
             DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
             DateTime currentPayPeriod = firstPayPeriod;
             int payPeriodCounter = 0;
+            int daysBetweenIntervals;
+
+            switch (rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenIntervals = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenIntervals = 14;
+                    break;
+                case Rate.Monthly:
+                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    break;
+                case Rate.Yearly:
+                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+                    break;
+                default:
+                    daysBetweenIntervals = 14;
+                    break;
+            }
 
             while (currentPayPeriod < DateTime.Now)
             {
-                currentPayPeriod = currentPayPeriod.AddDays(14);
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
             }
 
             while (currentPayPeriod < endTimeSpan)
             {
                 payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(14);
+                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
             }
 
-            return 10.00M;
+            return payPeriodCounter;
         }
 
         private void ShowBudgetForOtherTimeRange()
         {
-            int otherYear;
-            int otherMonth;
-            int otherDay;
 
-            Console.WriteLine("Enter the date you'd like to check your budget at");
-            
-            otherYear = Validator.Convert<int>("year (YYYY)");
-            otherMonth = Validator.Convert<int>("month (MM)");
-            otherDay = Validator.Convert<int>("day (dd)");
+            int endTimeSpanDay = Validator.Convert<int>("end day");
+            int endTimeSpanMonth = Validator.Convert<int>("end month");
+            int endTimeSpanYear = Validator.Convert<int>("end year");
 
-            DateTime otherDate = new DateTime(otherYear, otherMonth, otherDay);
-            decimal income = CalculatePay(otherDate);
+            DateTime endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
 
-            Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(amountNeededPerMonth)}", true, true);
-            Utilities.PrintMessage($"Income total through {otherDate.ToString("yyyy, MMMM, dd")}: {Utilities.FormatAmount(income)}", true, true);
-            Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_difference)}", true);
+            decimal _incomeThisRange = CalculateIncomesForTimePeriod(TimeRange.Other, endTimeSpan);
+            decimal _expensesThisRange = CalculateExpensesForTimePeriod(TimeRange.Other, endTimeSpan);
+            decimal _differenceThisRange = _incomeThisRange - _expensesThisRange;
+
+            Utilities.PrintMessage($"Expense total for this range: {Utilities.FormatAmount(_expensesThisRange)}", true, true);
+            Utilities.PrintMessage($"Income total for this range: {Utilities.FormatAmount(_incomeThisRange)}", true, true);
+            Utilities.PrintMessage($"Your balance for this range is {Utilities.FormatAmount(_differenceThisRange)}", true);
         }
 
         private void ShowBudgetForCurrentMonthAndYear()
@@ -505,7 +621,8 @@ namespace BudgetApp.App
 
             Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_expensesThisMonth)}", true, true);
             Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_incomeThisMonth)}", true, true);
-            Utilities.PrintMessage($"Income total for this year: {Utilities.FormatAmount(_sumOfAllBiweeklyIncomesThisYear)}", true, true);
+            Utilities.PrintMessage($"Expense total for this year: {Utilities.FormatAmount(_expensesThisYear)}", true, true);
+            Utilities.PrintMessage($"Income total for this year: {Utilities.FormatAmount(_incomeThisYear)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_differenceThisMonth)}", true);
         }
 
@@ -628,6 +745,8 @@ namespace BudgetApp.App
             Console.WriteLine("New income summary:\n");
             Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
 
+            InsertTransaction(selectedAccount.Id, TransactionType.Income, incomeAmount, $"added new income {incomeName} to list of incomes");
+
         }
 
         private Rate ProcessRateOption()
@@ -684,7 +803,9 @@ namespace BudgetApp.App
                     break;
                 case 2:
                     Console.WriteLine("Amount");
-                    selectedAccount.IncomeList.Find(i => i.Id == id).Amount = Validator.Convert<decimal>("new amount");
+                    Income selectedIncome = selectedAccount.IncomeList.Find(i => i.Id == id);
+                    selectedIncome.Amount = Validator.Convert<decimal>("new amount");
+                    InsertTransaction(selectedAccount.Id, TransactionType.Income, selectedIncome.Amount, $"updated amount of income {selectedIncome.IncomeName}");
                     break;
                 case 3:
                     Console.WriteLine("Rate");
@@ -704,10 +825,39 @@ namespace BudgetApp.App
 
         }
 
-        decimal CalculateIncomesForTimePeriod(TimeRange timeRange)
+        decimal CalculateIncomesForTimePeriod(TimeRange timeRange, DateTime endTime)
         {
             allIncomes = 0;
             
+            foreach (Income income in selectedAccount.IncomeList)
+            {
+                allIncomes += CalculateIncomeByRateAndTime(timeRange, income, endTime);
+            }
+
+            CalculateIncomesForEachRate();
+
+            return allIncomes;
+        }
+
+        decimal CalculateExpensesForTimePeriod(TimeRange timeRange, DateTime endTime)
+        {
+            
+            SumOfAllExpenses = 0;
+
+            foreach (Expense expense in selectedAccount.ExpenseList)
+            {
+                SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense, endTime);
+            }
+
+            CalculateExpensesForEachRate();
+
+            return SumOfAllExpenses;
+        }
+
+        decimal CalculateIncomesForTimePeriod(TimeRange timeRange)
+        {
+            allIncomes = 0;
+
             foreach (Income income in selectedAccount.IncomeList)
             {
                 allIncomes += CalculateIncomeByRateAndTime(timeRange, income);
@@ -720,7 +870,7 @@ namespace BudgetApp.App
 
         decimal CalculateExpensesForTimePeriod(TimeRange timeRange)
         {
-            
+
             SumOfAllExpenses = 0;
 
             foreach (Expense expense in selectedAccount.ExpenseList)
@@ -1060,6 +1210,8 @@ namespace BudgetApp.App
             expense.Amount = monthlyExpenseAmount;
 
             Console.WriteLine($"The monthly amount for {expenseName} is {Utilities.FormatAmount(monthlyExpenseAmount)}");
+
+            InsertTransaction(selectedAccount.Id, TransactionType.Expense, monthlyExpenseAmount, $"updated expense amount for {expenseName}");
         }
 
         private void ProcessExpense(decimal expense_amt)
@@ -1080,7 +1232,7 @@ namespace BudgetApp.App
                 return;
             }
 
-            InsertTransaction(TransactionType.Expense, expense_amt, "");
+            InsertTransaction(selectedAccount.Id, TransactionType.Expense, expense_amt, $"paid off expense in full");
         }
         void CalculateExpensesForEachRate()
         {
@@ -1232,14 +1384,27 @@ namespace BudgetApp.App
             _listOfTransactions.Add(transaction);
         }
 
+        
+
         public void ViewTransactions()
         {
-            Console.WriteLine("This method will allow users to view past expenses/incomes");
+            List<Transaction> filteredTransactionList = _listOfTransactions.Where(t => t.UserAccountId == selectedAccount.Id).ToList();
+
+            ConsoleTable consoleTable = new ConsoleTable("Id", "Transaction Date", "Type", "Description", "Amount " + AppScreen.cur);
+            
+            foreach(Transaction transaction in filteredTransactionList)
+            {
+                consoleTable.AddRow(transaction.UserAccountId, transaction.TransactionDate, transaction.TransactionType, transaction.Description, transaction.TransactionAmount);
+            }
+
+            consoleTable.Write();
+            Utilities.PrintMessage($"You have {filteredTransactionList.Count} transaction(s)", true);
+
         }
 
         public void InsertTransaction(TransactionType _updateType, decimal _updateAmount, string description)
         {
-            Console.WriteLine("Need to implement Insert Transaction");
+            throw new NotImplementedException();
         }
 
         public void ViewTransaction()
