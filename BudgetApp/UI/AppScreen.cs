@@ -139,6 +139,8 @@ namespace BudgetApp.UI
             Console.WriteLine("3. Monthly                    ");
             Console.WriteLine("4. Yearly                     ");
             Console.WriteLine("5. Logout                     ");
+
+
         }
 
         internal static void DisplayIncomeUpdateOptions()
