@@ -618,12 +618,24 @@ namespace BudgetApp.App
             decimal _incomeThisYear = CalculateIncomesForTimePeriod(TimeRange.Year);
             decimal _expensesThisYear = CalculateExpensesForTimePeriod(TimeRange.Year);
             decimal _differenceThisMonth = _incomeThisMonth - _expensesThisMonth;
+            decimal _differenceThisYear = _incomeThisYear - _expensesThisYear;
 
             Utilities.PrintMessage($"Expense total for this month: {Utilities.FormatAmount(_expensesThisMonth)}", true, true);
             Utilities.PrintMessage($"Income total for this month: {Utilities.FormatAmount(_incomeThisMonth)}", true, true);
             Utilities.PrintMessage($"Expense total for this year: {Utilities.FormatAmount(_expensesThisYear)}", true, true);
             Utilities.PrintMessage($"Income total for this year: {Utilities.FormatAmount(_incomeThisYear)}", true, true);
             Utilities.PrintMessage($"Your balance for this month is {Utilities.FormatAmount(_differenceThisMonth)}", true);
+
+            ConsoleTable currentMonthYearTbl = new ConsoleTable("Expenses This Month", $"{_expensesThisMonth}");
+            currentMonthYearTbl.AddRow("Incomes This Month", $"{_incomeThisMonth}");
+            currentMonthYearTbl.AddRow("Balance This Month", $"{_differenceThisMonth}");
+            currentMonthYearTbl.AddRow("Expenses This Year", $"{_expensesThisYear}");
+            currentMonthYearTbl.AddRow("Incomes This Year", $"{_incomeThisYear}");
+            currentMonthYearTbl.AddRow("Balance This Year", $"{_differenceThisYear}");
+
+            currentMonthYearTbl.Write();
+
+            Utilities.PressEnterToContinue();
         }
 
         private void ShowPreviousTransactions()
@@ -1400,16 +1412,6 @@ namespace BudgetApp.App
             consoleTable.Write();
             Utilities.PrintMessage($"You have {filteredTransactionList.Count} transaction(s)", true);
 
-        }
-
-        public void InsertTransaction(TransactionType _updateType, decimal _updateAmount, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ViewTransaction()
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }
