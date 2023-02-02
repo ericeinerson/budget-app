@@ -613,6 +613,7 @@ namespace BudgetApp.App
 
         private void ShowBudgetForCurrentMonthAndYear()
         {
+            //create budget summary for expenses and incomes this month and year
             decimal _incomeThisMonth = CalculateIncomesForTimePeriod(TimeRange.Month);
             decimal _expensesThisMonth = CalculateExpensesForTimePeriod(TimeRange.Month);
             decimal _incomeThisYear = CalculateIncomesForTimePeriod(TimeRange.Year);
@@ -746,14 +747,19 @@ namespace BudgetApp.App
             int monthDeposited = Validator.Convert<int>("month of each deposit");
             int dayDeposited = Validator.Convert<int>("day of each deposit");
             DateTime dateDeposited = new DateTime(DateTime.Now.Year, monthDeposited, dayDeposited);
-
-            string dateDepositedStr = new DateTime().ToString($"MMMM-dd");
-
-            Utilities.PrintMessage($"Your new income details: {dateDepositedStr}", true);
-
             AppScreen.DisplayRateOptions();
             Rate incomeRate = ProcessRateOption();
-            selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
+
+            string dateDepositedStr = dateDeposited.ToString($"MMMM dd");
+
+            selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Day = dayDeposited, Month = monthDeposited, Rate = incomeRate, Id = _incomeIdCounter });
+
+            ConsoleTable newIncomeTbl = new ConsoleTable("Name", "Amount", "Start Date", "Rate Of Deposit");
+            newIncomeTbl.AddRow(incomeName, incomeAmount, dateDepositedStr, incomeRate);
+
+            newIncomeTbl.Options.EnableCount = false;
+            newIncomeTbl.Write();
+
             Console.WriteLine("New income summary:\n");
             Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
 
