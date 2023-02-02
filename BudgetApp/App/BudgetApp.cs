@@ -12,7 +12,7 @@ namespace BudgetApp.App
     public class BudgetApp : IUserLogin, IUserAccountActions, ITransaction
     {
         private List<UserAccount>? userAccountList;
-        protected UserAccount? selectedAccount;
+        protected UserAccount selectedAccount = new UserAccount();
         private List<Transaction>? _listOfTransactions;
 
         private decimal amountNeededPerMonth;
@@ -32,7 +32,7 @@ namespace BudgetApp.App
         private decimal payAtSelectedTime = 0;
         private decimal monthlyIncomes = 0;
         private decimal yearlyIncomes = 0;
-        private int _incomeIdCounter = 2;
+        private int _incomeIdCounter;
         private int _wishlistIdCounter = 1;
         public decimal SumOfAllExpenses { get; set; }
         private decimal _sumOfAllMonthlyExpenses = 0;
@@ -42,7 +42,7 @@ namespace BudgetApp.App
         {
             AppScreen.Welcome();
             CheckUserPasscode();
-            AppScreen.WelcomeCustomer(selectedAccount!.FullName!);
+            AppScreen.WelcomeCustomer(selectedAccount.FullName!);
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
@@ -171,11 +171,7 @@ namespace BudgetApp.App
                     IsLocked = false,
                     TotalLogin = 0,
                     TotalExpenses = 0,
-                    TotalIncomes = 0,
-                    ExpenseCategories = new Dictionary<string, decimal>
-                    {
-                        { "other", 0 }
-                    }
+                    TotalIncomes = 0
                 },
                 new UserAccount
                 {
@@ -186,16 +182,13 @@ namespace BudgetApp.App
                     IsLocked = false,
                     TotalLogin = 0,
                     TotalExpenses = 0,
-                    TotalIncomes = 0,
-                    ExpenseCategories = new Dictionary<string, decimal>
-                    {
-                        { "other", 0 }
-                    }
+                    TotalIncomes = 0
                 }
             };
             #endregion
 
             _listOfTransactions = new List<Transaction>();
+            _incomeIdCounter = selectedAccount.IncomeList.Count;
         }
 
         #region Check Passcode
@@ -613,6 +606,7 @@ namespace BudgetApp.App
 
         private void ShowBudgetForCurrentMonthAndYear()
         {
+            //create budget summary for expenses and incomes this month and year
             decimal _incomeThisMonth = CalculateIncomesForTimePeriod(TimeRange.Month);
             decimal _expensesThisMonth = CalculateExpensesForTimePeriod(TimeRange.Month);
             decimal _incomeThisYear = CalculateIncomesForTimePeriod(TimeRange.Year);
@@ -741,24 +735,23 @@ namespace BudgetApp.App
         private void AddNewIncome()
         {
             _incomeIdCounter++;
+
             string incomeName = Utilities.GetUserInput("income name");
             decimal incomeAmount = Validator.Convert<decimal>("income amount");
             int monthDeposited = Validator.Convert<int>("month of each deposit");
             int dayDeposited = Validator.Convert<int>("day of each deposit");
             DateTime dateDeposited = new DateTime(DateTime.Now.Year, monthDeposited, dayDeposited);
-
-            string dateDepositedStr = new DateTime().ToString($"MMMM-dd");
-
-            Utilities.PrintMessage($"Your new income details: {dateDepositedStr}", true);
-
             AppScreen.DisplayRateOptions();
             Rate incomeRate = ProcessRateOption();
-            selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Rate = incomeRate, Id = _incomeIdCounter });
-            Console.WriteLine("New income summary:\n");
-            Console.WriteLine($"Income: {incomeName}, Amount: {Utilities.FormatAmount(incomeAmount)}, Frequency/Rate: {incomeRate}, Id: {_incomeIdCounter}");
+
+            selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Day = dayDeposited, Month = monthDeposited, Rate = incomeRate, Id = _incomeIdCounter });
+
+            ConsoleTable newIncomeTbl = new ConsoleTable("Name", "Amount", "Start Date", "Rate Of Deposit");
+            newIncomeTbl.AddRow(incomeName, incomeAmount, dateDeposited.ToString("MMMM dd"), incomeRate);
+            newIncomeTbl.Options.EnableCount = false;
+            newIncomeTbl.Write();
 
             InsertTransaction(selectedAccount.Id, TransactionType.Income, incomeAmount, $"added new income {incomeName} to list of incomes");
-
         }
 
         private Rate ProcessRateOption()
@@ -944,9 +937,9 @@ namespace BudgetApp.App
         {
             _sumOfAllMonthlyExpenses = 0;
 
-            foreach (KeyValuePair<string, decimal> expense in selectedAccount.ExpenseCategories)
+            foreach (Expense expense in selectedAccount.ExpenseList)
             {
-                _sumOfAllMonthlyExpenses += expense.Value;
+                _sumOfAllMonthlyExpenses += expense.Amount;
             }
 
             return _sumOfAllMonthlyExpenses;
