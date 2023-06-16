@@ -17,14 +17,14 @@ namespace BudgetApp.UI
 				try
 				{
 					var converter = TypeDescriptor.GetConverter(typeof(T));
-					if(converter != null)
-					{
-						return (T)converter.ConvertFromString(userInput);
-					}
-					else
+					if(converter == null)
 					{
 						return default;
 					}
+					else
+					{
+                        return (T)converter.ConvertFromString(userInput);
+                    }
 				}
 				catch
 				{

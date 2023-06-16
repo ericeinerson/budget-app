@@ -8,7 +8,7 @@ namespace BudgetApp.Domain.Entities
 		public UserAccount()
 		{
 			Id = 1;
-			Passcode = 0000;
+			Passcode = "0000";
 			FullName = "test name";
 			Balance = 0;
 			TotalLogin = 0;
@@ -20,7 +20,7 @@ namespace BudgetApp.Domain.Entities
 			ExpenseList = new List<Expense>();
 		}
 		public int Id { get; set; }
-		public int Passcode { get; set; }
+		public string Passcode { get; set; }
 		public string? FullName { get; set; }
 		public decimal Balance { get; set; }
 		public int TotalLogin { get; set; }

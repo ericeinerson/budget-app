@@ -24,7 +24,7 @@ namespace BudgetApp.UI
             UserAccount tempUserAccount = new UserAccount();
 
             tempUserAccount.FullName = Validator.Convert<string>("your name.").ToLower();
-            tempUserAccount.Passcode = Convert.ToInt32(Utilities.GetSecretInput("Enter your passcode."));
+            tempUserAccount.Passcode = Utilities.GetSecretInput("Enter your passcode.");
 
             return tempUserAccount;
         }
@@ -60,6 +60,8 @@ namespace BudgetApp.UI
             Console.WriteLine("5. Wishlist/Future              ");
             Console.WriteLine("6. Logout                       ");
             Console.WriteLine("7. Update Balance               ");
+            Console.WriteLine("8. Save Information             ");
+            Console.WriteLine("9. Load Information             ");
 
         }
 
@@ -148,10 +150,10 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an income update option. \n\n");
 
-            Console.WriteLine("1. Name                     ");
-            Console.WriteLine("2. Amount                   ");
-            Console.WriteLine("3. Rate                    ");
-            Console.WriteLine("4. Logout                     ");
+            Console.WriteLine("1. Name                             ");
+            Console.WriteLine("2. Amount                           ");
+            Console.WriteLine("3. Rate                             ");
+            Console.WriteLine("4. Logout                           ");
         }
 
         internal static void DisplayBudgetSummaryOptions()
@@ -195,7 +197,6 @@ namespace BudgetApp.UI
                 else if (response == "N")
                 {
                     break;
-
                 }
                 Utilities.PrintMessage("Invalid entry. Try again", false, true);
                 continue;

@@ -1,0 +1,21 @@
+#fullNamefullName:Eric Einerson;
+#passcodepasscode:0991;
+#idid:1;
+#isLockedisLocked:False;
+#totalLogin
+userTotalLogin:0;
+#balance
+userBalance:0;
+#wishlist
+wishListItem:Breath of the Wild;wishListItemCost:60.00;wishListItemId:1;wishListItemPriority:1;
+wishListItem:Betrayal: Legacy;wishListItemCost:100.00;wishListItemId:2;wishListItemPriority:2;
+#expenses
+expenseName:rent_utilities;expenseAmount:2000.00;expenseDay:1;expenseId:1;expenseMonth:1;expenseRate:Monthly;
+expenseName:credit_cards;expenseAmount:400.00;expenseDay:3;expenseId:1;expenseMonth:1;expenseRate:Monthly;
+expenseName:gas;expenseAmount:125.00;expenseDay:1;expenseId:1;expenseMonth:1;expenseRate:Monthly;
+expenseName:subscriptions;expenseAmount:100.00;expenseDay:10;expenseId:1;expenseMonth:1;expenseRate:Monthly;
+#incomes
+inocomeName:paycheck;inocomeAmount:1000.00;inocomeDay:5;inocomeId:1;inocomeMonth:1;inocomeRate:Biweekly;
+inocomeName:taxes;inocomeAmount:1000.00;inocomeDay:12;inocomeId:2;inocomeMonth:11;inocomeRate:Yearly;
+inocomeName:freelance;inocomeAmount:30.00;inocomeDay:2;inocomeId:3;inocomeMonth:1;inocomeRate:Weekly;
+inocomeName:mow lawn;inocomeAmount:10.00;inocomeDay:6;inocomeId:4;inocomeMonth:1;inocomeRate:Weekly;

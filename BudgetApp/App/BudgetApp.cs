@@ -13,12 +13,9 @@ namespace BudgetApp.App
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new UserAccount();
-        private List<Transaction>? _listOfTransactions;
+        private List<Transaction> _listOfTransactions = new List<Transaction>();
 
-        private decimal amountNeededPerMonth;
         private decimal _currentBalance;
-        private decimal _estimatedIncome = 9000.00M;
-        private decimal _difference;
         private decimal _sumOfAllWishlistExpenses = 0;
         private decimal _weeklyExpenses = 0;
         private decimal _biweeklyExpenses = 0;
@@ -27,9 +24,6 @@ namespace BudgetApp.App
         private decimal allIncomes = 0;
         private decimal weeklyIncomes = 0;
         private decimal biweeklyIncomes = 0;
-        private decimal biweeklyIncomeThisMonth = 0;
-        private decimal _sumOfAllBiweeklyIncomesThisYear = 0;
-        private decimal payAtSelectedTime = 0;
         private decimal monthlyIncomes = 0;
         private decimal yearlyIncomes = 0;
         private int _incomeIdCounter;
@@ -44,25 +38,24 @@ namespace BudgetApp.App
             CheckUserPasscode();
             AppScreen.WelcomeCustomer(selectedAccount.FullName!);
             AppScreen.DisplayAppMenu();
+            Utilities.CheckForExistingUserFile();
             ProcessAppMenuOption();
         }
 
         #region Initialize Data
         public void InitializeData()
         {
-            userAccountList = new List<UserAccount>
+            UserAccount self = new UserAccount()
             {
-                new UserAccount
-                {
-                    Id = 1,
-                    FullName = "Eric Einerson",
-                    Passcode = 0991,
-                    Balance = 0,
-                    IsLocked = false,
-                    TotalLogin = 0,
-                    TotalExpenses = 0,
-                    TotalIncomes = 0,
-                    ExpenseList = new List<Expense>
+                Id = 1,
+                FullName = "Eric Einerson",
+                Passcode = "0991",
+                Balance = 0,
+                IsLocked = false,
+                TotalLogin = 0,
+                TotalExpenses = 0,
+                TotalIncomes = 0,
+                ExpenseList = new List<Expense>
                     {
                         new Expense
                         {
@@ -101,9 +94,9 @@ namespace BudgetApp.App
                             Id = 1
                         }
                     },
-                    Wishlist = new Wishlist
-                    {
-                        Items = new List<WishlistItem>
+                Wishlist = new Wishlist
+                {
+                    Items = new List<WishlistItem>
                         {
                             new WishlistItem
                             {
@@ -120,8 +113,8 @@ namespace BudgetApp.App
                                 Priority = 2
                             }
                         }
-                    },
-                    IncomeList = new List<Income>
+                },
+                IncomeList = new List<Income>
                     {
                         new Income
                         {
@@ -161,12 +154,16 @@ namespace BudgetApp.App
                         }
                     }
 
-                },
+            };
+
+            userAccountList = new List<UserAccount>
+            {
+                self,
                 new UserAccount
                 {
                     Id = 2,
                     FullName = "Pickle Rick",
-                    Passcode = 8374,
+                    Passcode = "8374",
                     Balance = 0,
                     IsLocked = false,
                     TotalLogin = 0,
@@ -177,7 +174,7 @@ namespace BudgetApp.App
                 {
                     Id = 3,
                     FullName = "Random User",
-                    Passcode = 1111,
+                    Passcode = "1111",
                     Balance = 0,
                     IsLocked = false,
                     TotalLogin = 0,
@@ -266,6 +263,14 @@ namespace BudgetApp.App
                     break;
                 case (int)AppMenu.UpdateBalance:
                     UpdateBalance();
+                    break;
+                case (int)AppMenu.SaveInfo:
+                    Utilities.SaveUserInformation(selectedAccount);
+                    Utilities.PressEnterToContinue();
+                    break;
+                case (int)AppMenu.LoadInfo:
+                    Console.WriteLine("Need to add loading functionality in");
+                    Utilities.PressEnterToContinue();
                     break;
                 default:
                     Utilities.PrintMessage("Invalid option.", false);
@@ -795,10 +800,15 @@ namespace BudgetApp.App
                 UpdateIncome();
             }
             AppScreen.DisplayIncomeUpdateOptions();
-            ProcessIncomeChangeOption(selectedIncomeId);
+            ProcessIncomeChangeOption(selectedIncomeId, GetSelectedAccount());
         }
 
-        private void ProcessIncomeChangeOption(int id)
+        private UserAccount GetSelectedAccount()
+        {
+            return selectedAccount;
+        }
+
+        private void ProcessIncomeChangeOption(int id, UserAccount selectedAccount)
         {
             switch (Validator.Convert<int>("an option"))
             {

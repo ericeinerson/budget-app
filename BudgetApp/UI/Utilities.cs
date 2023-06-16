@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using BudgetApp.Domain.Entities;
 
 namespace BudgetApp.UI
 {
 	public static class Utilities
 	{
+        private static string directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo";
+        private static string fileName = "userInfo.txt";
         private static CultureInfo culture = new CultureInfo("EN-US");
         private static long transactionId;
 
@@ -103,6 +106,122 @@ namespace BudgetApp.UI
         public static string FormatAmount(decimal amt)
         {
             return String.Format(culture, "{0:C2}", amt);
+        }
+
+        public static void LoadUserInformation(UserAccount userAccount)
+        {
+            string path = $"{directory}{fileName}";
+            if (File.Exists(path))
+            {
+                userAccount = new UserAccount();
+                string[] userAccountInfoAsString = File.ReadAllLines(path);
+                for(int i = 0; i < userAccountInfoAsString.Length; i++)
+                {
+
+                }
+            }
+        }
+
+        public static void SaveUserInformation(UserAccount userAccount)
+        {
+            string path = $"{directory}{fileName}";
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("#fullName");
+            sb.Append($"fullName:{userAccount.FullName};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#passcode");
+            sb.Append($"passcode:{userAccount.Passcode.ToString()};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#id");
+            sb.Append($"id:{userAccount.Id};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#isLocked");
+            sb.Append($"isLocked:{userAccount.IsLocked};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#totalLogin");
+            sb.Append(Environment.NewLine);
+            sb.Append($"userTotalLogin:{userAccount.TotalLogin};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#balance");
+            sb.Append(Environment.NewLine);
+            sb.Append($"userBalance:{userAccount.Balance};");
+            sb.Append(Environment.NewLine);
+
+            sb.Append("#wishlist");
+            sb.Append(Environment.NewLine);
+            for (int i = 0; i < userAccount.Wishlist.Items.Count; i++)
+            {
+                WishlistItem wishlistItem = userAccount.Wishlist.Items[i];
+                sb.Append($"wishListItem:{wishlistItem.Item};");
+                sb.Append($"wishListItemCost:{wishlistItem.Cost};");
+                sb.Append($"wishListItemId:{wishlistItem.Id};");
+                sb.Append($"wishListItemPriority:{wishlistItem.Priority};");
+
+                sb.Append(Environment.NewLine);
+            }
+
+            sb.Append("#expenses");
+            sb.Append(Environment.NewLine);
+            for (int i = 0; i < userAccount.ExpenseList.Count; i++)
+            {
+                Expense expense = userAccount.ExpenseList[i];
+                sb.Append($"expenseName:{expense.ExpenseName};");
+                sb.Append($"expenseAmount:{expense.Amount};");
+                sb.Append($"expenseDay:{expense.Day};");
+                sb.Append($"expenseId:{expense.Id};");
+                sb.Append($"expenseMonth:{expense.Month};");
+                sb.Append($"expenseRate:{expense.Rate};");
+
+                sb.Append(Environment.NewLine);
+            }
+
+            sb.Append("#incomes");
+            sb.Append(Environment.NewLine);
+            for (int i = 0; i < userAccount.IncomeList.Count; i++)
+            {
+                Income income = userAccount.IncomeList[i];
+                sb.Append($"inocomeName:{income.IncomeName};");
+                sb.Append($"inocomeAmount:{income.Amount};");
+                sb.Append($"inocomeDay:{income.Day};");
+                sb.Append($"inocomeId:{income.Id};");
+                sb.Append($"inocomeMonth:{income.Month};");
+                sb.Append($"inocomeRate:{income.Rate};");
+
+                sb.Append(Environment.NewLine);
+            }
+  
+                File.WriteAllText(path, sb.ToString());
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("Saved expenses successfully!");
+                Console.ResetColor();
+            
+        }
+
+        public static void CheckForExistingUserFile()
+        {
+            string path = $"{directory}{fileName}";
+            bool existingFileFound = File.Exists(path);
+
+            if (existingFileFound)
+            {
+                Console.WriteLine("Existing file found");
+            }
+            else
+            {
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Directory is ready for saving files");
+                    Console.ResetColor();
+                }
+            }
         }
     }
 }

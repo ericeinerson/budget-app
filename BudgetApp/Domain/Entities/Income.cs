@@ -4,6 +4,10 @@ namespace BudgetApp.Domain.Entities
 {
 	public class Income
 	{
+        public Income()
+        {
+            IncomeName = "test name";
+        }
         public string IncomeName { get; set; }
         public decimal Amount { get; set; }
         public Rate Rate { get; set; }
