@@ -269,7 +269,7 @@ namespace BudgetApp.App
                     Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.LoadInfo:
-                    Console.WriteLine("Need to add loading functionality in");
+                    selectedAccount = Utilities.LoadUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
                 default:
