@@ -1,1 +1,0 @@
-fullName:Eric Einerson;passcode:0991;id:1;isLocked:False;totalLogin:0;balance:0;

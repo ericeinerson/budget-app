@@ -2,13 +2,16 @@
 using System.Globalization;
 using System.Text;
 using BudgetApp.Domain.Entities;
-
+using System.Collections.Generic;
 namespace BudgetApp.UI
 {
 	public static class Utilities
 	{
-        private static string directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo";
-        private static string fileName = "userInfo.txt";
+        private static string basicUserInfoFileName = "userInfo.txt";
+        private static string expensesInfoFileName = "userExpenses.txt";
+        private static string incomesInfoFileName = "userIncomes.txt";
+        private static string wishlistInfoFileName = "userWishlist.txt";
+
         private static CultureInfo culture = new CultureInfo("EN-US");
         private static long transactionId;
 
@@ -110,24 +113,29 @@ namespace BudgetApp.UI
 
         public static UserAccount LoadUserInformation(UserAccount userAccount)
         {
-            string path = $"{directory}/{fileName}";
+            string userAccountInfoPath = $"{userAccount.Directory}/{basicUserInfoFileName}";
+            string expensesPath = $"{userAccount.Directory}/{expensesInfoFileName}";
+            string incomesPath = $"{userAccount.Directory}/{incomesInfoFileName}";
+            string wishlistPath = $"{userAccount.Directory}/{wishlistInfoFileName}";
+
             userAccount = new UserAccount();
-            if (File.Exists(path))
+
+            if (File.Exists(userAccountInfoPath))
             {
-                string[] userAccountInfoAsString = File.ReadAllLines(path);
-                string[] userSplits = new string[6];
+                string[] userAccountInfoAsString = File.ReadAllLines(userAccountInfoPath);
+                string[] userAccountInfoSplits = new string[6];
 
                 for(int i = 0; i < userAccountInfoAsString.Length; i++)
                 {
-                    userSplits = userAccountInfoAsString[i].Split(';');
+                    userAccountInfoSplits = userAccountInfoAsString[i].Split(';');
                 }
 
-                string fullName = userSplits[0].Substring(userSplits[0].IndexOf(':') + 1);
-                string passcode = userSplits[1].Substring(userSplits[1].IndexOf(':') + 1);
-                int id = int.Parse(userSplits[2].Substring(userSplits[2].IndexOf(':') + 1));
-                bool isLocked = bool.Parse(userSplits[3].Substring(userSplits[3].IndexOf(':') + 1));
-                int totalLogin = int.Parse(userSplits[4].Substring(userSplits[4].IndexOf(':') + 1));
-                decimal balance = decimal.Parse(userSplits[5].Substring(userSplits[5].IndexOf(':') + 1));
+                string fullName = userAccountInfoSplits[0].Substring(userAccountInfoSplits[0].IndexOf(':') + 1);
+                string passcode = userAccountInfoSplits[1].Substring(userAccountInfoSplits[1].IndexOf(':') + 1);
+                int id = int.Parse(userAccountInfoSplits[2].Substring(userAccountInfoSplits[2].IndexOf(':') + 1));
+                bool isLocked = bool.Parse(userAccountInfoSplits[3].Substring(userAccountInfoSplits[3].IndexOf(':') + 1));
+                int totalLogin = int.Parse(userAccountInfoSplits[4].Substring(userAccountInfoSplits[4].IndexOf(':') + 1));
+                decimal balance = decimal.Parse(userAccountInfoSplits[5].Substring(userAccountInfoSplits[5].IndexOf(':') + 1));
 
                 userAccount.FullName = fullName;
                 userAccount.Passcode = passcode;
@@ -136,26 +144,125 @@ namespace BudgetApp.UI
                 userAccount.TotalLogin = totalLogin;
                 userAccount.Balance = balance;
             }
+            if (File.Exists(expensesPath))
+            {
+                string[] expensesAsString = File.ReadAllLines(expensesPath);
+                string[] expensesSplits = new string[6];
+
+                for (int i = 0; i < expensesAsString.Length; i++)
+                {
+                    expensesSplits = expensesAsString[i].Split(';');
+                }
+
+                    string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
+                    decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
+                    int day = int.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
+                    int month = int.Parse(expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1));
+                    int rate = int.Parse(expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1));
+                    int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
+
+                    userAccount.ExpenseList.Add(new Expense() { ExpenseName = expenseName });
+                    userAccount.ExpenseList.Add(new Expense() { Amount = amount });
+                    userAccount.ExpenseList.Add(new Expense() { Day = day });
+                    userAccount.ExpenseList.Add(new Expense() { Month = month });
+                    userAccount.ExpenseList.Add(new Expense() { Rate = (Domain.Enums.Rate)rate });
+                    userAccount.ExpenseList.Add(new Expense() { Id = id });
+            }
+            if (File.Exists(incomesPath))
+            {
+                string[] incomesAsString = File.ReadAllLines(incomesPath);
+                string[] incomesSplits = new string[6];
+
+                for (int i = 0; i < incomesAsString.Length; i++)
+                {
+                    incomesSplits = incomesAsString[i].Split(';');
+                }
+
+                string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
+                decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
+                int day = int.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
+                int month = int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
+                Domain.Enums.Rate rate = (Domain.Enums.Rate)int.Parse(incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1));
+                int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
+
+                userAccount.IncomeList.Add(new Income() { IncomeName = incomeName });
+                userAccount.IncomeList.Add(new Income() { Amount = amount });
+                userAccount.IncomeList.Add(new Income() { Day = day });
+                userAccount.IncomeList.Add(new Income() { Month = month });
+                userAccount.IncomeList.Add(new Income() { Rate = rate });
+                userAccount.IncomeList.Add(new Income() { Id = id });
+            }
+            if (File.Exists(wishlistPath))
+            {
+                string[] wishlistAsString = File.ReadAllLines(wishlistPath);
+                string[] wishlistSplits = new string[6];
+
+                for (int i = 0; i < wishlistAsString.Length; i++)
+                {
+                    wishlistSplits = wishlistAsString[i].Split(';');
+                }
+
+                string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
+                decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
+                int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
+                int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
+
+                userAccount.Wishlist.Items.Add(new WishlistItem() { Item = item });
+                userAccount.Wishlist.Items.Add(new WishlistItem() { Cost = cost });
+                userAccount.Wishlist.Items.Add(new WishlistItem() { Id = id });
+                userAccount.Wishlist.Items.Add(new WishlistItem() { Priority = priority });
+
+            }
             return userAccount;
         }
 
         public static void SaveUserInformation(UserAccount userAccount)
         {
-            string path = $"{directory}/{fileName}";
-            StringBuilder sb = new StringBuilder();
+            string userInfoPath = $"{userAccount.Directory}/{basicUserInfoFileName}";
+            StringBuilder userInfoSB = new StringBuilder();
+            string expensesPath = $"{userAccount.Directory}/{expensesInfoFileName}";
+            StringBuilder expensesSB = new StringBuilder();
+            string incomesPath = $"{userAccount.Directory}/{incomesInfoFileName}";
+            StringBuilder incomesSB = new StringBuilder();
+            string wishlistPath = $"{userAccount.Directory}/{wishlistInfoFileName}";
+            StringBuilder wishlistSB = new StringBuilder();  
 
-            sb.Append($"fullName:{userAccount.FullName};");
+            userInfoSB.Append($"fullName:{userAccount.FullName};");
+            userInfoSB.Append($"passcode:{userAccount.Passcode.ToString()};");
+            userInfoSB.Append($"id:{userAccount.Id};");
+            userInfoSB.Append($"isLocked:{userAccount.IsLocked};");
+            userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
+            userInfoSB.Append($"balance:{userAccount.Balance};");
+            userInfoSB.Append(Environment.NewLine);
 
-            sb.Append($"passcode:{userAccount.Passcode.ToString()};");
-
-            sb.Append($"id:{userAccount.Id};");
-
-            sb.Append($"isLocked:{userAccount.IsLocked};");
-
-            sb.Append($"totalLogin:{userAccount.TotalLogin};");
-
-            sb.Append($"balance:{userAccount.Balance};");
-            sb.Append(Environment.NewLine);
+            foreach(Expense e in userAccount.ExpenseList)
+            {
+                expensesSB.Append($"expenseName:{e.ExpenseName};");
+                expensesSB.Append($"amount:{e.Amount};");
+                expensesSB.Append($"day:{e.Day};");
+                expensesSB.Append($"month:{e.Month};");
+                expensesSB.Append($"rate:{(int)e.Rate};");
+                expensesSB.Append($"id:{e.Id};");
+                expensesSB.Append(Environment.NewLine);
+            }
+            foreach (Income i in userAccount.IncomeList)
+            {
+                incomesSB.Append($"incomeName:{i.IncomeName};");
+                incomesSB.Append($"amount:{i.Amount};");
+                incomesSB.Append($"day:{i.Day};");
+                incomesSB.Append($"month:{i.Month};");
+                incomesSB.Append($"rate:{(int)i.Rate};");
+                incomesSB.Append($"id:{i.Id};");
+                incomesSB.Append(Environment.NewLine);
+            }
+            foreach (WishlistItem w in userAccount.Wishlist.Items)
+            {
+                wishlistSB.Append($"itemName:{w.Item};");
+                wishlistSB.Append($"cost:{w.Cost};");
+                wishlistSB.Append($"id:{w.Id};");
+                wishlistSB.Append($"priority:{w.Priority};");
+                wishlistSB.Append(Environment.NewLine);
+            }
 
             //sb.Append("#wishlist");
             //sb.Append(Environment.NewLine);
@@ -199,32 +306,51 @@ namespace BudgetApp.UI
 
             //    sb.Append(Environment.NewLine);
             //}
-  
-                File.WriteAllText(path, sb.ToString());
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine("Saved expenses successfully!");
-                Console.ResetColor();
+
+            File.WriteAllText(userInfoPath, userInfoSB.ToString());
+            File.WriteAllText(expensesPath, expensesSB.ToString());
+            File.WriteAllText(incomesPath, incomesSB.ToString());
+            File.WriteAllText(wishlistPath, wishlistSB.ToString());
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("Saved user info successfully!");
+            Console.ResetColor();
             
         }
 
-        public static void CheckForExistingUserFile()
+        public static void CheckForExistingUserFile(UserAccount userAccount)
         {
-            string path = $"{directory}{fileName}";
-            bool existingFileFound = File.Exists(path);
-
-            if (existingFileFound)
+            string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}";
+            bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
+            string expensesPath = $"{userAccount.Directory}{expensesInfoFileName}";
+            bool existingExpensesFileFound = File.Exists(expensesPath);
+            string incomesPath = $"{userAccount.Directory}{incomesInfoFileName}";
+            bool existingIncomesFileFound = File.Exists(incomesPath);
+            string wishlistPath = $"{userAccount.Directory}{wishlistInfoFileName}";
+            bool existingWishlistFileFound = File.Exists(wishlistPath);
+            if (existingBasicUserInfoFileFound)
             {
-                Console.WriteLine("Existing file found");
+                Console.WriteLine("Existing file for basic user info found");
             }
-            else
+            
+            if (existingExpensesFileFound)
             {
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("Directory is ready for saving files");
-                    Console.ResetColor();
-                }
+                Console.WriteLine("Existing file for expenses found");
+            }
+            if (existingIncomesFileFound)
+            {
+                Console.WriteLine("Existing file for incomes found");
+            }
+
+            if (existingWishlistFileFound)
+            {
+                Console.WriteLine("Existing file for wishlist found");
+            }
+            if (!Directory.Exists(userAccount.Directory))
+            {
+                Directory.CreateDirectory(userAccount.Directory);
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Directory is ready for saving expenses info files");
+                Console.ResetColor();
             }
         }
     }

@@ -56,7 +56,7 @@ namespace BudgetApp.UI
             Console.WriteLine("1. Budget Summary               ");
             Console.WriteLine("2. Instructions/App Description ");
             Console.WriteLine("3. Incomes                      ");
-            Console.WriteLine("4. Categorized Expenses         ");
+            Console.WriteLine("4. Expenses                     ");
             Console.WriteLine("5. Wishlist/Future              ");
             Console.WriteLine("6. Logout                       ");
             Console.WriteLine("7. Update Balance               ");

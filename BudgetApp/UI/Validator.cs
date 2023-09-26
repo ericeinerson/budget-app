@@ -5,7 +5,7 @@ namespace BudgetApp.UI
 {
 	public static class Validator
 	{
-        public static T Convert<T>(string prompt)
+        public static T? Convert<T>(string prompt)
 		{
 			bool valid = false;
 			string userInput;
@@ -14,19 +14,27 @@ namespace BudgetApp.UI
 			{
 				userInput = Utilities.GetUserInput(prompt);
 
-				try
-				{
+                try
+                {
 					var converter = TypeDescriptor.GetConverter(typeof(T));
-					if(converter == null)
+
+                    if (converter == null)
+                    {
+                        throw new Exception();
+                    }
+                    
+                    var retVal = converter.ConvertFromString(userInput);
+
+					if (retVal == null)
 					{
-						return default;
+						throw new Exception();
 					}
 					else
 					{
-                        return (T)converter.ConvertFromString(userInput);
-                    }
-				}
-				catch
+						return (T)retVal;
+					}
+                }
+                catch
 				{
 					Utilities.PrintMessage("Invalid input. Try again", false);
 				}
