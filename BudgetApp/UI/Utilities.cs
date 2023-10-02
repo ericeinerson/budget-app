@@ -7,7 +7,7 @@ namespace BudgetApp.UI
 {
 	public static class Utilities
 	{
-        private static string basicUserInfoFileName = "userInfo.txt";
+        private static string basicUserInfoFileName = $"userInfo.txt";
         private static string expensesInfoFileName = "userExpenses.txt";
         private static string incomesInfoFileName = "userIncomes.txt";
         private static string wishlistInfoFileName = "userWishlist.txt";
@@ -153,7 +153,8 @@ namespace BudgetApp.UI
                 {
                     expensesSplits = expensesAsString[i].Split(';');
                 }
-
+                if (expensesAsString.Any())
+                {
                     string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
                     int day = int.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
@@ -167,6 +168,7 @@ namespace BudgetApp.UI
                     userAccount.ExpenseList.Add(new Expense() { Month = month });
                     userAccount.ExpenseList.Add(new Expense() { Rate = (Domain.Enums.Rate)rate });
                     userAccount.ExpenseList.Add(new Expense() { Id = id });
+                }
             }
             if (File.Exists(incomesPath))
             {
@@ -176,21 +178,27 @@ namespace BudgetApp.UI
                 for (int i = 0; i < incomesAsString.Length; i++)
                 {
                     incomesSplits = incomesAsString[i].Split(';');
+                
+                    string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
+                    decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
+                    int day = int.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
+                    int month = int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
+                    Domain.Enums.Rate rate = (Domain.Enums.Rate)int.Parse(incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1));
+                    int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
+
+                    userAccount.IncomeList.Add(new Income() { IncomeName = incomeName,
+                        Amount = amount,
+                        Day = day,
+                        Month = month,
+                        Rate = rate,
+                        Id = id
+                    });
+                    //userAccount.IncomeList.Add(new Income() { Amount = amount });
+                    //userAccount.IncomeList.Add(new Income() { Day = day });
+                    //userAccount.IncomeList.Add(new Income() { Month = month });
+                    //userAccount.IncomeList.Add(new Income() { Rate = rate });
+                    //userAccount.IncomeList.Add(new Income() { Id = id });
                 }
-
-                string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
-                decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
-                int day = int.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
-                int month = int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
-                Domain.Enums.Rate rate = (Domain.Enums.Rate)int.Parse(incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1));
-                int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
-
-                userAccount.IncomeList.Add(new Income() { IncomeName = incomeName });
-                userAccount.IncomeList.Add(new Income() { Amount = amount });
-                userAccount.IncomeList.Add(new Income() { Day = day });
-                userAccount.IncomeList.Add(new Income() { Month = month });
-                userAccount.IncomeList.Add(new Income() { Rate = rate });
-                userAccount.IncomeList.Add(new Income() { Id = id });
             }
             if (File.Exists(wishlistPath))
             {
@@ -202,16 +210,18 @@ namespace BudgetApp.UI
                     wishlistSplits = wishlistAsString[i].Split(';');
                 }
 
-                string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
-                decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
-                int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
-                int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
+                if (wishlistAsString.Any())
+                {
+                    string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
+                    decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
+                    int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
+                    int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
 
-                userAccount.Wishlist.Items.Add(new WishlistItem() { Item = item });
-                userAccount.Wishlist.Items.Add(new WishlistItem() { Cost = cost });
-                userAccount.Wishlist.Items.Add(new WishlistItem() { Id = id });
-                userAccount.Wishlist.Items.Add(new WishlistItem() { Priority = priority });
-
+                    userAccount.Wishlist.Items.Add(new WishlistItem() { Item = item });
+                    userAccount.Wishlist.Items.Add(new WishlistItem() { Cost = cost });
+                    userAccount.Wishlist.Items.Add(new WishlistItem() { Id = id });
+                    userAccount.Wishlist.Items.Add(new WishlistItem() { Priority = priority });
+                }
             }
             return userAccount;
         }
@@ -319,7 +329,7 @@ namespace BudgetApp.UI
 
         public static void CheckForExistingUserFile(UserAccount userAccount)
         {
-            string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}";
+            string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}.txt";
             bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
             string expensesPath = $"{userAccount.Directory}{expensesInfoFileName}";
             bool existingExpensesFileFound = File.Exists(expensesPath);
