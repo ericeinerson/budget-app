@@ -113,17 +113,17 @@ namespace BudgetApp.UI
 
         public static UserAccount LoadUserInformation(UserAccount userAccount)
         {
-            string userAccountInfoPath = $"{userAccount.Directory}/{basicUserInfoFileName}";
-            string expensesPath = $"{userAccount.Directory}/{expensesInfoFileName}";
-            string incomesPath = $"{userAccount.Directory}/{incomesInfoFileName}";
-            string wishlistPath = $"{userAccount.Directory}/{wishlistInfoFileName}";
+            string userAccountInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
+            string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
+            string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
+            string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
 
             userAccount = new UserAccount();
 
             if (File.Exists(userAccountInfoPath))
             {
                 string[] userAccountInfoAsString = File.ReadAllLines(userAccountInfoPath);
-                string[] userAccountInfoSplits = new string[6];
+                string[] userAccountInfoSplits = new string[7];
 
                 for(int i = 0; i < userAccountInfoAsString.Length; i++)
                 {
@@ -136,6 +136,7 @@ namespace BudgetApp.UI
                 bool isLocked = bool.Parse(userAccountInfoSplits[3].Substring(userAccountInfoSplits[3].IndexOf(':') + 1));
                 int totalLogin = int.Parse(userAccountInfoSplits[4].Substring(userAccountInfoSplits[4].IndexOf(':') + 1));
                 decimal balance = decimal.Parse(userAccountInfoSplits[5].Substring(userAccountInfoSplits[5].IndexOf(':') + 1));
+                string directory = userAccountInfoSplits[6].Substring(userAccountInfoSplits[6].IndexOf(':') + 1);
 
                 userAccount.FullName = fullName;
                 userAccount.Passcode = passcode;
@@ -162,12 +163,14 @@ namespace BudgetApp.UI
                     int rate = int.Parse(expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1));
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
 
-                    userAccount.ExpenseList.Add(new Expense() { ExpenseName = expenseName });
-                    userAccount.ExpenseList.Add(new Expense() { Amount = amount });
-                    userAccount.ExpenseList.Add(new Expense() { Day = day });
-                    userAccount.ExpenseList.Add(new Expense() { Month = month });
-                    userAccount.ExpenseList.Add(new Expense() { Rate = (Domain.Enums.Rate)rate });
-                    userAccount.ExpenseList.Add(new Expense() { Id = id });
+                    userAccount.ExpenseList.Add(new Expense() {
+                        ExpenseName = expenseName,
+                        Amount = amount,
+                        Day = day,
+                        Month = month,
+                        Rate = (Domain.Enums.Rate)rate,
+                        Id = id
+                    });
                 }
             }
             if (File.Exists(incomesPath))
@@ -228,13 +231,13 @@ namespace BudgetApp.UI
 
         public static void SaveUserInformation(UserAccount userAccount)
         {
-            string userInfoPath = $"{userAccount.Directory}/{basicUserInfoFileName}";
+            string userInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
             StringBuilder userInfoSB = new StringBuilder();
-            string expensesPath = $"{userAccount.Directory}/{expensesInfoFileName}";
+            string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
             StringBuilder expensesSB = new StringBuilder();
-            string incomesPath = $"{userAccount.Directory}/{incomesInfoFileName}";
+            string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
             StringBuilder incomesSB = new StringBuilder();
-            string wishlistPath = $"{userAccount.Directory}/{wishlistInfoFileName}";
+            string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
             StringBuilder wishlistSB = new StringBuilder();  
 
             userInfoSB.Append($"fullName:{userAccount.FullName};");
@@ -243,6 +246,7 @@ namespace BudgetApp.UI
             userInfoSB.Append($"isLocked:{userAccount.IsLocked};");
             userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
             userInfoSB.Append($"balance:{userAccount.Balance};");
+            userInfoSB.Append($"directory:{userAccount.Directory};");
             userInfoSB.Append(Environment.NewLine);
 
             foreach(Expense e in userAccount.ExpenseList)
@@ -337,11 +341,11 @@ namespace BudgetApp.UI
             bool existingIncomesFileFound = File.Exists(incomesPath);
             string wishlistPath = $"{userAccount.Directory}{wishlistInfoFileName}";
             bool existingWishlistFileFound = File.Exists(wishlistPath);
+           
             if (existingBasicUserInfoFileFound)
             {
                 Console.WriteLine("Existing file for basic user info found");
             }
-            
             if (existingExpensesFileFound)
             {
                 Console.WriteLine("Existing file for expenses found");

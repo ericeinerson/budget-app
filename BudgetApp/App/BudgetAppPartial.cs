@@ -48,7 +48,7 @@ namespace BudgetApp.App
             UserAccount self = new UserAccount()
             {
                 Id = 1,
-                Directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo",
+                Directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo/",
                 FullName = "Eric Einerson",
                 Passcode = "0991",
                 Balance = 0,

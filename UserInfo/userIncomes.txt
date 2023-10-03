@@ -1,0 +1,1 @@
+incomeName:wackj;amount:12;day:12;month:12;rate:1;id:1;
