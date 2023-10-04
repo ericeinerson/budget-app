@@ -1,1 +1,4 @@
 incomeName:wackj;amount:12;day:12;month:12;rate:1;id:1;
+incomeName:wack;amount:3456;day:1;month:10;rate:2;id:1;
+incomeName:attack;amount:56;day:2;month:2;rate:4;id:2;
+incomeName:infinity;amount:100000000;day:24;month:10;rate:4;id:1;

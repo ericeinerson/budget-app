@@ -144,6 +144,7 @@ namespace BudgetApp.UI
                 userAccount.IsLocked = isLocked;
                 userAccount.TotalLogin = totalLogin;
                 userAccount.Balance = balance;
+                userAccount.Directory = directory;
             }
             if (File.Exists(expensesPath))
             {
@@ -153,9 +154,7 @@ namespace BudgetApp.UI
                 for (int i = 0; i < expensesAsString.Length; i++)
                 {
                     expensesSplits = expensesAsString[i].Split(';');
-                }
-                if (expensesAsString.Any())
-                {
+                
                     string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
                     int day = int.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
@@ -211,19 +210,18 @@ namespace BudgetApp.UI
                 for (int i = 0; i < wishlistAsString.Length; i++)
                 {
                     wishlistSplits = wishlistAsString[i].Split(';');
-                }
-
-                if (wishlistAsString.Any())
-                {
+             
                     string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
                     decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
                     int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
                     int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
 
-                    userAccount.Wishlist.Items.Add(new WishlistItem() { Item = item });
-                    userAccount.Wishlist.Items.Add(new WishlistItem() { Cost = cost });
-                    userAccount.Wishlist.Items.Add(new WishlistItem() { Id = id });
-                    userAccount.Wishlist.Items.Add(new WishlistItem() { Priority = priority });
+                    userAccount.Wishlist.Items.Add(new WishlistItem() {
+                        Item = item,
+                        Cost = cost,
+                        Id = id,
+                        Priority = priority
+                    });
                 }
             }
             return userAccount;
