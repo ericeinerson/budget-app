@@ -1,5 +1,0 @@
-itemName:zelda;cost:9;id:2;priority:2;
-itemName:tears of kingdom;cost:120;id:2;priority:1;
-itemName:wackadoodle;cost:230;id:3;priority:233;
-itemName:test4;cost:2345.09;id:4;priority:13;
-itemName:realcool;cost:123456;id:2;priority:3;

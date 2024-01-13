@@ -183,23 +183,11 @@ namespace BudgetApp.UI
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
             Console.Clear();
-            Console.WriteLine("Would you like to exit the app (Y/N)?");
-            string response = string.Empty;
+            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?");
 
-            while (response != "Y" || response != "N") {
-
-                response = Console.ReadLine()!;
-
-                if (response == "Y")
-                {
-                    Environment.Exit(1);
-                }
-                else if (response == "N")
-                {
-                    break;
-                }
-                Utilities.PrintMessage("Invalid entry. Try again", false, true);
-                continue;
+            if (logoutOption == "Y")
+            {
+                Environment.Exit(1);
             }
         }
     }

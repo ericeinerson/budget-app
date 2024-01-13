@@ -1,4 +1,2 @@
 expenseName:rent_utilities;amount:2000;day:1;month:1;rate:3;id:0;
-expenseName:credit_cards;amount:450;day:2;month:3;rate:2;id:1;
-expenseName:gas;amount:13000;day:23;month:10;rate:3;id:4;
-expenseName:gym;amount:450000;day:30;month:10;rate:4;id:0;
+expenseName:credit_cards;amount:34;day:2;month:2;rate:2;id:1;

@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Text;
 using BudgetApp.Domain.Entities;
 using System.Collections.Generic;
+using BudgetApp.UI;
+
 namespace BudgetApp.UI
 {
 	public static class Utilities
@@ -24,6 +26,7 @@ namespace BudgetApp.UI
         {
             bool isPrompt = true;
             string asterics = string.Empty;
+            int astericsCounter = 0;
 
             StringBuilder input = new StringBuilder();
 
@@ -54,6 +57,7 @@ namespace BudgetApp.UI
                 if(inputKey.Key == ConsoleKey.Backspace && input.Length > 0)
                 {
                     input.Remove(input.Length -1, 1);
+                    Console.Write("\b \b");
                 }
                 else if(inputKey.Key != ConsoleKey.Backspace)
                 {
@@ -123,11 +127,11 @@ namespace BudgetApp.UI
             if (File.Exists(userAccountInfoPath))
             {
                 string[] userAccountInfoAsString = File.ReadAllLines(userAccountInfoPath);
-                string[] userAccountInfoSplits = new string[7];
+                var userAccountInfoSplits = new List<string>();
 
                 for(int i = 0; i < userAccountInfoAsString.Length; i++)
                 {
-                    userAccountInfoSplits = userAccountInfoAsString[i].Split(';');
+                    userAccountInfoSplits = userAccountInfoAsString[i].Split(';').ToList<string>();
                 }
 
                 string fullName = userAccountInfoSplits[0].Substring(userAccountInfoSplits[0].IndexOf(':') + 1);
@@ -149,11 +153,11 @@ namespace BudgetApp.UI
             if (File.Exists(expensesPath))
             {
                 string[] expensesAsString = File.ReadAllLines(expensesPath);
-                string[] expensesSplits = new string[6];
+                var expensesSplits = new List<string>();
 
                 for (int i = 0; i < expensesAsString.Length; i++)
                 {
-                    expensesSplits = expensesAsString[i].Split(';');
+                    expensesSplits = expensesAsString[i].Split(';').ToList<string>();
                 
                     string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
@@ -175,11 +179,11 @@ namespace BudgetApp.UI
             if (File.Exists(incomesPath))
             {
                 string[] incomesAsString = File.ReadAllLines(incomesPath);
-                string[] incomesSplits = new string[6];
+                var incomesSplits = new List<string>();
 
                 for (int i = 0; i < incomesAsString.Length; i++)
                 {
-                    incomesSplits = incomesAsString[i].Split(';');
+                    incomesSplits = incomesAsString[i].Split(';').ToList<string>();
                 
                     string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
@@ -195,11 +199,6 @@ namespace BudgetApp.UI
                         Rate = rate,
                         Id = id
                     });
-                    //userAccount.IncomeList.Add(new Income() { Amount = amount });
-                    //userAccount.IncomeList.Add(new Income() { Day = day });
-                    //userAccount.IncomeList.Add(new Income() { Month = month });
-                    //userAccount.IncomeList.Add(new Income() { Rate = rate });
-                    //userAccount.IncomeList.Add(new Income() { Id = id });
                 }
             }
             if (File.Exists(wishlistPath))
@@ -276,56 +275,12 @@ namespace BudgetApp.UI
                 wishlistSB.Append(Environment.NewLine);
             }
 
-            //sb.Append("#wishlist");
-            //sb.Append(Environment.NewLine);
-            //for (int i = 0; i < userAccount.Wishlist.Items.Count; i++)
-            //{
-            //    WishlistItem wishlistItem = userAccount.Wishlist.Items[i];
-            //    sb.Append($"wishListItem:{wishlistItem.Item};");
-            //    sb.Append($"wishListItemCost:{wishlistItem.Cost};");
-            //    sb.Append($"wishListItemId:{wishlistItem.Id};");
-            //    sb.Append($"wishListItemPriority:{wishlistItem.Priority};");
-
-            //    sb.Append(Environment.NewLine);
-            //}
-
-            //sb.Append("#expenses");
-            //sb.Append(Environment.NewLine);
-            //for (int i = 0; i < userAccount.ExpenseList.Count; i++)
-            //{
-            //    Expense expense = userAccount.ExpenseList[i];
-            //    sb.Append($"expenseName:{expense.ExpenseName};");
-            //    sb.Append($"expenseAmount:{expense.Amount};");
-            //    sb.Append($"expenseDay:{expense.Day};");
-            //    sb.Append($"expenseId:{expense.Id};");
-            //    sb.Append($"expenseMonth:{expense.Month};");
-            //    sb.Append($"expenseRate:{expense.Rate};");
-
-            //    sb.Append(Environment.NewLine);
-            //}
-
-            //sb.Append("#incomes");
-            //sb.Append(Environment.NewLine);
-            //for (int i = 0; i < userAccount.IncomeList.Count; i++)
-            //{
-            //    Income income = userAccount.IncomeList[i];
-            //    sb.Append($"inocomeName:{income.IncomeName};");
-            //    sb.Append($"inocomeAmount:{income.Amount};");
-            //    sb.Append($"inocomeDay:{income.Day};");
-            //    sb.Append($"inocomeId:{income.Id};");
-            //    sb.Append($"inocomeMonth:{income.Month};");
-            //    sb.Append($"inocomeRate:{income.Rate};");
-
-            //    sb.Append(Environment.NewLine);
-            //}
-
             File.WriteAllText(userInfoPath, userInfoSB.ToString());
             File.WriteAllText(expensesPath, expensesSB.ToString());
             File.WriteAllText(incomesPath, incomesSB.ToString());
             File.WriteAllText(wishlistPath, wishlistSB.ToString());
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Saved user info successfully!");
-            Console.ResetColor();
             
         }
 
@@ -364,6 +319,27 @@ namespace BudgetApp.UI
                 Console.WriteLine("Directory is ready for saving expenses info files");
                 Console.ResetColor();
             }
+        }
+
+        public static string PromptYesONo(string prompt)
+        {
+            Console.Clear();
+            Console.WriteLine(prompt + " Please enter Y for yes or N for no.");
+            string response = string.Empty;
+
+            while (response != "Y" || response != "N")
+            {
+                response = Console.ReadLine()!;
+
+                if (response == "Y" || response == "N")
+                {
+                    break;
+                }
+                
+                Utilities.PrintMessage("Invalid entry. Try again", false, true);
+                continue;
+            }
+            return response;
         }
     }
 }

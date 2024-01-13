@@ -2,13 +2,30 @@
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
+using ConsoleTables;
 
 namespace BudgetApp.App
 {
 	public partial class BudgetApp
 	{
+
+        public void ViewExpenses()
+        {
+            ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount");
+            foreach(Expense expense in selectedAccount.ExpenseList)
+            {
+                allExpensesTable.AddRow(expense.ExpenseName, expense.Amount);
+            }
+            allExpensesTable.Write();
+        }
         public void CategorizedExpenses()
         {
+            string viewExpensesOption = Utilities.PromptYesONo("Would you like to view all your expenses?");
+            if(viewExpensesOption == "Y")
+            {
+                ViewExpenses();
+            }
+
             CalculateExpensesForEachRate();
 
             Console.WriteLine($"\nSum of weekly expenses: {Utilities.FormatAmount(_weeklyExpenses)}\n");
@@ -24,7 +41,6 @@ namespace BudgetApp.App
             AppScreen.DisplayExpenseUpdateOptions();
 
             int expenseUpdateOption = ProcessExpenseUpdateOption();
-
 
             switch (expenseUpdateOption)
             {
@@ -395,6 +411,8 @@ namespace BudgetApp.App
 
             return SumOfAllExpenses;
         }
+
+
     }
 }
 

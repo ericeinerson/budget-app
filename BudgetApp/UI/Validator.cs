@@ -18,7 +18,7 @@ namespace BudgetApp.UI
                 {
 					var converter = TypeDescriptor.GetConverter(typeof(T));
 
-                    if (converter == null)
+                   if (converter == null)
                     {
                         throw new Exception();
                     }
