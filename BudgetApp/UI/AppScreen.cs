@@ -57,11 +57,11 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Instructions/App Description ");
             Console.WriteLine("3. Incomes                      ");
             Console.WriteLine("4. Expenses                     ");
-            Console.WriteLine("5. Wishlist/Future              ");
+            //Console.WriteLine("5. Wishlist/Future              ");
             Console.WriteLine("6. Logout                       ");
-            Console.WriteLine("7. Update Balance               ");
-            Console.WriteLine("8. Save Information             ");
-            Console.WriteLine("9. Load Information             ");
+            //Console.WriteLine("7. Update Balance               ");
+            //Console.WriteLine("8. Save Information             ");
+            //Console.WriteLine("9. Load Information             ");
 
         }
 
@@ -183,9 +183,9 @@ namespace BudgetApp.UI
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
             Console.Clear();
-            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?");
+            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?").ToLower();
 
-            if (logoutOption == "Y")
+            if (logoutOption == "y")
             {
                 Environment.Exit(1);
             }

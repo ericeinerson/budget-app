@@ -38,7 +38,7 @@ namespace BudgetApp.App
             CheckUserPasscode();
             AppScreen.WelcomeCustomer(selectedAccount.FullName!);
             AppScreen.DisplayAppMenu();
-            Utilities.CheckForExistingUserFile(selectedAccount);
+            //Utilities.CheckForExistingUserFile(selectedAccount);
             ProcessAppMenuOption();
         }
 
@@ -170,11 +170,11 @@ namespace BudgetApp.App
                     UpdateBalance();
                     break;
                 case (int)AppMenu.SaveInfo:
-                    Utilities.SaveUserInformation(selectedAccount);
+                    //Utilities.SaveUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.LoadInfo:
-                    selectedAccount = Utilities.LoadUserInformation(selectedAccount);
+                    //selectedAccount = Utilities.LoadUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
                 default:
