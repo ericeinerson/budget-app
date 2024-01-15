@@ -68,14 +68,14 @@ namespace BudgetApp.UI
         internal static void DisplayExpenseOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an expense to update. \n\n");
+            Console.WriteLine("Select an option. \n\n");
 
-            Console.WriteLine("1. Rent/Utilities           6. Medical      ");
-            Console.WriteLine("2. Credit Cards             7. Insurance    ");
-            Console.WriteLine("3. Food/General             8. Subscriptions");
-            Console.WriteLine("4. Loans                    9. Gym          ");
-            Console.WriteLine("5. Gas                      10. Other       ");
-            Console.WriteLine("11. Logout                  12. App Menu    ");
+            Console.WriteLine("1. Show All Expenses                        ");
+            Console.WriteLine("2. Add New Expense                          ");
+            Console.WriteLine("3. Remove Expense                           ");
+            //Console.WriteLine("                                            ");
+            //Console.WriteLine("                                            ");
+            //Console.WriteLine("                                            ");
 
         }
 

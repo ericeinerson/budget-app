@@ -6,7 +6,7 @@ namespace BudgetApp.Domain.Enums
 		BudgetSummary = 1,
 		Instructions,
 		Incomes,
-		CategorizedExpenses,
+		Expenses,
 		Wishlist,
 		Logout,
 		UpdateBalance,

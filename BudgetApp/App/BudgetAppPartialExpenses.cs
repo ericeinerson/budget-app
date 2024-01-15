@@ -6,17 +6,69 @@ using ConsoleTables;
 
 namespace BudgetApp.App
 {
-	public partial class BudgetApp
-	{
+    public partial class BudgetApp
+    {
 
         public void ViewExpenses()
         {
             ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount");
-            foreach(Expense expense in selectedAccount.ExpenseList)
+            foreach (Expense expense in selectedAccount.ExpenseList)
             {
                 allExpensesTable.AddRow(expense.ExpenseName, expense.Amount);
             }
             allExpensesTable.Write();
+            Utilities.PressEnterToContinue();
+        }
+
+        public void AddExpense()
+        {
+            string expenseName = Utilities.GetUserInput("expense name");
+            decimal expenseAmount = Validator.Convert<decimal>("expense amount");
+
+            selectedAccount.ExpenseList.Add(new Expense()
+            {
+                ExpenseName = expenseName,
+                Amount = expenseAmount
+            });
+
+            Utilities.PrintMessage($"You have succcessfully added {expenseName} with a value of ${expenseAmount}!", true, false);
+        }
+
+        public void RemoveExpense()
+        {
+            Expense expense = FindExpense();
+            if (expense != null)
+            {
+                selectedAccount.ExpenseList.Remove(expense);
+                Utilities.PrintMessage($"You have succcessfully removed {expense.ExpenseName} with a value of ${expense.Amount}!", true, false);
+            }
+        }
+
+        public Expense FindExpense()
+        {
+            Expense? expense = null;
+
+            while(expense == null)
+            {
+                string expenseName = Utilities.GetUserInput("expense name. If not known, enter n to skip or a to exit to app menu").ToLower();
+                if(expenseName == "a")
+                {
+                    break;
+                }
+                expense = selectedAccount.ExpenseList.FirstOrDefault(e => e.ExpenseName.ToLower() == expenseName.ToLower());
+                if (expenseName == "n")
+                {
+                    decimal expenseAmount = Validator.Convert<decimal>("expense amount");
+                    expense = selectedAccount.ExpenseList.FirstOrDefault(e => e.Amount == expenseAmount);
+                }
+
+                if(expense == null)
+                {
+                    Utilities.PrintMessage("Sorry, expense not found. Please try again", false, false);
+                }
+            }
+
+            return expense;
         }
         public void CategorizedExpenses()
         {
@@ -26,12 +78,12 @@ namespace BudgetApp.App
                 ViewExpenses();
             }
 
-            CalculateExpensesForEachRate();
+            //CalculateExpensesForEachRate();
 
-            Console.WriteLine($"\nSum of weekly expenses: {Utilities.FormatAmount(_weeklyExpenses)}\n");
-            Console.WriteLine($"\nSum of biweekly expenses: {Utilities.FormatAmount(_biweeklyExpenses)}\n");
-            Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_monthlyExpenses)}\n");
-            Console.WriteLine($"\nSum of yearly expenses: {Utilities.FormatAmount(_yearlyExpenses)}\n");
+            //Console.WriteLine($"\nSum of weekly expenses: {Utilities.FormatAmount(_weeklyExpenses)}\n");
+            //Console.WriteLine($"\nSum of biweekly expenses: {Utilities.FormatAmount(_biweeklyExpenses)}\n");
+            //Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_monthlyExpenses)}\n");
+            //Console.WriteLine($"\nSum of yearly expenses: {Utilities.FormatAmount(_yearlyExpenses)}\n");
 
             Utilities.PressEnterToContinue();
             AppScreen.DisplayExpenseOptions();
@@ -64,17 +116,17 @@ namespace BudgetApp.App
             Utilities.PressEnterToContinue();
         }
 
-        private decimal CalculateTotalExpenses()
-        {
-            _sumOfAllMonthlyExpenses = 0;
+        //private decimal CalculateTotalExpenses()
+        //{
+        //    _sumOfAllMonthlyExpenses = 0;
 
-            foreach (Expense expense in selectedAccount.ExpenseList)
-            {
-                _sumOfAllMonthlyExpenses += expense.Amount;
-            }
+        //    foreach (Expense expense in selectedAccount.ExpenseList)
+        //    {
+        //        _sumOfAllMonthlyExpenses += expense.Amount;
+        //    }
 
-            return _sumOfAllMonthlyExpenses;
-        }
+        //    return _sumOfAllMonthlyExpenses;
+        //}
 
         public string ChooseMonthlyExpense()
         {
@@ -177,19 +229,19 @@ namespace BudgetApp.App
             Expense expense = new Expense();
             string name = expenseName;
             decimal amount = Validator.Convert<decimal>("expense amount");
-            int id = expenseId;
-            expenseId++;
+            //int id = expenseId;
+            //expenseId++;
             int day = Validator.Convert<int>("day expense is withdrawn");
             int month = Validator.Convert<int>("month expense is withdrawn. Enter 1 as default if this is a monthly expense");
             AppScreen.DisplayRateOptions();
-            Rate rate = ProcessRateOption();
+            //Rate rate = ProcessRateOption();
 
             expense.ExpenseName = name;
             expense.Amount = amount;
-            expense.Id = id;
+            //expense.Id = id;
             expense.Day = day;
             expense.Month = month;
-            expense.Rate = rate;
+            //expense.Rate = rate;
 
             return expense;
         }
@@ -362,55 +414,55 @@ namespace BudgetApp.App
                 return;
             }
 
-            if (PreviewUpdate(expense_amt) == false)
-            {
-                Utilities.PrintMessage("You have cancelled your action", false);
-                return;
-            }
+            //if (PreviewUpdate(expense_amt) == false)
+            //{
+            //    Utilities.PrintMessage("You have cancelled your action", false);
+            //    return;
+            //}
 
             InsertTransaction(selectedAccount.Id, TransactionType.Expense, expense_amt, $"paid off expense in full");
         }
-        void CalculateExpensesForEachRate()
-        {
-            _weeklyExpenses = 0;
-            _biweeklyExpenses = 0;
-            _monthlyExpenses = 0;
-            _yearlyExpenses = 0;
+        //void CalculateExpensesForEachRate()
+        //{
+        //    _weeklyExpenses = 0;
+        //    _biweeklyExpenses = 0;
+        //    _monthlyExpenses = 0;
+        //    _yearlyExpenses = 0;
 
-            foreach (Expense expense in selectedAccount.ExpenseList)
-            {
-                switch (expense.Rate)
-                {
-                    case Rate.Weekly:
-                        _weeklyExpenses += expense.Amount;
-                        break;
-                    case Rate.Biweekly:
-                        _biweeklyExpenses += expense.Amount;
-                        break;
-                    case Rate.Monthly:
-                        _monthlyExpenses += expense.Amount;
-                        break;
-                    case Rate.Yearly:
-                        _yearlyExpenses += expense.Amount;
-                        break;
-                }
-            }
-        }
+        //    foreach (Expense expense in selectedAccount.ExpenseList)
+        //    {
+        //        switch (expense.Rate)
+        //        {
+        //            case Rate.Weekly:
+        //                _weeklyExpenses += expense.Amount;
+        //                break;
+        //            case Rate.Biweekly:
+        //                _biweeklyExpenses += expense.Amount;
+        //                break;
+        //            case Rate.Monthly:
+        //                _monthlyExpenses += expense.Amount;
+        //                break;
+        //            case Rate.Yearly:
+        //                _yearlyExpenses += expense.Amount;
+        //                break;
+        //        }
+        //    }
+        //}
 
-        decimal CalculateExpensesForTimePeriod(TimeRange timeRange)
-        {
+        //decimal CalculateExpensesForTimePeriod(TimeRange timeRange)
+        //{
 
-            SumOfAllExpenses = 0;
+        //    SumOfAllExpenses = 0;
 
-            foreach (Expense expense in selectedAccount.ExpenseList)
-            {
-                SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense);
-            }
+        //    foreach (Expense expense in selectedAccount.ExpenseList)
+        //    {
+        //        SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense);
+        //    }
 
-            CalculateExpensesForEachRate();
+        //    CalculateExpensesForEachRate();
 
-            return SumOfAllExpenses;
-        }
+        //    return SumOfAllExpenses;
+        //}
 
 
     }
