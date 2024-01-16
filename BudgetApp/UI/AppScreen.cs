@@ -60,8 +60,8 @@ namespace BudgetApp.UI
             //Console.WriteLine("5. Wishlist/Future              ");
             Console.WriteLine("6. Logout                       ");
             //Console.WriteLine("7. Update Balance               ");
-            //Console.WriteLine("8. Save Information             ");
-            //Console.WriteLine("9. Load Information             ");
+            Console.WriteLine("8. Save Information             ");
+            Console.WriteLine("9. Load Information             ");
 
         }
 
@@ -140,7 +140,9 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Biweekly                   ");
             Console.WriteLine("3. Monthly                    ");
             Console.WriteLine("4. Yearly                     ");
-            Console.WriteLine("5. Logout                     ");
+            Console.WriteLine("5. Inconsistent               ");
+            Console.WriteLine("6. Other                      ");
+            Console.WriteLine("7. Logout                     ");
 
 
         }

@@ -7,6 +7,7 @@ namespace BudgetApp.Domain.Enums
 		Biweekly,
 		Monthly,
 		Yearly,
+		Inconsistent,
 		Other
 	}
 }

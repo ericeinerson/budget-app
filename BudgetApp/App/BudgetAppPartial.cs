@@ -6,6 +6,7 @@ using BudgetApp.UI;
 using BudgetApp.Domain;
 using ConsoleTables;
 using System.Reflection.Emit;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
 {
@@ -169,11 +170,11 @@ namespace BudgetApp.App
                     UpdateBalance();
                     break;
                 case (int)AppMenu.SaveInfo:
-                    //Utilities.SaveUserInformation(selectedAccount);
+                    Utilities.SaveUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.LoadInfo:
-                    //selectedAccount = Utilities.LoadUserInformation(selectedAccount);
+                    selectedAccount = Utilities.LoadUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
                 default:
@@ -211,6 +212,10 @@ namespace BudgetApp.App
                     break;
                 case 3:
                     RemoveExpense();
+                    break;
+                case 4:
+                    // TO DO
+                    Console.WriteLine("Add method for updating expense details");
                     break;
             }
         }
@@ -589,6 +594,14 @@ namespace BudgetApp.App
             //_currentBalance = Validator.Convert<decimal>("current balance");
             //Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
 
+        }
+
+        public Rate ProcessRateOption()
+        {
+            AppScreen.DisplayRateOptions();
+            Rate rate = (Validator.Convert<Rate>("a rate"));
+
+            return rate;
         }
 
         public void Incomes()

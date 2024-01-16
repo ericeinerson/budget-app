@@ -1,2 +1,4 @@
-expenseName:rent_utilities;amount:2000;day:1;month:1;rate:3;id:0;
-expenseName:credit_cards;amount:34;day:2;month:2;rate:2;id:1;
+expenseName:wack;amount:56.98;
+expenseName:three;amount:3;
+expenseName:wackattack;amount:345.98;
+expenseName:wack3;amount:45000.09;
