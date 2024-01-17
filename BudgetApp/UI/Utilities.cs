@@ -91,7 +91,8 @@ namespace BudgetApp.UI
         public static string GetUserInput(string prompt)
         {
             Console.WriteLine($"Enter {prompt}");
-            return Console.ReadLine();
+            
+            return Console.ReadLine() ?? string.Empty;
         }
 
         public static void PrintDotAnimation(int timer = 10)
@@ -161,6 +162,8 @@ namespace BudgetApp.UI
 
                     string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
+                    DateTime date = DateTime.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
+                    string amountFormatted = expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1);
                     //int day = int.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
                     //int month = int.Parse(expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1));
                     //int rate = int.Parse(expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1));
@@ -170,6 +173,8 @@ namespace BudgetApp.UI
                     {
                         ExpenseName = expenseName,
                         Amount = amount,
+                        Date = date,
+                        AmountFormatted = amountFormatted
                         //Day = day,
                         //Month = month,
                         //Rate = (Domain.Enums.Rate)rate,
@@ -254,6 +259,8 @@ namespace BudgetApp.UI
             {
                 expensesSB.Append($"expenseName:{e.ExpenseName};");
                 expensesSB.Append($"amount:{e.Amount};");
+                expensesSB.Append($"start date:{e.Date};");
+                expensesSB.Append($"amount formatted:{e.AmountFormatted};");
                 expensesSB.Append(Environment.NewLine);
             }
             //foreach (Income i in userAccount.IncomeList)

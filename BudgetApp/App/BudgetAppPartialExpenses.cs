@@ -3,6 +3,7 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
+using System.Globalization;
 
 namespace BudgetApp.App
 {
@@ -11,10 +12,10 @@ namespace BudgetApp.App
 
         public void ViewExpenses()
         {
-            ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount");
+            ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount","Start Date");
             foreach (Expense expense in selectedAccount.ExpenseList)
             {
-                allExpensesTable.AddRow(expense.ExpenseName, expense.Amount);
+                allExpensesTable.AddRow(expense.ExpenseName, expense.AmountFormatted, expense.Date.ToString("MMMM dd, yyyy"));
             }
             allExpensesTable.Write();
             Utilities.PressEnterToContinue();
@@ -25,7 +26,7 @@ namespace BudgetApp.App
             Expense expense = ConstructExpense();
             selectedAccount.ExpenseList.Add(expense);
 
-            Utilities.PrintMessage($"You have succcessfully added {expense.ExpenseName} with a value of ${expense.Amount}!", true, false);
+            Utilities.PrintMessage($"You have succcessfully added {expense.ExpenseName} with a value of {expense.AmountFormatted}. This expense will be done on {expense.Date.ToString("MMMM dd, yyyy")}!", true, false);
         }
 
         public void RemoveExpense()
@@ -34,7 +35,7 @@ namespace BudgetApp.App
             if (expense != null)
             {
                 selectedAccount.ExpenseList.Remove(expense);
-                Utilities.PrintMessage($"You have succcessfully removed {expense.ExpenseName} with a value of ${expense.Amount}!", true, false);
+                Utilities.PrintMessage($"You have succcessfully removed {expense.ExpenseName} with a value of {expense.AmountFormatted}!", true, false);
             }
         }
 
@@ -123,122 +124,36 @@ namespace BudgetApp.App
         //    return _sumOfAllMonthlyExpenses;
         //}
 
-        //public string ChooseMonthlyExpense()
-        //{
-
-        //    switch (Validator.Convert<int>("an expense to update or add"))
-        //    {
-        //        case 1:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "rent_utilities"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("rent_utilities"));
-        //            }
-        //            return "rent_utilities";
-        //        case 2:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "credit_cards"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("credit_cards"));
-        //            }
-        //            return "credit_cards";
-        //        case 3:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "food_general"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("food_general"));
-        //            }
-        //            return "food_general";
-        //        case 4:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "loans"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("loans"));
-        //            }
-        //            return "loans";
-        //        case 5:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "gas"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("gas"));
-        //            }
-        //            return "gas";
-        //        case 6:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "medical"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("medical"));
-        //            }
-        //            return "medical";
-        //        case 7:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "insurance"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("insurance"));
-        //            }
-        //            return "insurance";
-        //        case 8:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "subscriptions"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("subscriptions"));
-        //            }
-        //            return "subscriptions";
-        //        case 9:
-        //            if (!selectedAccount.ExpenseList.Any(e => e.ExpenseName == "gym"))
-        //            {
-        //                Utilities.PrintMessage("Expense not added to list. Enter the following information to add to list:", true);
-
-        //                selectedAccount.ExpenseList.Add(ConstructExpense("gym"));
-        //            }
-        //            return "gym";
-        //        case 10:
-        //            return ProcessOtherExpense();
-
-        //        case 11:
-        //            AppScreen.LogoutProgress();
-        //            Utilities.PrintMessage("You have successfully logged out.", true);
-        //            Run();
-        //            return string.Empty;
-        //        case 12:
-        //            AppScreen.DisplayAppMenu();
-        //            ProcessAppMenuOption();
-        //            return string.Empty;
-        //        default:
-        //            Utilities.PrintMessage("Invalid Option. Try again", false);
-        //            ChooseMonthlyExpense();
-        //            return string.Empty;
-        //    }
-        //}
-
         public Expense ConstructExpense()
         {
             Expense expense = new Expense();
+            int id = expenseId;
+            expenseId++;
             string name = Utilities.GetUserInput("expense name");
             decimal amount = Validator.Convert<decimal>("expense amount");
+            string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+
             Rate rate = ProcessRateOption();
-            //int id = expenseId;
-            //expenseId++;
-            int day = Validator.Convert<int>("day expense is withdrawn");
-            int month = Validator.Convert<int>("month expense is withdrawn. Enter 1 as default if this is a monthly expense");
-            AppScreen.DisplayRateOptions();
+            DateTime date = DateTime.MinValue;
+            string todayOrFuture = Utilities.GetUserInput("whether t for today or f for future").ToLower();
+
+            if (todayOrFuture == "t")
+            {
+                date = DateTime.Now;
+            }
+            else if (todayOrFuture == "f")
+            {
+                int day = Validator.Convert<int>("day expense is withdrawn");
+                int month = Validator.Convert<int>("month expense is withdrawn");
+                int year = Validator.Convert<int>("year expense is withdrawn");
+                date = new DateTime(year, month, day);
+            }
 
             expense.ExpenseName = name;
             expense.Amount = amount;
+            expense.AmountFormatted = formattedAmount;
             expense.Rate = rate;
-
-            //expense.Id = id;
-            //expense.Day = day;
-            //expense.Month = month;
-            //expense.Rate = rate;
+            expense.Date = date;
 
             return expense;
         }

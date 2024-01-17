@@ -31,7 +31,7 @@ namespace BudgetApp.App
         //private int _wishlistIdCounter = 1;
         //public decimal SumOfAllExpenses { get; set; }
         //private decimal _sumOfAllMonthlyExpenses = 0;
-        //private int expenseId = 0;
+        private int expenseId = 0;
 
         public void Run()
         {
@@ -364,124 +364,124 @@ namespace BudgetApp.App
             return pay;
         }
 
-        public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense, DateTime endTime)
-        {
-            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
-            DateTime startTimeSpan;
-            DateTime endTimeSpan;
+        //public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense, DateTime endTime)
+        //{
+        //    DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+        //    DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+        //    DateTime startTimeSpan;
+        //    DateTime endTimeSpan;
 
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
-            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+        //    DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
+        //    DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        //    DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
 
-            DateTime currentPayPeriod = firstPayPeriod;
-            int payPeriodCounter = 0;
-            int daysBetweenIntervals = 0;
-            decimal pay = expense.Amount;
+        //    DateTime currentPayPeriod = firstPayPeriod;
+        //    int payPeriodCounter = 0;
+        //    int daysBetweenIntervals = 0;
+        //    decimal pay = expense.Amount;
 
-            switch (expense.Rate)
-            {
-                case Rate.Weekly:
-                    daysBetweenIntervals = 7;
-                    break;
-                case Rate.Biweekly:
-                    daysBetweenIntervals = 14;
-                    break;
-                case Rate.Monthly:
-                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                    break;
-                case Rate.Yearly:
-                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
-                    break;
-            }
+        //    switch (expense.Rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+        //            break;
+        //    }
 
-            startTimeSpan = DateTime.Now;
-            endTimeSpan = endTime;
+        //    startTimeSpan = DateTime.Now;
+        //    endTimeSpan = endTime;
 
-            while (currentPayPeriod < startTimeSpan)
-            {
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < startTimeSpan)
+        //    {
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            while (currentPayPeriod < endTimeSpan)
-            {
-                payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < endTimeSpan)
+        //    {
+        //        payPeriodCounter++;
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            pay *= payPeriodCounter;
-            return pay;
-        }
+        //    pay *= payPeriodCounter;
+        //    return pay;
+        //}
 
-        public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense)
-        {
-            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
-            DateTime startTimeSpan;
-            DateTime endTimeSpan;
+        //public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense)
+        //{
+        //    DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+        //    DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+        //    DateTime startTimeSpan;
+        //    DateTime endTimeSpan;
 
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
-            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+        //    DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, expense.Month, expense.Day);
+        //    DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        //    DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
 
-            DateTime currentPayPeriod = firstPayPeriod;
-            int payPeriodCounter = 0;
-            int daysBetweenIntervals = 0;
-            decimal pay = expense.Amount;
+        //    DateTime currentPayPeriod = firstPayPeriod;
+        //    int payPeriodCounter = 0;
+        //    int daysBetweenIntervals = 0;
+        //    decimal pay = expense.Amount;
 
-            switch (expense.Rate)
-            {
-                case Rate.Weekly:
-                    daysBetweenIntervals = 7;
-                    break;
-                case Rate.Biweekly:
-                    daysBetweenIntervals = 14;
-                    break;
-                case Rate.Monthly:
-                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                    break;
-                case Rate.Yearly:
-                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
-                    break;
-            }
-            switch (timeRange)
-            {
-                case TimeRange.Month:
-                    startTimeSpan = currentMonthStart.AddMilliseconds(-1);
-                    endTimeSpan = currentMonthEnd;
-                    break;
-                case TimeRange.Year:
-                    startTimeSpan = currentYearStart.AddMilliseconds(-1);
-                    endTimeSpan = currentYearEnd;
-                    break;
-                case TimeRange.Other:
-                    startTimeSpan = DateTime.Now;
-                    int endTimeSpanDay = Validator.Convert<int>("end day");
-                    int endTimeSpanMonth = Validator.Convert<int>("end month");
-                    int endTimeSpanYear = Validator.Convert<int>("end year");
-                    endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
-                    break;
-                default:
-                    startTimeSpan = DateTime.MaxValue;
-                    endTimeSpan = DateTime.MinValue;
-                    break;
-            }
+        //    switch (expense.Rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+        //            break;
+        //    }
+        //    switch (timeRange)
+        //    {
+        //        case TimeRange.Month:
+        //            startTimeSpan = currentMonthStart.AddMilliseconds(-1);
+        //            endTimeSpan = currentMonthEnd;
+        //            break;
+        //        case TimeRange.Year:
+        //            startTimeSpan = currentYearStart.AddMilliseconds(-1);
+        //            endTimeSpan = currentYearEnd;
+        //            break;
+        //        case TimeRange.Other:
+        //            startTimeSpan = DateTime.Now;
+        //            int endTimeSpanDay = Validator.Convert<int>("end day");
+        //            int endTimeSpanMonth = Validator.Convert<int>("end month");
+        //            int endTimeSpanYear = Validator.Convert<int>("end year");
+        //            endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
+        //            break;
+        //        default:
+        //            startTimeSpan = DateTime.MaxValue;
+        //            endTimeSpan = DateTime.MinValue;
+        //            break;
+        //    }
 
-            while (currentPayPeriod < startTimeSpan)
-            {
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < startTimeSpan)
+        //    {
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            while (currentPayPeriod < endTimeSpan)
-            {
-                payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < endTimeSpan)
+        //    {
+        //        payPeriodCounter++;
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            pay *= payPeriodCounter;
-            return pay;
-        }
+        //    pay *= payPeriodCounter;
+        //    return pay;
+        //}
 
         public int CalculateTransactionCounter(DateTime endTimeSpan, Rate rate)
         {
