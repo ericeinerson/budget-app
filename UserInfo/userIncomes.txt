@@ -1,0 +1,2 @@
+incomeName:wackinncome;amount:123;date:2/23/2000 12:00:00AM;rate:1;amount formatted:$123.00;id:0;
+incomeName:wanngadannga;amount:1234;date:1/16/2024 9:31:51PM;rate:1;amount formatted:$1,234.00;id:0;

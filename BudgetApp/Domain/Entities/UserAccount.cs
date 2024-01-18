@@ -32,6 +32,7 @@ namespace BudgetApp.Domain.Entities
 		public Wishlist Wishlist {get;set;}
 		public List<Income> IncomeList { get; set; }
         public List<Expense> ExpenseList { get; set; }
+		public List<TransactionCategory> TransactionCategoryList { get; set; }
     }
 }
 

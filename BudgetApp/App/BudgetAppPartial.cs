@@ -31,6 +31,7 @@ namespace BudgetApp.App
         //private int _wishlistIdCounter = 1;
         //public decimal SumOfAllExpenses { get; set; }
         //private decimal _sumOfAllMonthlyExpenses = 0;
+        private int incomeId = 0;
         private int expenseId = 0;
 
         public void Run()
@@ -58,7 +59,8 @@ namespace BudgetApp.App
                 TotalIncomes = 0,
                 ExpenseList = new List<Expense>(),
                 Wishlist = new Wishlist(),
-                IncomeList = new List<Income>()
+                IncomeList = new List<Income>(),
+                TransactionCategoryList = new List<TransactionCategory>()
             };
 
             userAccountList = new List<UserAccount>
@@ -152,15 +154,15 @@ namespace BudgetApp.App
                     DisplayInstructions();
                     Utilities.PressEnterToContinue();
                     break;
-                //case (int)AppMenu.Incomes:
-                //    ManageIncome();
-                //    break;
+                case (int)AppMenu.Incomes:
+                    ProcessIncomeOption();
+                    break;
                 case (int)AppMenu.Expenses:
                     ProcessExpenseOption();
                     break;
-                //case (int)AppMenu.Wishlist:
-                //    ManageWishList();
-                //    break;
+                case (int)AppMenu.Categories:
+                    ProcessCategoryOption();
+                    break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
                     Utilities.PrintMessage("You have successfully logged out.", true);
@@ -193,12 +195,114 @@ namespace BudgetApp.App
             ProcessBudgetSummaryMenu();
         }
 
+        public void ProcessCategoryMenuOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    ViewTransactionCategories();
+                    break;
+                case 2:
+                    AddTransactionCategory();
+                    break;
+                case 3:
+                    RemoveTransactionCategory();
+                    break;
+            }
+        }
+
+        public void AddTransactionCategory()
+        {
+            TransactionCategory category = ConstructTransactionCategory();
+            selectedAccount.TransactionCategoryList.Add(category);
+
+            Utilities.PrintMessage($"You have succcessfully added {category.Name} with an id of {category.Id}!", true, false);
+        }
+
+        public void RemoveTransactionCategory()
+        {
+            TransactionCategory category = FindTransactionCategory();
+            if (category != null)
+            {
+                selectedAccount.TransactionCategoryList.Remove(category);
+                Utilities.PrintMessage($"You have succcessfully removed {category.Name} with an id of {category.Id}!", true, false);
+            }
+        }
+
+        public TransactionCategory FindTransactionCategory()
+        {
+            TransactionCategory? category = null;
+
+            while (category == null)
+            {
+                string categoryName = Utilities.GetUserInput("category name. If not known, enter n to skip or a to exit to app menu").ToLower();
+                if (categoryName == "a")
+                {
+                    break;
+                }
+                category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Name.ToLower() == categoryName.ToLower());
+                if (categoryName == "n")
+                {
+                    int categoryId = Validator.Convert<int>("category id");
+                    category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Id == categoryId);
+                }
+
+                if (category == null)
+                {
+                    Utilities.PrintMessage("Sorry, category not found. Please try again", false, false);
+                }
+            }
+
+            return category;
+        }
+
+        public TransactionCategory ConstructTransactionCategory()
+        {
+            TransactionCategory category = new TransactionCategory();
+
+            string categoryName = Utilities.GetUserInput("category name");
+            int categoryId = 0;
+
+            foreach(TransactionCategory tc in selectedAccount.TransactionCategoryList)
+            {
+                categoryId = Math.Max(categoryId, tc.Id);
+            }
+            categoryId++;
+
+            category.Name = categoryName;
+            category.Id = categoryId;
+
+            return category;
+        }
+
+        public void ViewTransactionCategories()
+        {
+            ConsoleTable allCategoriesTable = new ConsoleTable("Name", "Id");
+            foreach (TransactionCategory category in selectedAccount.TransactionCategoryList)
+            {
+                allCategoriesTable.AddRow(category.Name, category.Id);
+            }
+            allCategoriesTable.Write();
+            Utilities.PressEnterToContinue();
+        }
+
         private void ProcessExpenseOption()
         {
             AppScreen.DisplayExpenseOptions();
             ProcessExpenseMenuOption();
         }
 
+        private void ProcessIncomeOption()
+        {
+            AppScreen.DisplayIncomeOptions();
+            ProcessIncomeMenuOption();
+        }
+
+        private void ProcessCategoryOption()
+        {
+            AppScreen.DisplayCategoryOptions();
+            ProcessCategoryMenuOption();
+        }
 
         private void ProcessExpenseMenuOption()
         {
@@ -216,6 +320,26 @@ namespace BudgetApp.App
                 case 4:
                     // TO DO
                     Console.WriteLine("Add method for updating expense details");
+                    break;
+            }
+        }
+
+        private void ProcessIncomeMenuOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    ViewIncomes();
+                    break;
+                case 2:
+                    AddIncome();
+                    break;
+                case 3:
+                    RemoveIncome();
+                    break;
+                case 4:
+                    // TO DO
+                    Console.WriteLine("Add method for updating income details");
                     break;
             }
         }
@@ -245,124 +369,124 @@ namespace BudgetApp.App
             }
         }
 
-        public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
-        {
-            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
-            DateTime startTimeSpan;
-            DateTime endTimeSpan;
+        //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
+        //{
+        //    DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+        //    DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+        //    DateTime startTimeSpan;
+        //    DateTime endTimeSpan;
 
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
-            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+        //    DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
+        //    DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        //    DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
 
-            DateTime currentPayPeriod = firstPayPeriod;
-            int payPeriodCounter = 0;
-            int daysBetweenIntervals = 0;
-            decimal pay = income.Amount;
+        //    DateTime currentPayPeriod = firstPayPeriod;
+        //    int payPeriodCounter = 0;
+        //    int daysBetweenIntervals = 0;
+        //    decimal pay = income.Amount;
 
-            switch (income.Rate)
-            {
-                case Rate.Weekly:
-                    daysBetweenIntervals = 7;
-                    break;
-                case Rate.Biweekly:
-                    daysBetweenIntervals = 14;
-                    break;
-                case Rate.Monthly:
-                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                    break;
-                case Rate.Yearly:
-                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366: 365;
-                    break;
-            }
-            switch (timeRange)
-            {
-                case TimeRange.Month:
-                    startTimeSpan = currentMonthStart.AddMilliseconds(-1);
-                    endTimeSpan = currentMonthEnd;
-                    break;
-                case TimeRange.Year:
-                    startTimeSpan = currentYearStart.AddMilliseconds(-1);
-                    endTimeSpan = currentYearEnd;
-                    break;
-                case TimeRange.Other:
-                    startTimeSpan = DateTime.Now;
-                    int endTimeSpanDay = Validator.Convert<int>("end day");
-                    int endTimeSpanMonth = Validator.Convert<int>("end month");
-                    int endTimeSpanYear = Validator.Convert<int>("end year");
-                    endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
-                    break;
-                default:
-                    startTimeSpan = DateTime.MaxValue;
-                    endTimeSpan = DateTime.MinValue;
-                    break;
-            }
+        //    switch (income.Rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366: 365;
+        //            break;
+        //    }
+        //    switch (timeRange)
+        //    {
+        //        case TimeRange.Month:
+        //            startTimeSpan = currentMonthStart.AddMilliseconds(-1);
+        //            endTimeSpan = currentMonthEnd;
+        //            break;
+        //        case TimeRange.Year:
+        //            startTimeSpan = currentYearStart.AddMilliseconds(-1);
+        //            endTimeSpan = currentYearEnd;
+        //            break;
+        //        case TimeRange.Other:
+        //            startTimeSpan = DateTime.Now;
+        //            int endTimeSpanDay = Validator.Convert<int>("end day");
+        //            int endTimeSpanMonth = Validator.Convert<int>("end month");
+        //            int endTimeSpanYear = Validator.Convert<int>("end year");
+        //            endTimeSpan = new DateTime(endTimeSpanYear, endTimeSpanMonth, endTimeSpanDay);
+        //            break;
+        //        default:
+        //            startTimeSpan = DateTime.MaxValue;
+        //            endTimeSpan = DateTime.MinValue;
+        //            break;
+        //    }
 
-            while(currentPayPeriod < startTimeSpan)
-            {
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while(currentPayPeriod < startTimeSpan)
+        //    {
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            while (currentPayPeriod < endTimeSpan)
-            {
-                payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < endTimeSpan)
+        //    {
+        //        payPeriodCounter++;
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            pay *= payPeriodCounter;
-            return pay;
-        }
+        //    pay *= payPeriodCounter;
+        //    return pay;
+        //}
 
-        public decimal CalculateIncomeByRateAndTime(TimeRange timeRange, Income income, DateTime endTime)
-        {
-            DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-            DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
-            DateTime startTimeSpan;
-            DateTime endTimeSpan;
+        //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange, Income income, DateTime endTime)
+        //{
+        //    DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
+        //    DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+        //    DateTime startTimeSpan;
+        //    DateTime endTimeSpan;
 
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
-            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
+        //    DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, income.Month, income.Day);
+        //    DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        //    DateTime currentMonthEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)).AddHours(23);
 
-            DateTime currentPayPeriod = firstPayPeriod;
-            int payPeriodCounter = 0;
-            int daysBetweenIntervals = 0;
-            decimal pay = income.Amount;
+        //    DateTime currentPayPeriod = firstPayPeriod;
+        //    int payPeriodCounter = 0;
+        //    int daysBetweenIntervals = 0;
+        //    decimal pay = income.Amount;
 
-            switch (income.Rate)
-            {
-                case Rate.Weekly:
-                    daysBetweenIntervals = 7;
-                    break;
-                case Rate.Biweekly:
-                    daysBetweenIntervals = 14;
-                    break;
-                case Rate.Monthly:
-                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                    break;
-                case Rate.Yearly:
-                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
-                    break;
-            }
+        //    switch (income.Rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+        //            break;
+        //    }
             
-            startTimeSpan = DateTime.Now;
-            endTimeSpan = endTime;
+        //    startTimeSpan = DateTime.Now;
+        //    endTimeSpan = endTime;
 
-            while (currentPayPeriod < startTimeSpan)
-            {
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < startTimeSpan)
+        //    {
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            while (currentPayPeriod < endTimeSpan)
-            {
-                payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < endTimeSpan)
+        //    {
+        //        payPeriodCounter++;
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            pay *= payPeriodCounter;
-            return pay;
-        }
+        //    pay *= payPeriodCounter;
+        //    return pay;
+        //}
 
         //public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense, DateTime endTime)
         //{

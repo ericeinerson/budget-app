@@ -1,4 +1,2 @@
-expenseName:wackattack;amount:43;start date:11/12/2024 12:00:00AM;amount formatted:;
-expenseName:wackattrackt;amount:23.333;start date:1/16/2024 8:10:33PM;amount formatted:;
-expenseName:wacckmegatrackt;amount:900.09;start date:1/16/2024 8:16:17PM;amount formatted:$900.09;
-expenseName:wackmex;amount:1.22;start date:1/1/0001 12:00:00AM;amount formatted:$1.22;
+expenseName:wingadingex;amount:34;date:1/16/2024 9:31:30PM;rate:2;amount formatted:$34.00;id:0;
+expenseName:fongadonng;amount:45;date:1/1/0001 12:00:00AM;rate:1;amount formatted:$45.00;id:0;

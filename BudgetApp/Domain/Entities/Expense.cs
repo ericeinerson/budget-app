@@ -15,6 +15,7 @@ namespace BudgetApp.Domain.Entities
         public string AmountFormatted { get; set; }
         public Rate Rate { get; set; }
         public DateTime Date { get; set; }
+        public int CategoryId { get; set; }
     }
 }
 

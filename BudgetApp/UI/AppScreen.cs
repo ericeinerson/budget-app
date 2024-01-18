@@ -57,7 +57,7 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Instructions/App Description ");
             Console.WriteLine("3. Incomes                      ");
             Console.WriteLine("4. Expenses                     ");
-            //Console.WriteLine("5. Wishlist/Future              ");
+            Console.WriteLine("5. Categories                   ");
             Console.WriteLine("6. Logout                       ");
             //Console.WriteLine("7. Update Balance               ");
             Console.WriteLine("8. Save Information             ");
@@ -73,10 +73,21 @@ namespace BudgetApp.UI
             Console.WriteLine("1. Show All Expenses                        ");
             Console.WriteLine("2. Add New Expense                          ");
             Console.WriteLine("3. Remove Expense                           ");
-            //Console.WriteLine("                                            ");
+            Console.WriteLine("4. Logout                                   ");
             //Console.WriteLine("                                            ");
             //Console.WriteLine("                                            ");
 
+        }
+
+        internal static void DisplayCategoryOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an option. \n\n");
+
+            Console.WriteLine("1. Show All Categories                       ");
+            Console.WriteLine("2. Add New Category                          ");
+            Console.WriteLine("3. Remove Category                           ");
+            //Console.WriteLine("4. Logout                                   ");
         }
 
         internal static void DisplayExpenseUpdateOptions()
@@ -92,17 +103,17 @@ namespace BudgetApp.UI
 
         }
 
-        internal static void DisplayIncomeOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an income to update. \n\n");
+        //internal static void DisplayIncomeOptions()
+        //{
+        //    Console.Clear();
+        //    Console.WriteLine("Select an income to update. \n\n");
 
-            Console.WriteLine("1. Paychecks             ");
-            Console.WriteLine("2. Taxes                 ");
-            Console.WriteLine("3. Other                 ");
-            Console.WriteLine("4. Return To Main Menu   ");
-            Console.WriteLine("5. Exit App              ");
-        }
+        //    Console.WriteLine("1. Paychecks             ");
+        //    Console.WriteLine("2. Taxes                 ");
+        //    Console.WriteLine("3. Other                 ");
+        //    Console.WriteLine("4. Return To Main Menu   ");
+        //    Console.WriteLine("5. Exit App              ");
+        //}
 
         internal static void DisplayWishlistOptions()
         {
@@ -120,14 +131,14 @@ namespace BudgetApp.UI
             //Add console table in to display expenses
         }
 
-        internal static void DisplayIncomeMenu()
+        internal static void DisplayIncomeOptions()
         {
             Console.Clear();
             Console.WriteLine("Select an income option. \n\n");
 
             Console.WriteLine("1. View Incomes               ");
             Console.WriteLine("2. Add an Income              ");
-            Console.WriteLine("3. Update an Income           ");
+            Console.WriteLine("3. Remove an Income           ");
             Console.WriteLine("4. Logout                     ");
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
@@ -8,6 +9,96 @@ namespace BudgetApp.App
 {
 	public partial class BudgetApp
 	{
+
+        public void ViewIncomes()
+        {
+            ConsoleTable allIncomesTable = new ConsoleTable("Name", "Amount", "Start Date");
+            foreach (Income income in selectedAccount.IncomeList)
+            {
+                allIncomesTable.AddRow(income.IncomeName, income.AmountFormatted, income.Date.ToString("MMMM dd, yyyy"));
+            }
+            allIncomesTable.Write();
+            Utilities.PressEnterToContinue();
+        }
+
+        public void AddIncome()
+        {
+            Income income = ConstructIncome();
+            selectedAccount.IncomeList.Add(income);
+
+            Utilities.PrintMessage($"You have succcessfully added {income.IncomeName} with a value of {income.AmountFormatted}. This income will be done on {income.Date.ToString("MMMM dd, yyyy")}!", true, false);
+        }
+
+        public void RemoveIncome()
+        {
+            Income income = FindIncome();
+            if (income != null)
+            {
+                selectedAccount.IncomeList.Remove(income);
+                Utilities.PrintMessage($"You have succcessfully removed {income.IncomeName} with a value of {income.AmountFormatted}!", true, false);
+            }
+        }
+
+        public Income FindIncome()
+        {
+            Income? income = null;
+
+            while (income == null)
+            {
+                string incomeName = Utilities.GetUserInput("income name. If not known, enter n to skip or a to exit to app menu").ToLower();
+                if (incomeName == "a")
+                {
+                    break;
+                }
+                income = selectedAccount.IncomeList.FirstOrDefault(e => e.IncomeName.ToLower() == incomeName.ToLower());
+                if (incomeName == "n")
+                {
+                    decimal incomeAmount = Validator.Convert<decimal>("income amount");
+                    income = selectedAccount.IncomeList.FirstOrDefault(e => e.Amount == incomeAmount);
+                }
+
+                if (income == null)
+                {
+                    Utilities.PrintMessage("Sorry, income not found. Please try again", false, false);
+                }
+            }
+
+            return income;
+        }
+
+        public Income ConstructIncome()
+        {
+            Income income = new Income();
+            int id = incomeId;
+            incomeId++;
+            string name = Utilities.GetUserInput("income name");
+            decimal amount = Validator.Convert<decimal>("income amount");
+            string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+
+            Rate rate = ProcessRateOption();
+            DateTime date = DateTime.MinValue;
+            string todayOrFuture = Utilities.GetUserInput("whether t for today or f for future").ToLower();
+
+            if (todayOrFuture == "t")
+            {
+                date = DateTime.Now;
+            }
+            else if (todayOrFuture == "f")
+            {
+                int day = Validator.Convert<int>("day income is withdrawn");
+                int month = Validator.Convert<int>("month income is withdrawn");
+                int year = Validator.Convert<int>("year income is withdrawn");
+                date = new DateTime(year, month, day);
+            }
+
+            income.IncomeName = name;
+            income.Amount = amount;
+            income.AmountFormatted = formattedAmount;
+            income.Rate = rate;
+            income.Date = date;
+
+            return income;
+        }
         //public void ManageIncome()
         //{
         //    CalculateIncomesForEachRate();
