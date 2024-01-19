@@ -132,6 +132,15 @@ namespace BudgetApp.App
             string name = Utilities.GetUserInput("expense name");
             decimal amount = Validator.Convert<decimal>("expense amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+            TransactionCategory category = AssignTransactionCategory();
+
+            var categoryId = category.Id;
+            var categoryName = category.Name;
+
+            Console.WriteLine(categoryId);
+            Console.WriteLine(categoryName);
+            Utilities.PressEnterToContinue();
+
 
             Rate rate = ProcessRateOption();
             DateTime date = DateTime.MinValue;

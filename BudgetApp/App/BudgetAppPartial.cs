@@ -286,6 +286,37 @@ namespace BudgetApp.App
             Utilities.PressEnterToContinue();
         }
 
+        public TransactionCategory AssignTransactionCategory()
+        {
+            TransactionCategory? category = null;
+            
+            var categoryList = selectedAccount.TransactionCategoryList;
+            string? categoryProperty = Utilities.GetUserInput("category name or id. Press q to quit");
+
+            while (category == null)
+            {
+                category = categoryList.FirstOrDefault(c => c.Id.ToString() == categoryProperty);
+
+                if(category == null)
+                {
+                    category = categoryList.FirstOrDefault(c => c.Name == categoryProperty);
+                }
+
+                if (category == null)
+                {
+                    Utilities.PrintMessage("Category not found. Please try again", false, true);
+                    categoryProperty = Console.ReadLine();
+                }
+
+                if (categoryProperty != null && categoryProperty.ToLower() == "q")
+                {
+                    break;
+                }
+            }
+
+            return category;
+        }
+
         private void ProcessExpenseOption()
         {
             AppScreen.DisplayExpenseOptions();
