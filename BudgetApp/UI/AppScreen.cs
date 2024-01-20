@@ -134,12 +134,14 @@ namespace BudgetApp.UI
         internal static void DisplayIncomeOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an income option. \n\n");
+            Console.WriteLine("Select an income option.  \n\n");
 
             Console.WriteLine("1. View Incomes               ");
             Console.WriteLine("2. Add an Income              ");
             Console.WriteLine("3. Remove an Income           ");
             Console.WriteLine("4. Logout                     ");
+            Console.WriteLine("5. Go Back                    ");
+            Console.WriteLine("6. Logout                     ");
         }
 
         internal static void DisplayRateOptions()

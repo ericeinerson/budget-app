@@ -14,23 +14,6 @@ namespace BudgetApp.App
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new UserAccount();
-        //private List<Transaction> _listOfTransactions = new List<Transaction>();
-
-        //private decimal _currentBalance;
-        //private decimal _sumOfAllWishlistExpenses = 0;
-        //private decimal _weeklyExpenses = 0;
-        //private decimal _biweeklyExpenses = 0;
-        //private decimal _monthlyExpenses = 0;
-        //private decimal _yearlyExpenses = 0;
-        //private decimal allIncomes = 0;
-        //private decimal weeklyIncomes = 0;
-        //private decimal biweeklyIncomes = 0;
-        //private decimal monthlyIncomes = 0;
-        //private decimal yearlyIncomes = 0;
-        //private int _incomeIdCounter;
-        //private int _wishlistIdCounter = 1;
-        //public decimal SumOfAllExpenses { get; set; }
-        //private decimal _sumOfAllMonthlyExpenses = 0;
         private int incomeId = 0;
         private int expenseId = 0;
 
@@ -60,7 +43,7 @@ namespace BudgetApp.App
                 ExpenseList = new List<Expense>(),
                 Wishlist = new Wishlist(),
                 IncomeList = new List<Income>(),
-                TransactionCategoryList = new List<TransactionCategory>()
+                TransactionCategoryList = new List<TransactionCategory>() { new TransactionCategory() { Name = "No Category", Id = 0 } }
             };
 
             userAccountList = new List<UserAccount>
@@ -222,10 +205,29 @@ namespace BudgetApp.App
         public void RemoveTransactionCategory()
         {
             TransactionCategory category = FindTransactionCategory();
-            if (category != null)
+            if (category != null && category.Id != 0)
             {
                 selectedAccount.TransactionCategoryList.Remove(category);
+                foreach(Expense expense in selectedAccount.ExpenseList)
+                {
+                    if(expense.CategoryId == category.Id)
+                    {
+                        expense.CategoryId = 0;
+                    }
+                }
+
+                foreach (Income income in selectedAccount.IncomeList)
+                {
+                    if (income.CategoryId == category.Id)
+                    {
+                        income.CategoryId = 0;
+                    }
+                }
                 Utilities.PrintMessage($"You have succcessfully removed {category.Name} with an id of {category.Id}!", true, false);
+            }
+            else if(category != null && category.Id == 0)
+            {
+                Utilities.PrintMessage("You cannot remove this category. It serves as a replacement for holding no categories", false, false);
             }
         }
 
@@ -302,15 +304,15 @@ namespace BudgetApp.App
                     category = categoryList.FirstOrDefault(c => c.Name == categoryProperty);
                 }
 
+                if (categoryProperty != null && categoryProperty.ToLower() == "q")
+                {
+                    break;
+                }
+
                 if (category == null)
                 {
                     Utilities.PrintMessage("Category not found. Please try again", false, true);
                     categoryProperty = Console.ReadLine();
-                }
-
-                if (categoryProperty != null && categoryProperty.ToLower() == "q")
-                {
-                    break;
                 }
             }
 
@@ -372,6 +374,9 @@ namespace BudgetApp.App
                     // TO DO
                     Console.WriteLine("Add method for updating income details");
                     break;
+                //case 5:
+                //    GoToAppMenu();
+                //    break;
             }
         }
 

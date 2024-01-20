@@ -350,6 +350,60 @@ namespace BudgetApp.UI
             }
             return response;
         }
+
+        static bool IsLeapYear(int year)
+        {
+            if ((year % 400 == 0) ||
+               (year % 100 != 0) &&
+               (year % 4 == 0))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static DateTime ConstructDate()
+        {
+            var date = new DateTime();
+
+            int month = Validator.Convert<int>("month transaction is done");
+            var longerMonths = new int[7] { 1, 3, 5, 7, 8, 10, 12 };
+            var shorterMonths = new int[4] { 4, 6, 9, 11 };
+
+            if (month < 1 || month > 12)
+            {
+                throw new ArgumentOutOfRangeException("month");
+            }
+            int day = Validator.Convert<int>("day transaction is done");
+
+            if (day < 1)
+            {
+                throw new ArgumentOutOfRangeException("day");
+            }
+            else if (longerMonths.Contains(month) && day > 31)
+            {
+                throw new ArgumentOutOfRangeException("day");
+            }
+            else if (shorterMonths.Contains(month) && day > 30)
+            {
+                throw new ArgumentOutOfRangeException("day");
+            }
+            else if (month == 2 && day > 29)
+            {
+                throw new ArgumentOutOfRangeException("day");
+            }
+            int year = Validator.Convert<int>("year transaction is done");
+            if (!DateTime.IsLeapYear(year) && month == 2 && day == 29)
+            {
+                throw new ArgumentOutOfRangeException("day");
+            }
+            date = new DateTime(year, month, day);
+
+            return date;
+        }
     }
 }
 

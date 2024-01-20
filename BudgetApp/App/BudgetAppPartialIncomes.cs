@@ -12,10 +12,13 @@ namespace BudgetApp.App
 
         public void ViewIncomes()
         {
-            ConsoleTable allIncomesTable = new ConsoleTable("Name", "Amount", "Start Date");
+            ConsoleTable allIncomesTable = new ConsoleTable("Name", "Amount", "Date", "Id", "Category");
+
             foreach (Income income in selectedAccount.IncomeList)
             {
-                allIncomesTable.AddRow(income.IncomeName, income.AmountFormatted, income.Date.ToString("MMMM dd, yyyy"));
+                TransactionCategory? category = selectedAccount.TransactionCategoryList.Find(t => t.Id == income.CategoryId);
+                var categoryName = category != null ? category.Name : string.Empty;
+                allIncomesTable.AddRow(income.IncomeName, income.AmountFormatted, income.Date.ToString("MMMM dd, yyyy"), income.Id, categoryName);
             }
             allIncomesTable.Write();
             Utilities.PressEnterToContinue();
@@ -69,11 +72,12 @@ namespace BudgetApp.App
         public Income ConstructIncome()
         {
             Income income = new Income();
-            int id = incomeId;
             incomeId++;
+            int id = incomeId;
             string name = Utilities.GetUserInput("income name");
             decimal amount = Validator.Convert<decimal>("income amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+            TransactionCategory category = AssignTransactionCategory();
 
             Rate rate = ProcessRateOption();
             DateTime date = DateTime.MinValue;
@@ -85,17 +89,16 @@ namespace BudgetApp.App
             }
             else if (todayOrFuture == "f")
             {
-                int day = Validator.Convert<int>("day income is withdrawn");
-                int month = Validator.Convert<int>("month income is withdrawn");
-                int year = Validator.Convert<int>("year income is withdrawn");
-                date = new DateTime(year, month, day);
+                date = Utilities.ConstructDate();
             }
 
+            income.Id = incomeId;
             income.IncomeName = name;
             income.Amount = amount;
             income.AmountFormatted = formattedAmount;
             income.Rate = rate;
             income.Date = date;
+            income.CategoryId = category.Id;
 
             return income;
         }

@@ -12,10 +12,12 @@ namespace BudgetApp.App
 
         public void ViewExpenses()
         {
-            ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount","Start Date");
+            ConsoleTable allExpensesTable = new ConsoleTable("Name", "Amount","Date", "Id", "Category");
             foreach (Expense expense in selectedAccount.ExpenseList)
             {
-                allExpensesTable.AddRow(expense.ExpenseName, expense.AmountFormatted, expense.Date.ToString("MMMM dd, yyyy"));
+                TransactionCategory? category = selectedAccount.TransactionCategoryList.Find(t => t.Id == expense.CategoryId);
+                var categoryName = category != null ? category.Name : string.Empty;
+                allExpensesTable.AddRow(expense.ExpenseName, expense.AmountFormatted, expense.Date.ToString("MMMM dd, yyyy"), expense.Id, categoryName);
             }
             allExpensesTable.Write();
             Utilities.PressEnterToContinue();
@@ -127,20 +129,28 @@ namespace BudgetApp.App
         public Expense ConstructExpense()
         {
             Expense expense = new Expense();
-            int id = expenseId;
             expenseId++;
+            int id = expenseId;
             string name = Utilities.GetUserInput("expense name");
             decimal amount = Validator.Convert<decimal>("expense amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
             TransactionCategory category = AssignTransactionCategory();
 
-            var categoryId = category.Id;
-            var categoryName = category.Name;
+            //TEST CODE REMOVE LATER START
+            if (category != null)
+            {
+                var categoryId = category.Id;
+                var categoryName = category.Name;
 
-            Console.WriteLine(categoryId);
-            Console.WriteLine(categoryName);
+                Console.WriteLine(categoryId);
+                Console.WriteLine(categoryName);
+            }
+            else
+            {
+                Console.WriteLine("Successfully exited the while loop with q");
+            }
             Utilities.PressEnterToContinue();
-
+            //TEST CODE REMOVE LATER END
 
             Rate rate = ProcessRateOption();
             DateTime date = DateTime.MinValue;
@@ -152,17 +162,17 @@ namespace BudgetApp.App
             }
             else if (todayOrFuture == "f")
             {
-                int day = Validator.Convert<int>("day expense is withdrawn");
-                int month = Validator.Convert<int>("month expense is withdrawn");
-                int year = Validator.Convert<int>("year expense is withdrawn");
-                date = new DateTime(year, month, day);
+                date = Utilities.ConstructDate();
             }
 
+            expense.Id = expenseId;
             expense.ExpenseName = name;
             expense.Amount = amount;
             expense.AmountFormatted = formattedAmount;
             expense.Rate = rate;
             expense.Date = date;
+            //TO DO OUT OF RANGE WHEN SELECTING Q
+            expense.CategoryId = category.Id;
 
             return expense;
         }
