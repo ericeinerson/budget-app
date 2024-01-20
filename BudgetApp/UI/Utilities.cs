@@ -12,6 +12,7 @@ namespace BudgetApp.UI
         private static string basicUserInfoFileName = $"userInfo.txt";
         private static string expensesInfoFileName = "userExpenses.txt";
         private static string incomesInfoFileName = "userIncomes.txt";
+        private static string categoriesInfoFileName = "userCategories.txt";
         private static string wishlistInfoFileName = "userWishlist.txt";
 
         private static CultureInfo culture = new CultureInfo("EN-US");
@@ -121,6 +122,7 @@ namespace BudgetApp.UI
             string userAccountInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
             string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
+            string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
             //string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
 
             userAccount = new UserAccount();
@@ -205,6 +207,25 @@ namespace BudgetApp.UI
                     });
                 }
             }
+            if (File.Exists(categoriesPath))
+            {
+                string[] categoriesAsString = File.ReadAllLines(categoriesPath);
+                var categoriesSplits = new List<string>();
+
+                for (int i = 0; i < categoriesAsString.Length; i++)
+                {
+                    categoriesSplits = categoriesAsString[i].Split(';').ToList<string>();
+
+                    string categoryName = categoriesSplits[0].Substring(categoriesSplits[0].IndexOf(':') + 1);
+                    int id = int.Parse(categoriesSplits[1].Substring(categoriesSplits[1].IndexOf(':') + 1));
+                    
+                    userAccount.TransactionCategoryList.Add(new TransactionCategory()
+                    {
+                        Name = categoryName,
+                        Id = id
+                    });
+                }
+            }
             //if (File.Exists(wishlistPath))
             //{
             //    string[] wishlistAsString = File.ReadAllLines(wishlistPath);
@@ -239,6 +260,8 @@ namespace BudgetApp.UI
             StringBuilder expensesSB = new StringBuilder();
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
             StringBuilder incomesSB = new StringBuilder();
+            string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
+            StringBuilder categoriesSB = new StringBuilder();
             //string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
             //StringBuilder wishlistSB = new StringBuilder();
 
@@ -271,6 +294,12 @@ namespace BudgetApp.UI
                 incomesSB.Append($"id:{i.Id};");
                 incomesSB.Append(Environment.NewLine);
             }
+            foreach (TransactionCategory c in userAccount.TransactionCategoryList)
+            {
+                categoriesSB.Append($"categoryName:{c.Name};");
+                categoriesSB.Append($"amount:{c.Id};");
+                categoriesSB.Append(Environment.NewLine);
+            }
             //foreach (WishlistItem w in userAccount.Wishlist.Items)
             //{
             //    wishlistSB.Append($"itemName:{w.Item};");
@@ -283,6 +312,7 @@ namespace BudgetApp.UI
             File.WriteAllText(userInfoPath, userInfoSB.ToString());
             File.WriteAllText(expensesPath, expensesSB.ToString());
             File.WriteAllText(incomesPath, incomesSB.ToString());
+            File.WriteAllText(categoriesPath, categoriesSB.ToString());
             //File.WriteAllText(wishlistPath, wishlistSB.ToString());
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Saved user info successfully!");

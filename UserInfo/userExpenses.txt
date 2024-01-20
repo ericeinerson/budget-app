@@ -1,2 +1,1 @@
-expenseName:wingadingex;amount:34;date:1/16/2024 9:31:30PM;rate:2;amount formatted:$34.00;id:0;
-expenseName:fongadonng;amount:45;date:1/1/0001 12:00:00AM;rate:1;amount formatted:$45.00;id:0;
+expenseName:wack;amount:1;date:1/20/2024 12:10:15PM;rate:1;amount formatted:$1.00;id:1;
