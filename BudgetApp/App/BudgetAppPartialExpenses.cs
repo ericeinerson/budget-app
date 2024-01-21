@@ -9,6 +9,32 @@ namespace BudgetApp.App
 {
     public partial class BudgetApp
     {
+        private void ProcessExpenseMenuOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    ViewExpenses();
+                    break;
+                case 2:
+                    AddExpense();
+                    break;
+                case 3:
+                    RemoveExpense();
+                    break;
+                case 4:
+                    // TO DO
+                    Console.WriteLine("Add method for updating expense details");
+                    break;
+                case 5:
+                    GoBackToAppScreen();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
 
         public void ViewExpenses()
         {

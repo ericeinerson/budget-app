@@ -4,6 +4,7 @@ using System.Text;
 using BudgetApp.Domain.Entities;
 using System.Collections.Generic;
 using BudgetApp.UI;
+using BudgetApp;
 
 namespace BudgetApp.UI
 {
@@ -123,7 +124,7 @@ namespace BudgetApp.UI
             string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
             string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
-            //string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
+            string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
 
             userAccount = new UserAccount();
 
@@ -226,29 +227,29 @@ namespace BudgetApp.UI
                     });
                 }
             }
-            //if (File.Exists(wishlistPath))
-            //{
-            //    string[] wishlistAsString = File.ReadAllLines(wishlistPath);
-            //    string[] wishlistSplits = new string[6];
+            if (File.Exists(wishlistPath))
+            {
+                string[] wishlistAsString = File.ReadAllLines(wishlistPath);
+                string[] wishlistSplits = new string[6];
 
-            //    for (int i = 0; i < wishlistAsString.Length; i++)
-            //    {
-            //        wishlistSplits = wishlistAsString[i].Split(';');
+                for (int i = 0; i < wishlistAsString.Length; i++)
+                {
+                    wishlistSplits = wishlistAsString[i].Split(';');
 
-            //        string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
-            //        decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
-            //        int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
-            //        int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
+                    string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
+                    decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
+                    int id = int.Parse(wishlistSplits[2].Substring(wishlistSplits[2].IndexOf(':') + 1));
+                    int priority = int.Parse(wishlistSplits[3].Substring(wishlistSplits[3].IndexOf(':') + 1));
 
-            //        userAccount.Wishlist.Items.Add(new WishlistItem()
-            //        {
-            //            Item = item,
-            //            Cost = cost,
-            //            Id = id,
-            //            Priority = priority
-            //        });
-            //    }
-            //}
+                    userAccount.Wishlist.Items.Add(new WishlistItem()
+                    {
+                        Item = item,
+                        Cost = cost,
+                        Id = id,
+                        Priority = priority
+                    });
+                }
+            }
             return userAccount;
         }
 
@@ -262,8 +263,8 @@ namespace BudgetApp.UI
             StringBuilder incomesSB = new StringBuilder();
             string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
             StringBuilder categoriesSB = new StringBuilder();
-            //string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
-            //StringBuilder wishlistSB = new StringBuilder();
+            string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
+            StringBuilder wishlistSB = new StringBuilder();
 
             userInfoSB.Append($"fullName:{userAccount.FullName};");
             userInfoSB.Append($"passcode:{userAccount.Passcode.ToString()};");
@@ -300,61 +301,61 @@ namespace BudgetApp.UI
                 categoriesSB.Append($"amount:{c.Id};");
                 categoriesSB.Append(Environment.NewLine);
             }
-            //foreach (WishlistItem w in userAccount.Wishlist.Items)
-            //{
-            //    wishlistSB.Append($"itemName:{w.Item};");
-            //    wishlistSB.Append($"cost:{w.Cost};");
-            //    wishlistSB.Append($"id:{w.Id};");
-            //    wishlistSB.Append($"priority:{w.Priority};");
-            //    wishlistSB.Append(Environment.NewLine);
-            //}
+            foreach (WishlistItem w in userAccount.Wishlist.Items)
+            {
+                wishlistSB.Append($"itemName:{w.Item};");
+                wishlistSB.Append($"cost:{w.Cost};");
+                wishlistSB.Append($"id:{w.Id};");
+                wishlistSB.Append($"priority:{w.Priority};");
+                wishlistSB.Append(Environment.NewLine);
+            }
 
             File.WriteAllText(userInfoPath, userInfoSB.ToString());
             File.WriteAllText(expensesPath, expensesSB.ToString());
             File.WriteAllText(incomesPath, incomesSB.ToString());
             File.WriteAllText(categoriesPath, categoriesSB.ToString());
-            //File.WriteAllText(wishlistPath, wishlistSB.ToString());
+            File.WriteAllText(wishlistPath, wishlistSB.ToString());
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Saved user info successfully!");
 
         }
 
-        //public static void CheckForExistingUserFile(UserAccount userAccount)
-        //{
-        //    string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}.txt";
-        //    bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
-        //    string expensesPath = $"{userAccount.Directory}{expensesInfoFileName}";
-        //    bool existingExpensesFileFound = File.Exists(expensesPath);
-        //    string incomesPath = $"{userAccount.Directory}{incomesInfoFileName}";
-        //    bool existingIncomesFileFound = File.Exists(incomesPath);
-        //    string wishlistPath = $"{userAccount.Directory}{wishlistInfoFileName}";
-        //    bool existingWishlistFileFound = File.Exists(wishlistPath);
+        public static void CheckForExistingUserFile(UserAccount userAccount)
+        {
+            string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}.txt";
+            bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
+            string expensesPath = $"{userAccount.Directory}{expensesInfoFileName}";
+            bool existingExpensesFileFound = File.Exists(expensesPath);
+            string incomesPath = $"{userAccount.Directory}{incomesInfoFileName}";
+            bool existingIncomesFileFound = File.Exists(incomesPath);
+            string wishlistPath = $"{userAccount.Directory}{wishlistInfoFileName}";
+            bool existingWishlistFileFound = File.Exists(wishlistPath);
 
-        //    if (existingBasicUserInfoFileFound)
-        //    {
-        //        Console.WriteLine("Existing file for basic user info found");
-        //    }
-        //    if (existingExpensesFileFound)
-        //    {
-        //        Console.WriteLine("Existing file for expenses found");
-        //    }
-        //    if (existingIncomesFileFound)
-        //    {
-        //        Console.WriteLine("Existing file for incomes found");
-        //    }
+            if (existingBasicUserInfoFileFound)
+            {
+                Console.WriteLine("Existing file for basic user info found");
+            }
+            if (existingExpensesFileFound)
+            {
+                Console.WriteLine("Existing file for expenses found");
+            }
+            if (existingIncomesFileFound)
+            {
+                Console.WriteLine("Existing file for incomes found");
+            }
 
-        //    if (existingWishlistFileFound)
-        //    {
-        //        Console.WriteLine("Existing file for wishlist found");
-        //    }
-        //    if (!Directory.Exists(userAccount.Directory))
-        //    {
-        //        Directory.CreateDirectory(userAccount.Directory);
-        //        Console.ForegroundColor = ConsoleColor.Blue;
-        //        Console.WriteLine("Directory is ready for saving expenses info files");
-        //        Console.ResetColor();
-        //    }
-        //}
+            if (existingWishlistFileFound)
+            {
+                Console.WriteLine("Existing file for wishlist found");
+            }
+            if (!Directory.Exists(userAccount.Directory))
+            {
+                Directory.CreateDirectory(userAccount.Directory);
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Directory is ready for saving expenses info files");
+                Console.ResetColor();
+            }
+        }
 
         public static string PromptYesONo(string prompt)
         {

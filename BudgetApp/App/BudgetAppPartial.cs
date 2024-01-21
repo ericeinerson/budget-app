@@ -16,6 +16,7 @@ namespace BudgetApp.App
         protected UserAccount selectedAccount = new UserAccount();
         private int incomeId = 0;
         private int expenseId = 0;
+        private int wishlistId = 0;
 
         public void Run()
         {
@@ -23,7 +24,7 @@ namespace BudgetApp.App
             CheckUserPasscode();
             AppScreen.WelcomeCustomer(selectedAccount.FullName!);
             AppScreen.DisplayAppMenu();
-            //Utilities.CheckForExistingUserFile(selectedAccount);
+            Utilities.CheckForExistingUserFile(selectedAccount);
             ProcessAppMenuOption();
         }
 
@@ -148,7 +149,6 @@ namespace BudgetApp.App
                     break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.", true);
                     Run();
                     break;
                 case (int)AppMenu.UpdateBalance:
@@ -166,10 +166,15 @@ namespace BudgetApp.App
                     Utilities.PrintMessage("Invalid option.", false);
                     break;
             }
+            GoBackToAppScreen();
+        }
+        #endregion
+
+        public void GoBackToAppScreen()
+        {
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
-        #endregion
 
         #region Budget Summary
         public void BudgetSummary()
@@ -178,146 +183,7 @@ namespace BudgetApp.App
             ProcessBudgetSummaryMenu();
         }
 
-        public void ProcessCategoryMenuOption()
-        {
-            switch (Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    ViewTransactionCategories();
-                    break;
-                case 2:
-                    AddTransactionCategory();
-                    break;
-                case 3:
-                    RemoveTransactionCategory();
-                    break;
-            }
-        }
-
-        public void AddTransactionCategory()
-        {
-            TransactionCategory category = ConstructTransactionCategory();
-            selectedAccount.TransactionCategoryList.Add(category);
-
-            Utilities.PrintMessage($"You have succcessfully added {category.Name} with an id of {category.Id}!", true, false);
-        }
-
-        public void RemoveTransactionCategory()
-        {
-            TransactionCategory category = FindTransactionCategory();
-            if (category != null && category.Id != 0)
-            {
-                selectedAccount.TransactionCategoryList.Remove(category);
-                foreach(Expense expense in selectedAccount.ExpenseList)
-                {
-                    if(expense.CategoryId == category.Id)
-                    {
-                        expense.CategoryId = 0;
-                    }
-                }
-
-                foreach (Income income in selectedAccount.IncomeList)
-                {
-                    if (income.CategoryId == category.Id)
-                    {
-                        income.CategoryId = 0;
-                    }
-                }
-                Utilities.PrintMessage($"You have succcessfully removed {category.Name} with an id of {category.Id}!", true, false);
-            }
-            else if(category != null && category.Id == 0)
-            {
-                Utilities.PrintMessage("You cannot remove this category. It serves as a replacement for holding no categories", false, false);
-            }
-        }
-
-        public TransactionCategory FindTransactionCategory()
-        {
-            TransactionCategory? category = null;
-
-            while (category == null)
-            {
-                string categoryName = Utilities.GetUserInput("category name. If not known, enter n to skip or a to exit to app menu").ToLower();
-                if (categoryName == "a")
-                {
-                    break;
-                }
-                category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Name.ToLower() == categoryName.ToLower());
-                if (categoryName == "n")
-                {
-                    int categoryId = Validator.Convert<int>("category id");
-                    category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Id == categoryId);
-                }
-
-                if (category == null)
-                {
-                    Utilities.PrintMessage("Sorry, category not found. Please try again", false, false);
-                }
-            }
-
-            return category;
-        }
-
-        public TransactionCategory ConstructTransactionCategory()
-        {
-            TransactionCategory category = new TransactionCategory();
-
-            string categoryName = Utilities.GetUserInput("category name");
-            int categoryId = 0;
-
-            foreach(TransactionCategory tc in selectedAccount.TransactionCategoryList)
-            {
-                categoryId = Math.Max(categoryId, tc.Id);
-            }
-            categoryId++;
-
-            category.Name = categoryName;
-            category.Id = categoryId;
-
-            return category;
-        }
-
-        public void ViewTransactionCategories()
-        {
-            ConsoleTable allCategoriesTable = new ConsoleTable("Name", "Id");
-            foreach (TransactionCategory category in selectedAccount.TransactionCategoryList)
-            {
-                allCategoriesTable.AddRow(category.Name, category.Id);
-            }
-            allCategoriesTable.Write();
-            Utilities.PressEnterToContinue();
-        }
-
-        public TransactionCategory AssignTransactionCategory()
-        {
-            TransactionCategory? category = null;
-            
-            var categoryList = selectedAccount.TransactionCategoryList;
-            string? categoryProperty = Utilities.GetUserInput("category name or id. Press q to quit");
-
-            while (category == null)
-            {
-                category = categoryList.FirstOrDefault(c => c.Id.ToString() == categoryProperty);
-
-                if(category == null)
-                {
-                    category = categoryList.FirstOrDefault(c => c.Name == categoryProperty);
-                }
-
-                if (categoryProperty != null && categoryProperty.ToLower() == "q")
-                {
-                    break;
-                }
-
-                if (category == null)
-                {
-                    Utilities.PrintMessage("Category not found. Please try again", false, true);
-                    categoryProperty = Console.ReadLine();
-                }
-            }
-
-            return category;
-        }
+        
 
         private void ProcessExpenseOption()
         {
@@ -335,49 +201,6 @@ namespace BudgetApp.App
         {
             AppScreen.DisplayCategoryOptions();
             ProcessCategoryMenuOption();
-        }
-
-        private void ProcessExpenseMenuOption()
-        {
-            switch(Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    ViewExpenses();
-                    break;
-                case 2:
-                    AddExpense();
-                    break;
-                case 3:
-                    RemoveExpense();
-                    break;
-                case 4:
-                    // TO DO
-                    Console.WriteLine("Add method for updating expense details");
-                    break;
-            }
-        }
-
-        private void ProcessIncomeMenuOption()
-        {
-            switch (Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    ViewIncomes();
-                    break;
-                case 2:
-                    AddIncome();
-                    break;
-                case 3:
-                    RemoveIncome();
-                    break;
-                case 4:
-                    // TO DO
-                    Console.WriteLine("Add method for updating income details");
-                    break;
-                //case 5:
-                //    GoToAppMenu();
-                //    break;
-            }
         }
 
         private void ProcessBudgetSummaryMenu()
@@ -505,7 +328,7 @@ namespace BudgetApp.App
         //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
         //            break;
         //    }
-            
+
         //    startTimeSpan = DateTime.Now;
         //    endTimeSpan = endTime;
 
@@ -556,23 +379,23 @@ namespace BudgetApp.App
         //            break;
         //    }
 
-        //    startTimeSpan = DateTime.Now;
-        //    endTimeSpan = endTime;
+        //        startTimeSpan = DateTime.Now;
+        //            endTimeSpan = endTime;
 
-        //    while (currentPayPeriod < startTimeSpan)
-        //    {
-        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-        //    }
+        //            while (currentPayPeriod<startTimeSpan)
+        //            {
+        //                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //            }
 
-        //    while (currentPayPeriod < endTimeSpan)
-        //    {
-        //        payPeriodCounter++;
-        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-        //    }
+        //            while (currentPayPeriod<endTimeSpan)
+        //            {
+        //                payPeriodCounter++;
+        //                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //            }
 
-        //    pay *= payPeriodCounter;
-        //    return pay;
-        //}
+        //pay *= payPeriodCounter;
+        //return pay;
+        //        }
 
         //public decimal CalculateExpenseByRateAndTime(TimeRange timeRange, Expense expense)
         //{

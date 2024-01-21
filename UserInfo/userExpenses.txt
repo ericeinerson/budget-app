@@ -1,1 +1,0 @@
-expenseName:wack;amount:1;date:1/20/2024 12:10:15PM;rate:1;amount formatted:$1.00;id:1;

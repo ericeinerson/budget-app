@@ -1,6 +1,7 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
 using BudgetApp.App;
+using BudgetApp;
 
 namespace BudgetApp.UI
 {
@@ -204,6 +205,10 @@ namespace BudgetApp.UI
             {
                 Environment.Exit(1);
             }
+
+            Utilities.PrintMessage("You have successfully logged out.", true);
+            //var budgetApp = new BudgetApp.App.BudgetApp();
+            //budgetApp.Run();
         }
     }
 }

@@ -1,2 +1,1 @@
 categoryName:No Category;amount:0;
-categoryName:thing;amount:1;

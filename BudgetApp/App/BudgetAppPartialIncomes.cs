@@ -10,6 +10,33 @@ namespace BudgetApp.App
 	public partial class BudgetApp
 	{
 
+        private void ProcessIncomeMenuOption()
+        {
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    ViewIncomes();
+                    break;
+                case 2:
+                    AddIncome();
+                    break;
+                case 3:
+                    RemoveIncome();
+                    break;
+                case 4:
+                    // TO DO
+                    Console.WriteLine("Add method for updating income details");
+                    break;
+                case 5:
+                    GoBackToAppScreen();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
+
         public void ViewIncomes()
         {
             ConsoleTable allIncomesTable = new ConsoleTable("Name", "Amount", "Date", "Id", "Category");
