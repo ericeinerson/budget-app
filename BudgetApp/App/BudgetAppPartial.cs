@@ -582,8 +582,19 @@ namespace BudgetApp.App
         public Rate ProcessRateOption()
         {
             AppScreen.DisplayRateOptions();
-            Rate rate = (Validator.Convert<Rate>("a rate"));
+            int rateInt = (Validator.Convert<int>("a rate"));
 
+            if(rateInt == 7)
+            {
+                GoBackToAppScreen();
+            }
+            else if(rateInt == 8)
+            {
+                AppScreen.LogoutProgress();
+                Run();
+            }
+
+            Rate rate = (Rate)rateInt;
             return rate;
         }
 
@@ -605,49 +616,16 @@ namespace BudgetApp.App
 
         #region Methods That Need Organizing/Implementing
 
-        //protected bool PreviewUpdate(decimal amount)
-        //{
-        //    Console.WriteLine("\nSummary");
-        //    Console.WriteLine("-------");
-        //    Console.WriteLine($"{Utilities.FormatAmount(amount)}\n\n");
-        //    Console.WriteLine("");
+        protected bool PreviewUpdate(decimal amount)
+        {
+            Console.WriteLine("\nSummary");
+            Console.WriteLine("-------");
+            Console.WriteLine($"{Utilities.FormatAmount(amount)}\n\n");
+            Console.WriteLine("");
 
-        //    int opt = Validator.Convert<int>("1 to confirm");
-        //    return opt.Equals(1);
-        //}
-
-        //public void InsertTransaction(long _userAccountId, TransactionType _tranType, decimal _tranAmount, string _desc)
-        //{
-        //    //create a new transaction object
-        //    var transaction = new Transaction()
-        //    {
-        //        TransactionId = Utilities.GetTransactionId(),
-        //        UserAccountId = _userAccountId,
-        //        TransactionDate = DateTime.Now,
-        //        TransactionType = _tranType,
-        //        TransactionAmount = _tranAmount,
-        //        Description = _desc
-        //    };
-
-        //    //add transaction object to the list
-        //    _listOfTransactions.Add(transaction);
-        //}
-
-        //public void ViewTransactions()
-        //{
-        //    List<Transaction> filteredTransactionList = _listOfTransactions.Where(t => t.UserAccountId == selectedAccount.Id).ToList();
-
-        //    ConsoleTable consoleTable = new ConsoleTable("Id", "Transaction Date", "Type", "Description", "Amount " + AppScreen.cur);
-
-        //    foreach(Transaction transaction in filteredTransactionList)
-        //    {
-        //        consoleTable.AddRow(transaction.UserAccountId, transaction.TransactionDate, transaction.TransactionType, transaction.Description, transaction.TransactionAmount);
-        //    }
-
-        //    consoleTable.Write();
-        //    Utilities.PrintMessage($"You have {filteredTransactionList.Count} transaction(s)", true);
-
-        //}
+            int opt = Validator.Convert<int>("1 to confirm");
+            return opt.Equals(1);
+        }
         #endregion
     }
 }

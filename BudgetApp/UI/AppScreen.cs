@@ -154,9 +154,10 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Biweekly                   ");
             Console.WriteLine("3. Monthly                    ");
             Console.WriteLine("4. Yearly                     ");
-            Console.WriteLine("5. Inconsistent               ");
+            Console.WriteLine("5. No Rate                    ");
             Console.WriteLine("6. Other                      ");
-            Console.WriteLine("7. Logout                     ");
+            Console.WriteLine("7. Return to App Sceen        ");
+            Console.WriteLine("8. Logout                     ");
 
 
         }

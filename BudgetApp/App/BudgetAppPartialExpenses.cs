@@ -91,66 +91,13 @@ namespace BudgetApp.App
                 }
             }
 
-            return expense;
-        }
-
-        public void CategorizedExpenses()
-        {
-            string viewExpensesOption = Utilities.PromptYesONo("Would you like to view all your expenses?");
-            if(viewExpensesOption == "Y")
+            if(expense == null)
             {
-                ViewExpenses();
+                throw new NullReferenceException();
             }
 
-            //CalculateExpensesForEachRate();
-
-            //Console.WriteLine($"\nSum of weekly expenses: {Utilities.FormatAmount(_weeklyExpenses)}\n");
-            //Console.WriteLine($"\nSum of biweekly expenses: {Utilities.FormatAmount(_biweeklyExpenses)}\n");
-            //Console.WriteLine($"\nSum of monthly expenses: {Utilities.FormatAmount(_monthlyExpenses)}\n");
-            //Console.WriteLine($"\nSum of yearly expenses: {Utilities.FormatAmount(_yearlyExpenses)}\n");
-
-            Utilities.PressEnterToContinue();
-            AppScreen.DisplayExpenseOptions();
-
-            //string chosenExpense = ChooseMonthlyExpense();
-
-            AppScreen.DisplayExpenseUpdateOptions();
-
-            int expenseUpdateOption = ProcessExpenseUpdateOption();
-
-            //switch (expenseUpdateOption)
-            //{
-            //    case 1:
-            //        decimal payOff = PayFullExpense(chosenExpense);
-            //        ProcessExpense(payOff);
-            //        break;
-            //    case 2:
-            //        var expense_amt = Validator.Convert<decimal>("expense amount");
-            //        PayPartialExpense(chosenExpense, expense_amt);
-            //        ProcessExpense(expense_amt);
-            //        break;
-            //    case 3:
-            //        UpdateMonthlyExpenseAmount(chosenExpense);
-            //        break;
-            //    default:
-            //        ProcessExpenseUpdateOption();
-            //        break;
-            //}
-
-            Utilities.PressEnterToContinue();
+            return expense;
         }
-
-        //private decimal CalculateTotalExpenses()
-        //{
-        //    _sumOfAllMonthlyExpenses = 0;
-
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        _sumOfAllMonthlyExpenses += expense.Amount;
-        //    }
-
-        //    return _sumOfAllMonthlyExpenses;
-        //}
 
         public Expense ConstructExpense()
         {
@@ -197,35 +144,9 @@ namespace BudgetApp.App
             expense.AmountFormatted = formattedAmount;
             expense.Rate = rate;
             expense.Date = date;
-            //TO DO OUT OF RANGE WHEN SELECTING Q
-            expense.CategoryId = category.Id;
+            expense.CategoryId = category == null ? 0 : category.Id;
 
             return expense;
-        }
-
-        private int ProcessExpenseUpdateOption()
-        {
-            switch (Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    Console.WriteLine("Pay All/Remaining");
-                    return 1;
-                case 2:
-                    Console.WriteLine("Pay Partial");
-                    return 2;
-                case 3:
-                    Console.WriteLine("You have chosen to update an expense\n\n");
-                    return 3;
-                case 4:
-                    AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.", true);
-                    Run();
-                    return 4;
-                default:
-                    Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessExpenseUpdateOption();
-                    return 0;
-            }
         }
 
         //public string ProcessOtherExpense()
@@ -326,18 +247,13 @@ namespace BudgetApp.App
         //    return "other";
         //}
 
-        private decimal PayFullExpense(string expenseName)
-        {
-            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
-            decimal payment = expense.Amount;
-            expense.Amount = 0;
-            Utilities.PrintMessage($"You have successfully paid off {expenseName}.", true);
-            return payment;
-        }
-
         private void PayPartialExpense(string expenseName, decimal payment)
         {
-            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+            Expense? expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+            if(expense == null)
+            {
+                throw new NullReferenceException();
+            }
             decimal newAmount = expense.Amount - payment;
 
             expense.Amount -= payment;
@@ -346,7 +262,12 @@ namespace BudgetApp.App
 
         private void UpdateMonthlyExpenseAmount(string expenseName)
         {
-            Expense expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+            Expense? expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
+
+            if(expense == null)
+            {
+                throw new NullReferenceException();
+            }
 
             decimal monthlyExpenseAmount = 0;
 
@@ -355,8 +276,6 @@ namespace BudgetApp.App
             expense.Amount = monthlyExpenseAmount;
 
             Console.WriteLine($"The monthly amount for {expenseName} is {Utilities.FormatAmount(monthlyExpenseAmount)}");
-
-            InsertTransaction(selectedAccount.Id, TransactionType.Expense, monthlyExpenseAmount, $"updated expense amount for {expenseName}");
         }
 
         private void ProcessExpense(decimal expense_amt)
@@ -371,57 +290,38 @@ namespace BudgetApp.App
                 return;
             }
 
-            //if (PreviewUpdate(expense_amt) == false)
-            //{
-            //    Utilities.PrintMessage("You have cancelled your action", false);
-            //    return;
-            //}
-
-            InsertTransaction(selectedAccount.Id, TransactionType.Expense, expense_amt, $"paid off expense in full");
+            if (PreviewUpdate(expense_amt) == false)
+            {
+                Utilities.PrintMessage("You have cancelled your action", false);
+                return;
+            }
         }
-        //void CalculateExpensesForEachRate()
-        //{
-        //    _weeklyExpenses = 0;
-        //    _biweeklyExpenses = 0;
-        //    _monthlyExpenses = 0;
-        //    _yearlyExpenses = 0;
+        void CalculateExpensesForEachRate()
+        {
+            decimal _weeklyExpenses = 0;
+            decimal _biweeklyExpenses = 0;
+            decimal _monthlyExpenses = 0;
+            decimal _yearlyExpenses = 0;
 
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        switch (expense.Rate)
-        //        {
-        //            case Rate.Weekly:
-        //                _weeklyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Biweekly:
-        //                _biweeklyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Monthly:
-        //                _monthlyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Yearly:
-        //                _yearlyExpenses += expense.Amount;
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //decimal CalculateExpensesForTimePeriod(TimeRange timeRange)
-        //{
-
-        //    SumOfAllExpenses = 0;
-
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense);
-        //    }
-
-        //    CalculateExpensesForEachRate();
-
-        //    return SumOfAllExpenses;
-        //}
-
-
+            foreach (Expense expense in selectedAccount.ExpenseList)
+            {
+                switch (expense.Rate)
+                {
+                    case Rate.Weekly:
+                        _weeklyExpenses += expense.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        _biweeklyExpenses += expense.Amount;
+                        break;
+                    case Rate.Monthly:
+                        _monthlyExpenses += expense.Amount;
+                        break;
+                    case Rate.Yearly:
+                        _yearlyExpenses += expense.Amount;
+                        break;
+                }
+            }
+        }
     }
 }
 

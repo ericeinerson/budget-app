@@ -93,6 +93,11 @@ namespace BudgetApp.App
                 }
             }
 
+            if (income == null)
+            {
+                throw new NullReferenceException();
+
+            }
             return income;
         }
 
@@ -129,108 +134,33 @@ namespace BudgetApp.App
 
             return income;
         }
-        //public void ManageIncome()
-        //{
-        //    CalculateIncomesForEachRate();
 
-        //    Console.WriteLine($"\nSum of weekly incomes: {Utilities.FormatAmount(weeklyIncomes)}\n");
-        //    Console.WriteLine($"\nSum of biweekly incomes: {Utilities.FormatAmount(biweeklyIncomes)}\n");
-        //    Console.WriteLine($"\nSum of monthly incomes: {Utilities.FormatAmount(monthlyIncomes)}\n");
-        //    Console.WriteLine($"\nSum of yearly incomes: {Utilities.FormatAmount(yearlyIncomes)}\n");
+        void CalculateIncomesForEachRate()
+        {
+            decimal weeklyIncomes = 0;
+            decimal biweeklyIncomes = 0;
+            decimal monthlyIncomes = 0;
+            decimal yearlyIncomes = 0;
 
-        //    Utilities.PressEnterToContinue();
-        //    AppScreen.DisplayIncomeMenu();
-
-        //    ProcessIncomeUpdateOption();
-
-        //    Utilities.PressEnterToContinue();
-        //}
-
-        //void CalculateIncomesForEachRate()
-        //{
-        //    weeklyIncomes = 0;
-        //    biweeklyIncomes = 0;
-        //    monthlyIncomes = 0;
-        //    yearlyIncomes = 0;
-
-        //    foreach (Income income in selectedAccount.IncomeList)
-        //    {
-        //        switch (income.Rate)
-        //        {
-        //            case Rate.Weekly:
-        //                weeklyIncomes += income.Amount;
-        //                break;
-        //            case Rate.Biweekly:
-        //                biweeklyIncomes += income.Amount;
-        //                break;
-        //            case Rate.Monthly:
-        //                monthlyIncomes += income.Amount;
-        //                break;
-        //            case Rate.Yearly:
-        //                yearlyIncomes += income.Amount;
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //private void ProcessIncomeUpdateOption()
-        //{
-        //    switch (Validator.Convert<int>("an option"))
-        //    {
-        //        case 1:
-        //            Console.WriteLine("View Incomes");
-        //            ViewIncome();
-        //            break;
-        //        case 2:
-        //            Console.WriteLine("Add new income");
-        //            AddNewIncome();
-        //            break;
-        //        case 3:
-        //            Console.WriteLine("Update an income\n\n");
-        //            UpdateIncome();
-        //            break;
-        //        case 4:
-        //            AppScreen.LogoutProgress();
-        //            Utilities.PrintMessage("You have successfully logged out.", true);
-        //            Run();
-        //            break;
-        //        default:
-        //            Utilities.PrintMessage("Invalid Option. Try again", false);
-        //            ProcessIncomeUpdateOption();
-        //            break;
-        //    }
-        //}
-
-        //private void ViewIncome()
-        //{
-        //    foreach (Income i in selectedAccount.IncomeList)
-        //    {
-        //        Console.WriteLine($"Income: {i.IncomeName}, Amount: {Utilities.FormatAmount(i.Amount)}, Frequency/Rate: {i.Rate}, Id: {i.Id}");
-        //    }
-        //    Utilities.PressEnterToContinue();
-        //}
-
-        //private void AddNewIncome()
-        //{
-        //    _incomeIdCounter++;
-
-        //    string incomeName = Utilities.GetUserInput("income name");
-        //    decimal incomeAmount = Validator.Convert<decimal>("income amount");
-        //    int monthDeposited = Validator.Convert<int>("month of each deposit");
-        //    int dayDeposited = Validator.Convert<int>("day of each deposit");
-        //    DateTime dateDeposited = new DateTime(DateTime.Now.Year, monthDeposited, dayDeposited);
-        //    AppScreen.DisplayRateOptions();
-        //    Rate incomeRate = ProcessRateOption();
-
-        //    selectedAccount.IncomeList.Add(new Income { IncomeName = incomeName, Amount = incomeAmount, Day = dayDeposited, Month = monthDeposited, Rate = incomeRate, Id = _incomeIdCounter });
-
-        //    ConsoleTable newIncomeTbl = new ConsoleTable("Name", "Amount", "Start Date", "Rate Of Deposit");
-        //    newIncomeTbl.AddRow(incomeName, incomeAmount, dateDeposited.ToString("MMMM dd"), incomeRate);
-        //    newIncomeTbl.Options.EnableCount = false;
-        //    newIncomeTbl.Write();
-
-        //    InsertTransaction(selectedAccount.Id, TransactionType.Income, incomeAmount, $"added new income {incomeName} to list of incomes");
-        //}
+            foreach (Income income in selectedAccount.IncomeList)
+            {
+                switch (income.Rate)
+                {
+                    case Rate.Weekly:
+                        weeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Biweekly:
+                        biweeklyIncomes += income.Amount;
+                        break;
+                    case Rate.Monthly:
+                        monthlyIncomes += income.Amount;
+                        break;
+                    case Rate.Yearly:
+                        yearlyIncomes += income.Amount;
+                        break;
+                }
+            }
+        }
 
         //private Rate ProcessRateOption()
         //{
