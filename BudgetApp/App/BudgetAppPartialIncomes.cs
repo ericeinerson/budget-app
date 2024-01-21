@@ -14,20 +14,24 @@ namespace BudgetApp.App
         {
             switch (Validator.Convert<int>("an option"))
             {
-                case 1:
+                case (int)IncomeOption.ViewIncomes:
                     ViewIncomes();
                     break;
-                case 2:
+                case (int)IncomeOption.AddIncome:
                     AddIncome();
                     break;
-                case 3:
+                case (int)IncomeOption.RemoveIncome:
                     RemoveIncome();
                     break;
-                case 4:
-                    // TO DO
-                    Console.WriteLine("Add method for updating income details");
+                //case 4:
+                //    // TO DO
+                //    Console.WriteLine("Add method for updating income details");
+                //    break;
+                case (int)IncomeOption.Logout:
+                    AppScreen.LogoutProgress();
+                    Run();
                     break;
-                case 5:
+                case (int)IncomeOption.GoBack:
                     GoBackToAppScreen();
                     break;
                 default:

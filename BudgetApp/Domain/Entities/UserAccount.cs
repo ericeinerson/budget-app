@@ -19,11 +19,12 @@ namespace BudgetApp.Domain.Entities
 			Wishlist = new Wishlist();
 			IncomeList = new List<Income>();
 			ExpenseList = new List<Expense>();
+			TransactionCategoryList = new List<TransactionCategory>();
 		}
 		public int Id { get; set; }
 		public string Directory { get; set; }
 		public string Passcode { get; set; }
-		public string? FullName { get; set; }
+		public string FullName { get; set; }
 		public decimal Balance { get; set; }
 		public int TotalLogin { get; set; }
 		public bool IsLocked { get; set; }

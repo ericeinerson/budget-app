@@ -1,5 +1,6 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 
 namespace BudgetApp.App
@@ -7,33 +8,31 @@ namespace BudgetApp.App
 	public partial class BudgetApp
 	{
         private decimal _sumOfAllWishlistExpenses;
-        public void ManageWishList()
-        {
-            AppScreen.DisplayWishlistOptions();
-            ProcessWishlistOption();
-        }
 
-        public void ProcessWishlistOption()
+        public void ProcessWishlistMenuOption()
         {
             switch (Validator.Convert<int>("an option"))
             {
-                case 1:
+                case (int)WishlistOption.ViewWishlist:
                     Console.WriteLine("View Wishlist");
                     ViewWishlist();
                     Utilities.PressEnterToContinue();
                     break;
-                case 2:
+                case (int)WishlistOption.AddWishlistItem:
                     Console.WriteLine("Add Wishlist Item");
                     AddWishlistItem();
                     Utilities.PressEnterToContinue();
                     break;
-                case 3:
+                case (int)WishlistOption.PayForWishlistItem:
                     Console.WriteLine("Pay For Wishlist Item");
                     PayForWishlistItem();
                     break;
-                case 4:
+                case (int)WishlistOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
+                    break;
+                case (int)WishlistOption.GoBack:
+                    GoBackToAppScreen();
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
@@ -75,9 +74,16 @@ namespace BudgetApp.App
             }
 
             int wishListItemId = Validator.Convert<int>("wishlist id");
+
             try
             {
-                WishlistItem selectedItem = selectedAccount.Wishlist.Items.Find(item => item.Id == wishListItemId);
+                WishlistItem? selectedItem = selectedAccount.Wishlist.Items.Find(item => item.Id == wishListItemId);
+
+                if(selectedItem == null)
+                {
+                    throw new NullReferenceException();
+                }
+
                 _sumOfAllWishlistExpenses += selectedItem.Cost;
                 foreach (WishlistItem item in selectedAccount.Wishlist.Items)
                 {

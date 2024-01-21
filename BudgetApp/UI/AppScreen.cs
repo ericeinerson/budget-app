@@ -1,5 +1,7 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.Enums;
+using BudgetApp.Extensions;
 using BudgetApp.App;
 using BudgetApp;
 
@@ -8,8 +10,13 @@ namespace BudgetApp.UI
 	public class AppScreen
 	{
         internal const string cur = "$";
+        AppMenu[] appMenuValues = Enum.GetValues<AppMenu>();
+        ExpenseOption[] expenseOptionValues = Enum.GetValues<ExpenseOption>();
+        IncomeOption[] incomeOptionValues = Enum.GetValues<IncomeOption>();
+        CategoryOption[] categoryOptionValues = Enum.GetValues<CategoryOption>();
+        WishlistOption[] wishlistOptionValues = Enum.GetValues<WishlistOption>();
 
-		internal static void Welcome()
+        internal static void Welcome()
         {
             Console.Clear();
             Console.Title = "My Budget App";
@@ -24,7 +31,7 @@ namespace BudgetApp.UI
         {
             UserAccount tempUserAccount = new UserAccount();
 
-            tempUserAccount.FullName = Validator.Convert<string>("your name.").ToLower();
+            tempUserAccount.FullName = Utilities.GetUserInput("your name.").ToLower();
             tempUserAccount.Passcode = Utilities.GetSecretInput("Enter your passcode.");
 
             return tempUserAccount;
@@ -34,6 +41,23 @@ namespace BudgetApp.UI
         {
             Console.WriteLine("\nChecking name and passcode...");
             Utilities.PrintDotAnimation();
+        }
+
+        internal static void LogoutProgress()
+        {
+            Console.WriteLine("Thank you for using My Budget App.");
+            Utilities.PrintDotAnimation();
+            Console.Clear();
+            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?").ToLower();
+
+            if (logoutOption == "y")
+            {
+                Environment.Exit(1);
+            }
+
+            Utilities.PrintMessage("You have successfully logged out.", true);
+            //var budgetApp = new BudgetApp.App.BudgetApp();
+            //budgetApp.Run();
         }
 
         internal static void PrintLockScreen()
@@ -54,16 +78,13 @@ namespace BudgetApp.UI
         {
             Console.Clear();
             Console.WriteLine("-------My Budget App Menu-------");
-            Console.WriteLine("1. Budget Summary               ");
-            Console.WriteLine("2. Instructions/App Description ");
-            Console.WriteLine("3. Incomes                      ");
-            Console.WriteLine("4. Expenses                     ");
-            Console.WriteLine("5. Categories                   ");
-            Console.WriteLine("6. Logout                       ");
-            //Console.WriteLine("7. Update Balance               ");
-            Console.WriteLine("8. Save Information             ");
-            Console.WriteLine("9. Load Information             ");
+            foreach(AppMenu menuItem in Enum.GetValues<AppMenu>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}",(int)menuItem, menuDescription);
 
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayExpenseOptions()
@@ -71,13 +92,13 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
 
-            Console.WriteLine("1. Show All Expenses                        ");
-            Console.WriteLine("2. Add New Expense                          ");
-            Console.WriteLine("3. Remove Expense                           ");
-            Console.WriteLine("4. Logout                                   ");
-            //Console.WriteLine("                                            ");
-            //Console.WriteLine("                                            ");
+            foreach (ExpenseOption menuItem in Enum.GetValues<ExpenseOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
 
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayCategoryOptions()
@@ -85,10 +106,13 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
 
-            Console.WriteLine("1. Show All Categories                       ");
-            Console.WriteLine("2. Add New Category                          ");
-            Console.WriteLine("3. Remove Category                           ");
-            //Console.WriteLine("4. Logout                                   ");
+            foreach (CategoryOption menuItem in Enum.GetValues<CategoryOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayExpenseUpdateOptions()
@@ -104,27 +128,18 @@ namespace BudgetApp.UI
 
         }
 
-        //internal static void DisplayIncomeOptions()
-        //{
-        //    Console.Clear();
-        //    Console.WriteLine("Select an income to update. \n\n");
-
-        //    Console.WriteLine("1. Paychecks             ");
-        //    Console.WriteLine("2. Taxes                 ");
-        //    Console.WriteLine("3. Other                 ");
-        //    Console.WriteLine("4. Return To Main Menu   ");
-        //    Console.WriteLine("5. Exit App              ");
-        //}
-
         internal static void DisplayWishlistOptions()
         {
             Console.Clear();
             Console.WriteLine("Select a wishlist option. \n\n");
 
-            Console.WriteLine("1. View Wishlist               ");
-            Console.WriteLine("2. Add Wishlist Item           ");
-            Console.WriteLine("3. Make Wishlist Expense       ");
-            Console.WriteLine("4. Logout                      ");
+            foreach (WishlistOption menuItem in Enum.GetValues<WishlistOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayExpenseSummary()
@@ -137,12 +152,13 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an income option.  \n\n");
 
-            Console.WriteLine("1. View Incomes               ");
-            Console.WriteLine("2. Add an Income              ");
-            Console.WriteLine("3. Remove an Income           ");
-            Console.WriteLine("4. Logout                     ");
-            Console.WriteLine("5. Go Back                    ");
-            Console.WriteLine("6. Logout                     ");
+            foreach (IncomeOption menuItem in Enum.GetValues<IncomeOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayRateOptions()
@@ -193,23 +209,6 @@ namespace BudgetApp.UI
         internal static void ViewActivity()
         {
             //Add console table in to display past expenses, incomes, and updates
-        }
-
-        internal static void LogoutProgress()
-        {
-            Console.WriteLine("Thank you for using My Budget App.");
-            Utilities.PrintDotAnimation();
-            Console.Clear();
-            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?").ToLower();
-
-            if (logoutOption == "y")
-            {
-                Environment.Exit(1);
-            }
-
-            Utilities.PrintMessage("You have successfully logged out.", true);
-            //var budgetApp = new BudgetApp.App.BudgetApp();
-            //budgetApp.Run();
         }
     }
 }

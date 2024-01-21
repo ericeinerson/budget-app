@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
 {
-    public partial class BudgetApp : IUserLogin, IUserAccountActions, ITransaction
+    public partial class BudgetApp : IUserLogin, ITransaction
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new UserAccount();
@@ -76,7 +76,6 @@ namespace BudgetApp.App
             #endregion
 
             //_listOfTransactions = new List<Transaction>();
-            //_incomeIdCounter = selectedAccount.IncomeList.Count;
         }
 
         #region Check Passcode
@@ -87,6 +86,7 @@ namespace BudgetApp.App
             {
                 UserAccount inputAccount = AppScreen.UserLoginForm();
                 AppScreen.LoginProgress();
+                
                 foreach (UserAccount account in userAccountList!)
                 {
                     selectedAccount = account;
@@ -132,7 +132,7 @@ namespace BudgetApp.App
             switch (Validator.Convert<int>("an option."))
             {
                 case (int)AppMenu.BudgetSummary:
-                    BudgetSummary();
+                    ProcessBudgetSummaryOption();
                     break;
                 case (int)AppMenu.Instructions:
                     DisplayInstructions();
@@ -146,6 +146,9 @@ namespace BudgetApp.App
                     break;
                 case (int)AppMenu.Categories:
                     ProcessCategoryOption();
+                    break;
+                case (int)AppMenu.Wishlist:
+                    ProcessWishlistOption();
                     break;
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
@@ -176,15 +179,6 @@ namespace BudgetApp.App
             ProcessAppMenuOption();
         }
 
-        #region Budget Summary
-        public void BudgetSummary()
-        {
-            AppScreen.DisplayBudgetSummaryOptions();
-            ProcessBudgetSummaryMenu();
-        }
-
-        
-
         private void ProcessExpenseOption()
         {
             AppScreen.DisplayExpenseOptions();
@@ -203,29 +197,10 @@ namespace BudgetApp.App
             ProcessCategoryMenuOption();
         }
 
-        private void ProcessBudgetSummaryMenu()
+        public void ProcessWishlistOption()
         {
-            switch(Validator.Convert<int>("a budget summary option"))
-            {
-                //case 1:
-                //    ShowBudgetForCurrentMonthAndYear();
-                //    break;
-                //case 2:
-                //    ShowBudgetForOtherTimeRange();
-                //    break;
-                case 3:
-                    ViewTransactions();
-                    break;
-                case 4:
-                    AppScreen.LogoutProgress();
-                    Utilities.PrintMessage("You have successfully logged out.", true);
-                    Run();
-                    break;
-                case 5:
-                    AppScreen.DisplayAppMenu();
-                    ProcessAppMenuOption();
-                    break;
-            }
+            AppScreen.DisplayWishlistOptions();
+            ProcessWishlistMenuOption();
         }
 
         //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
@@ -557,8 +532,6 @@ namespace BudgetApp.App
 
         }
 
-        #endregion
-
         #region Instructions
         private void DisplayInstructions()
         {
@@ -570,49 +543,16 @@ namespace BudgetApp.App
         }
         #endregion
 
-        #region Update Balance
-        public void UpdateBalance()
-        {
-            Console.WriteLine("Please enter your balance");
-            //_currentBalance = Validator.Convert<decimal>("current balance");
-            //Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
-
-        }
-
         public Rate ProcessRateOption()
         {
             AppScreen.DisplayRateOptions();
+
             int rateInt = (Validator.Convert<int>("a rate"));
 
-            if(rateInt == 7)
-            {
-                GoBackToAppScreen();
-            }
-            else if(rateInt == 8)
-            {
-                AppScreen.LogoutProgress();
-                Run();
-            }
+            var rate = (Rate)rateInt;
 
-            Rate rate = (Rate)rateInt;
             return rate;
         }
-
-        public void Incomes()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InsertTransaction(long _userAccountId, TransactionType _updateType, decimal _updateAmount, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ViewTransactions()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
 
         #region Methods That Need Organizing/Implementing
 

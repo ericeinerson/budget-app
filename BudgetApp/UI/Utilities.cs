@@ -5,6 +5,8 @@ using BudgetApp.Domain.Entities;
 using System.Collections.Generic;
 using BudgetApp.UI;
 using BudgetApp;
+using BudgetApp.Domain.Enums;
+using System.ComponentModel;
 
 namespace BudgetApp.UI
 {

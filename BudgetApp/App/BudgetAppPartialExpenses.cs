@@ -13,20 +13,24 @@ namespace BudgetApp.App
         {
             switch (Validator.Convert<int>("an option"))
             {
-                case 1:
+                case (int)ExpenseOption.ViewExpenses:
                     ViewExpenses();
                     break;
-                case 2:
+                case (int)ExpenseOption.AddExpense:
                     AddExpense();
                     break;
-                case 3:
+                case (int)ExpenseOption.RemoveExpense:
                     RemoveExpense();
                     break;
-                case 4:
-                    // TO DO
-                    Console.WriteLine("Add method for updating expense details");
+                //case (int)ExpenseOption.UpdateExpense:
+                //    // TO DO
+                //    Console.WriteLine("Add method for updating expense details");
+                //    break;
+                case (int)ExpenseOption.Logout:
+                    AppScreen.LogoutProgress();
+                    Run();
                     break;
-                case 5:
+                case (int)ExpenseOption.GoBack:
                     GoBackToAppScreen();
                     break;
                 default:

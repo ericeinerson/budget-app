@@ -1,5 +1,6 @@
 ﻿using System;
 using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
 
@@ -11,21 +12,21 @@ namespace BudgetApp.App
         {
             switch (Validator.Convert<int>("an option"))
             {
-                case 1:
+                case (int)CategoryOption.ViewCategories:
                     ViewTransactionCategories();
                     break;
-                case 2:
+                case (int)CategoryOption.AddCategory:
                     AddTransactionCategory();
                     break;
-                case 3:
+                case (int)CategoryOption.RemoveCategory:
                     RemoveTransactionCategory();
                     break;
-                case 4:
-                    GoBackToAppScreen();
-                    break;
-                case 5:
+                case (int)CategoryOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
+                    break;
+                case (int)CategoryOption.GoBack:
+                    GoBackToAppScreen();
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
