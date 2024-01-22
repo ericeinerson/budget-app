@@ -11,6 +11,8 @@ namespace BudgetApp.Domain.Enums
         AddExpense,
         [Description("Remove Expense")]
         RemoveExpense,
+        [Description("Update An Expense's Details")]
+        UpdateExpenseDetails,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]

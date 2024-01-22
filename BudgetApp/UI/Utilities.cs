@@ -12,13 +12,13 @@ namespace BudgetApp.UI
 {
 	public static class Utilities
 	{
-        private static string basicUserInfoFileName = $"userInfo.txt";
-        private static string expensesInfoFileName = "userExpenses.txt";
-        private static string incomesInfoFileName = "userIncomes.txt";
-        private static string categoriesInfoFileName = "userCategories.txt";
-        private static string wishlistInfoFileName = "userWishlist.txt";
+        private static readonly string basicUserInfoFileName = $"userInfo.txt";
+        private static readonly string expensesInfoFileName = "userExpenses.txt";
+        private static readonly string incomesInfoFileName = "userIncomes.txt";
+        private static readonly string categoriesInfoFileName = "userCategories.txt";
+        private static readonly string wishlistInfoFileName = "userWishlist.txt";
 
-        private static CultureInfo culture = new CultureInfo("EN-US");
+        private static readonly CultureInfo culture = new("EN-US");
         private static long transactionId;
 
         public static long GetTransactionId()
@@ -30,7 +30,6 @@ namespace BudgetApp.UI
         {
             bool isPrompt = true;
             string asterics = string.Empty;
-            int astericsCounter = 0;
 
             StringBuilder input = new StringBuilder();
 
@@ -159,16 +158,15 @@ namespace BudgetApp.UI
             if (File.Exists(expensesPath))
             {
                 string[] expensesAsString = File.ReadAllLines(expensesPath);
-                var expensesSplits = new List<string>();
 
                 for (int i = 0; i < expensesAsString.Length; i++)
                 {
-                    expensesSplits = expensesAsString[i].Split(';').ToList<string>();
+                    List<string>? expensesSplits = expensesAsString[i].Split(';').ToList();
 
                     string expenseName = expensesSplits[0].Substring(expensesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[1].Substring(expensesSplits[1].IndexOf(':') + 1));
                     DateTime date = DateTime.Parse(expensesSplits[2].Substring(expensesSplits[2].IndexOf(':') + 1));
-                    Domain.Enums.Rate rate = (Domain.Enums.Rate)int.Parse(expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1));
+                    Rate rate = (Rate)int.Parse(expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1));
                     string amountFormatted = expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
                    
@@ -186,16 +184,15 @@ namespace BudgetApp.UI
             if (File.Exists(incomesPath))
             {
                 string[] incomesAsString = File.ReadAllLines(incomesPath);
-                var incomesSplits = new List<string>();
 
                 for (int i = 0; i < incomesAsString.Length; i++)
                 {
-                    incomesSplits = incomesAsString[i].Split(';').ToList<string>();
+                    List<string>? incomesSplits = incomesAsString[i].Split(';').ToList();
 
                     string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
                     DateTime date = DateTime.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
-                    Domain.Enums.Rate rate = (Domain.Enums.Rate)int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
+                    Rate rate = (Rate)int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
                     string amountFormatted = incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
 
@@ -213,11 +210,10 @@ namespace BudgetApp.UI
             if (File.Exists(categoriesPath))
             {
                 string[] categoriesAsString = File.ReadAllLines(categoriesPath);
-                var categoriesSplits = new List<string>();
 
                 for (int i = 0; i < categoriesAsString.Length; i++)
                 {
-                    categoriesSplits = categoriesAsString[i].Split(';').ToList<string>();
+                    List<string>? categoriesSplits = categoriesAsString[i].Split(';').ToList();
 
                     string categoryName = categoriesSplits[0].Substring(categoriesSplits[0].IndexOf(':') + 1);
                     int id = int.Parse(categoriesSplits[1].Substring(categoriesSplits[1].IndexOf(':') + 1));
@@ -232,11 +228,10 @@ namespace BudgetApp.UI
             if (File.Exists(wishlistPath))
             {
                 string[] wishlistAsString = File.ReadAllLines(wishlistPath);
-                string[] wishlistSplits = new string[6];
 
                 for (int i = 0; i < wishlistAsString.Length; i++)
                 {
-                    wishlistSplits = wishlistAsString[i].Split(';');
+                    string[] wishlistSplits = wishlistAsString[i].Split(';');
 
                     string item = wishlistSplits[0].Substring(wishlistSplits[0].IndexOf(':') + 1);
                     decimal cost = decimal.Parse(wishlistSplits[1].Substring(wishlistSplits[1].IndexOf(':') + 1));
@@ -378,30 +373,28 @@ namespace BudgetApp.UI
                     break;
                 }
 
-                Utilities.PrintMessage("Invalid entry. Try again", false, true);
+                PrintMessage("Invalid entry. Try again", false, true);
                 continue;
             }
             return response;
         }
 
-        static bool IsLeapYear(int year)
-        {
-            if ((year % 400 == 0) ||
-               (year % 100 != 0) &&
-               (year % 4 == 0))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        //static bool IsLeapYear(int year)
+        //{
+        //    if ((year % 400 == 0) ||
+        //       (year % 100 != 0) &&
+        //       (year % 4 == 0))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public static DateTime ConstructDate()
         {
-            var date = new DateTime();
-
             int month = Validator.Convert<int>("month transaction is done");
             var longerMonths = new int[7] { 1, 3, 5, 7, 8, 10, 12 };
             var shorterMonths = new int[4] { 4, 6, 9, 11 };
@@ -433,7 +426,7 @@ namespace BudgetApp.UI
             {
                 throw new ArgumentOutOfRangeException("day");
             }
-            date = new DateTime(year, month, day);
+            var date = new DateTime(year, month, day);
 
             return date;
         }

@@ -1,34 +1,26 @@
 ﻿using System;
+using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 
 namespace BudgetApp.App
 {
 	public partial class BudgetApp
 	{
-        public void ProcessBudgetSummaryOption()
-        {
-            AppScreen.DisplayBudgetSummaryOptions();
-            ProcessBudgetSummaryMenuOption();
-        }
-
         private void ProcessBudgetSummaryMenuOption()
         {
             switch (Validator.Convert<int>("a budget summary option"))
             {
-                //case 1:
-                //    ShowBudgetForCurrentMonthAndYear();
-                //    break;
-                //case 2:
-                //    ShowBudgetForOtherTimeRange();
-                //    break;
-                //case 3:
-                //    ViewTransactions();
-                //    break;
-                case 8:
+                case (int)BudgetSummaryOption.ViewCurrentBalance:
+                    ViewBalance();
+                    break;
+                case (int)BudgetSummaryOption.UpdateCurrentBalance:
+                    UpdateBalance();
+                    break;
+                case (int)BudgetSummaryOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
                     break;
-                case 9:
+                case (int)BudgetSummaryOption.GoBack:
                     GoBackToAppScreen();
                     break;
                 default:
@@ -38,12 +30,19 @@ namespace BudgetApp.App
             }
         }
 
+        public void ViewBalance()
+        {
+            Console.WriteLine(selectedAccount.Balance);
+            Utilities.PressEnterToContinue();
+        }
+
         public void UpdateBalance()
         {
-            Console.WriteLine("Please enter your balance");
+            var _balance = Validator.Convert<decimal>("updated balance");
+            selectedAccount.Balance = _balance;
+            Console.WriteLine(_balance);
             //_currentBalance = Validator.Convert<decimal>("current balance");
             //Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
-
         }
     }
 }

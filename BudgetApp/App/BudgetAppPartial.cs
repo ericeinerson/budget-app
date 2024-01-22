@@ -14,10 +14,7 @@ namespace BudgetApp.App
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new UserAccount();
-        private int incomeId = 0;
-        private int expenseId = 0;
-        private int wishlistId = 0;
-
+        
         public void Run()
         {
             AppScreen.Welcome();
@@ -44,7 +41,8 @@ namespace BudgetApp.App
                 ExpenseList = new List<Expense>(),
                 Wishlist = new Wishlist(),
                 IncomeList = new List<Income>(),
-                TransactionCategoryList = new List<TransactionCategory>() { new TransactionCategory() { Name = "No Category", Id = 0 } }
+                TransactionCategoryList = new List<TransactionCategory>() { new TransactionCategory() { Name = "No Category", Id = 0 } },
+                IncomeId = 0
             };
 
             userAccountList = new List<UserAccount>
@@ -75,7 +73,6 @@ namespace BudgetApp.App
             };
             #endregion
 
-            //_listOfTransactions = new List<Transaction>();
         }
 
         #region Check Passcode
@@ -201,6 +198,12 @@ namespace BudgetApp.App
         {
             AppScreen.DisplayWishlistOptions();
             ProcessWishlistMenuOption();
+        }
+
+        public void ProcessBudgetSummaryOption()
+        {
+            AppScreen.DisplayBudgetSummaryOptions();
+            ProcessBudgetSummaryMenuOption();
         }
 
         //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
@@ -443,7 +446,7 @@ namespace BudgetApp.App
 
         public int CalculateTransactionCounter(DateTime endTimeSpan, Rate rate)
         {
-            DateTime firstPayPeriod = new DateTime(DateTime.Now.Year, 1, 5);
+            DateTime firstPayPeriod = new(DateTime.Now.Year, 1, 5);
             DateTime currentPayPeriod = firstPayPeriod;
             int payPeriodCounter = 0;
             int daysBetweenIntervals;
@@ -526,11 +529,6 @@ namespace BudgetApp.App
 
         //    Utilities.PressEnterToContinue();
         //}
-
-        private void ShowPreviousTransactions()
-        {
-
-        }
 
         #region Instructions
         private void DisplayInstructions()

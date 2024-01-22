@@ -16,6 +16,9 @@ namespace BudgetApp.Domain.Entities
 			IsLocked = true;
 			TotalExpenses = 0;
 			TotalIncomes = 0;
+			IncomeId = 0;
+			ExpenseId = 0;
+			WishlistId = 0;
 			Wishlist = new Wishlist();
 			IncomeList = new List<Income>();
 			ExpenseList = new List<Expense>();
@@ -30,6 +33,9 @@ namespace BudgetApp.Domain.Entities
 		public bool IsLocked { get; set; }
 		public decimal TotalExpenses { get; set; }
 		public decimal TotalIncomes { get; set; }
+		public int IncomeId { get; set; }
+		public int ExpenseId { get; set; }
+		public int WishlistId { get; set; }
 		public Wishlist Wishlist {get;set;}
 		public List<Income> IncomeList { get; set; }
         public List<Expense> ExpenseList { get; set; }

@@ -7,6 +7,7 @@ namespace BudgetApp.Domain.Entities
         public Income()
         {
             IncomeName = "test name";
+            AmountFormatted = "$0.00";
         }
         public string IncomeName { get; set; }
         public decimal Amount { get; set; }

@@ -96,6 +96,11 @@ namespace BudgetApp.App
                 }
             }
 
+            if(category == null)
+            {
+                throw new NullReferenceException();
+            }
+
             return category;
         }
 
@@ -155,6 +160,11 @@ namespace BudgetApp.App
                     Utilities.PrintMessage("Category not found. Please try again", false, true);
                     categoryProperty = Console.ReadLine();
                 }
+            }
+
+            if(category == null)
+            {
+                throw new NullReferenceException();
             }
 
             return category;

@@ -108,8 +108,8 @@ namespace BudgetApp.App
         public Income ConstructIncome()
         {
             Income income = new Income();
-            incomeId++;
-            int id = incomeId;
+            selectedAccount.IncomeId++;
+            int id = selectedAccount.IncomeId;
             string name = Utilities.GetUserInput("income name");
             decimal amount = Validator.Convert<decimal>("income amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
@@ -128,7 +128,7 @@ namespace BudgetApp.App
                 date = Utilities.ConstructDate();
             }
 
-            income.Id = incomeId;
+            income.Id = id;
             income.IncomeName = name;
             income.Amount = amount;
             income.AmountFormatted = formattedAmount;
@@ -166,34 +166,6 @@ namespace BudgetApp.App
             }
         }
 
-        //private Rate ProcessRateOption()
-        //{
-        //    switch (Validator.Convert<int>("an option"))
-        //    {
-        //        case 1:
-        //            Console.WriteLine("Weekly");
-        //            return Rate.Weekly;
-        //        case 2:
-        //            Console.WriteLine("Biweekly");
-        //            return Rate.Biweekly;
-        //        case 3:
-        //            Console.WriteLine("Monthly");
-        //            return Rate.Monthly;
-        //        case 4:
-        //            Console.WriteLine("Yearly");
-        //            return Rate.Yearly;
-        //        case 5:
-        //            AppScreen.LogoutProgress();
-        //            Utilities.PrintMessage("You have successfully logged out.", true);
-        //            Run();
-        //            return Rate.Other;
-        //        default:
-        //            Utilities.PrintMessage("Invalid Option. Try again", false);
-        //            ProcessIncomeUpdateOption();
-        //            return Rate.Other;
-        //    }
-        //}
-
         //private void UpdateIncome()
         //{
         //    int selectedIncomeId = Validator.Convert<int>("Enter Id of income to update");
@@ -208,11 +180,6 @@ namespace BudgetApp.App
         //    }
         //    AppScreen.DisplayIncomeUpdateOptions();
         //    ProcessIncomeChangeOption(selectedIncomeId, GetSelectedAccount());
-        //}
-
-        //private UserAccount GetSelectedAccount()
-        //{
-        //    return selectedAccount;
         //}
 
         //private void ProcessIncomeChangeOption(int id, UserAccount selectedAccount)
@@ -259,21 +226,6 @@ namespace BudgetApp.App
         //    CalculateIncomesForEachRate();
 
         //    return allIncomes;
-        //}
-
-        //decimal CalculateExpensesForTimePeriod(TimeRange timeRange, DateTime endTime)
-        //{
-
-        //    SumOfAllExpenses = 0;
-
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense, endTime);
-        //    }
-
-        //    CalculateExpensesForEachRate();
-
-        //    return SumOfAllExpenses;
         //}
 
         //decimal CalculateIncomesForTimePeriod(TimeRange timeRange)

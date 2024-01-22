@@ -22,10 +22,9 @@ namespace BudgetApp.App
                 case (int)ExpenseOption.RemoveExpense:
                     RemoveExpense();
                     break;
-                //case (int)ExpenseOption.UpdateExpense:
-                //    // TO DO
-                //    Console.WriteLine("Add method for updating expense details");
-                //    break;
+                case (int)ExpenseOption.UpdateExpenseDetails:
+                    UpdateExpenseDetails();
+                    break;
                 case (int)ExpenseOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
@@ -106,8 +105,8 @@ namespace BudgetApp.App
         public Expense ConstructExpense()
         {
             Expense expense = new Expense();
-            expenseId++;
-            int id = expenseId;
+            selectedAccount.ExpenseId++;
+            int id = selectedAccount.ExpenseId;
             string name = Utilities.GetUserInput("expense name");
             decimal amount = Validator.Convert<decimal>("expense amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
@@ -142,7 +141,7 @@ namespace BudgetApp.App
                 date = Utilities.ConstructDate();
             }
 
-            expense.Id = expenseId;
+            expense.Id = id;
             expense.ExpenseName = name;
             expense.Amount = amount;
             expense.AmountFormatted = formattedAmount;
@@ -153,6 +152,78 @@ namespace BudgetApp.App
             return expense;
         }
 
+        private void UpdateExpenseDetails()
+        {
+            var expense = FindExpense();
+
+            AppScreen.DisplayExpenseUpdateDetails();
+
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    UpdateExpenseAmount(expense);
+                    break;
+                case 2:
+                    UpdateExpenseName(expense);
+                    break;
+                case 3:
+                    UpdateExpenseRate(expense);
+                    break;
+                case 4:
+                    UpdateExpenseDate(expense);
+                    break;
+                case 5:
+                    UpdateExpenseCategory(expense);
+                    break;
+                case 6:
+                    UpdateAllExpenseDetails(expense);
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    UpdateExpenseDetails();
+                    break;
+            }
+        }
+
+        private void UpdateExpenseAmount(Expense expense)
+        {
+            var amount = Validator.Convert<decimal>("new amount");
+            expense.Amount = amount;
+            expense.AmountFormatted = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+        }
+
+        private void UpdateExpenseName(Expense expense)
+        {
+            var name = Utilities.GetUserInput("new name");
+            expense.ExpenseName = name;
+        }
+
+        private void UpdateExpenseRate(Expense expense)
+        {
+            var rate = ProcessRateOption();
+            expense.Rate = rate;
+        }
+
+        private void UpdateExpenseDate(Expense expense)
+        {
+            var date = Utilities.ConstructDate();
+            expense.Date = date;
+        }
+
+        private void UpdateExpenseCategory(Expense expense)
+        {
+            var categoryId = AssignTransactionCategory().Id;
+            expense.CategoryId = categoryId;
+        }
+
+        private void UpdateAllExpenseDetails(Expense expense)
+        {
+            UpdateExpenseAmount(expense);
+            UpdateExpenseName(expense);
+            UpdateExpenseRate(expense);
+            UpdateExpenseDate(expense);
+            UpdateExpenseCategory(expense);
+        }
         //public string ProcessOtherExpense()
         //{
         //    Console.WriteLine("Would you like to add a new category (Y/N)?\n");
@@ -326,6 +397,22 @@ namespace BudgetApp.App
                 }
             }
         }
+
+        //decimal CalculateExpensesForTimePeriod(TimeRange timeRange, DateTime endTime)
+        //{
+
+        //    SumOfAllExpenses = 0;
+
+        //    foreach (Expense expense in selectedAccount.ExpenseList)
+        //    {
+        //        SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense, endTime);
+        //    }
+
+        //    CalculateExpensesForEachRate();
+
+        //    return SumOfAllExpenses;
+        //}
+
     }
 }
 

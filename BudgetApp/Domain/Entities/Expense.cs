@@ -8,6 +8,7 @@ namespace BudgetApp.Domain.Entities
         public Expense()
         {
             ExpenseName = "test name";
+            AmountFormatted = "$0.00";
         }
         public int Id { get; set; }
         public string ExpenseName { get; set; }

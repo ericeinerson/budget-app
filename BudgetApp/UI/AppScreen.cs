@@ -10,11 +10,6 @@ namespace BudgetApp.UI
 	public class AppScreen
 	{
         internal const string cur = "$";
-        AppMenu[] appMenuValues = Enum.GetValues<AppMenu>();
-        ExpenseOption[] expenseOptionValues = Enum.GetValues<ExpenseOption>();
-        IncomeOption[] incomeOptionValues = Enum.GetValues<IncomeOption>();
-        CategoryOption[] categoryOptionValues = Enum.GetValues<CategoryOption>();
-        WishlistOption[] wishlistOptionValues = Enum.GetValues<WishlistOption>();
 
         internal static void Welcome()
         {
@@ -29,10 +24,11 @@ namespace BudgetApp.UI
 
         internal static UserAccount UserLoginForm()
         {
-            UserAccount tempUserAccount = new UserAccount();
-
-            tempUserAccount.FullName = Utilities.GetUserInput("your name.").ToLower();
-            tempUserAccount.Passcode = Utilities.GetSecretInput("Enter your passcode.");
+            UserAccount tempUserAccount = new()
+            {
+                FullName = Utilities.GetUserInput("your name.").ToLower(),
+                Passcode = Utilities.GetSecretInput("Enter your passcode.")
+            };
 
             return tempUserAccount;
         }
@@ -128,6 +124,19 @@ namespace BudgetApp.UI
 
         }
 
+        internal static void DisplayExpenseUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Amount                                   ");
+            Console.WriteLine("2. Name                                     ");
+            Console.WriteLine("3. Rate                                     ");
+            Console.WriteLine("4. Date                                     ");
+            Console.WriteLine("5. Category                                 ");
+            Console.WriteLine("6. All                                      ");
+        }
+
         internal static void DisplayWishlistOptions()
         {
             Console.Clear();
@@ -142,9 +151,18 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayExpenseSummary()
+        internal static void DisplayBudgetSummaryOptions()
         {
-            //Add console table in to display expenses
+            Console.Clear();
+            Console.WriteLine("Select a budget summary option. \n\n");
+
+            foreach (BudgetSummaryOption menuItem in Enum.GetValues<BudgetSummaryOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayIncomeOptions()
@@ -166,16 +184,13 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select a rate option. \n\n");
 
-            Console.WriteLine("1. Weekly                     ");
-            Console.WriteLine("2. Biweekly                   ");
-            Console.WriteLine("3. Monthly                    ");
-            Console.WriteLine("4. Yearly                     ");
-            Console.WriteLine("5. No Rate                    ");
-            Console.WriteLine("6. Other                      ");
-            Console.WriteLine("7. Return to App Sceen        ");
-            Console.WriteLine("8. Logout                     ");
+            foreach (Rate menuItem in Enum.GetValues<Rate>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
 
-
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayIncomeUpdateOptions()
@@ -187,18 +202,6 @@ namespace BudgetApp.UI
             Console.WriteLine("2. Amount                           ");
             Console.WriteLine("3. Rate                             ");
             Console.WriteLine("4. Logout                           ");
-        }
-
-        internal static void DisplayBudgetSummaryOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an option. \n\n                        ");
-
-            Console.WriteLine("1. Budget Summary For Current Month And Year  ");
-            Console.WriteLine("2. Budget Summary At Specified Future Date    ");
-            Console.WriteLine("3. View Previous Transactions                 ");
-            Console.WriteLine("4. Logout                                     ");
-            Console.WriteLine("5. App Menu                                   ");
         }
 
         internal static void DisplayBudgetSummary()
