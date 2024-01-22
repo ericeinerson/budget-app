@@ -11,6 +11,8 @@ namespace BudgetApp.Domain.Enums
         AddCategory,
         [Description("Remove Category")]
         RemoveCategory,
+        [Description("Update Category Details")]
+        UpdateCategoryDetails,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]

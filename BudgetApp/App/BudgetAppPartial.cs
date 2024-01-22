@@ -543,13 +543,26 @@ namespace BudgetApp.App
 
         public Rate ProcessRateOption()
         {
-            AppScreen.DisplayRateOptions();
+            string isRepeating = Utilities.PromptYesOrNo("Is this a repeating transaction?");
 
-            int rateInt = (Validator.Convert<int>("a rate"));
+            if (isRepeating == "y")
+            {
+                AppScreen.DisplayRateOptions();
 
-            var rate = (Rate)rateInt;
+                int rateInt = (Validator.Convert<int>("a rate"));
 
-            return rate;
+                var rate = (Rate)rateInt;
+
+                return rate;
+            }
+            else if(isRepeating == "n")
+            {
+                return Rate.NoRate;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
         #region Methods That Need Organizing/Implementing

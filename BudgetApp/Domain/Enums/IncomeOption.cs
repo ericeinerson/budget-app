@@ -11,6 +11,8 @@ namespace BudgetApp.Domain.Enums
         AddIncome,
         [Description("Remove Income")]
         RemoveIncome,
+        [Description("Update Income Details")]
+        UpdateIncomeDetails,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]

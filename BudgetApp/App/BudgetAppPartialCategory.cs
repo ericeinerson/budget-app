@@ -21,6 +21,9 @@ namespace BudgetApp.App
                 case (int)CategoryOption.RemoveCategory:
                     RemoveTransactionCategory();
                     break;
+                case (int)CategoryOption.UpdateCategoryDetails:
+                    UpdateCategoryeDetails();
+                    break;
                 case (int)CategoryOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
@@ -30,7 +33,7 @@ namespace BudgetApp.App
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
+                    ProcessCategoryMenuOption();
                     break;
             }
         }
@@ -168,6 +171,62 @@ namespace BudgetApp.App
             }
 
             return category;
+        }
+
+        private TransactionCategory FindCategory()
+        {
+            TransactionCategory? category = null;
+
+            while (category == null)
+            {
+                string categoryName = Utilities.GetUserInput("income name. If not known, enter n to skip or a to exit to app menu").ToLower();
+                if (categoryName == "a")
+                {
+                    break;
+                }
+                category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Name.ToLower() == categoryName.ToLower());
+                if (categoryName == "n")
+                {
+                    int categoryId = Validator.Convert<int>("category id");
+                    category = selectedAccount.TransactionCategoryList.FirstOrDefault(c => c.Id == categoryId);
+                }
+
+                if (category == null)
+                {
+                    Utilities.PrintMessage("Sorry, category not found. Please try again", false, false);
+                }
+            }
+
+            if (category == null)
+            {
+                throw new NullReferenceException();
+
+            }
+            return category;
+        }
+
+        private void UpdateCategoryeDetails()
+        {
+            var category = FindCategory();
+
+            AppScreen.DisplayCategoryUpdateDetails();
+
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    UpdateCategoryName(category);
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    UpdateIncomeDetails();
+                    break;
+            }
+        }
+
+        private void UpdateCategoryName(TransactionCategory category)
+        {
+            var name = Utilities.GetUserInput("new name");
+            category.Name = name;
         }
     }
 }

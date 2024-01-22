@@ -1,0 +1,2 @@
+incomeName:i1;amount:11;date:1/1/0001 12:00:00AM;rate:3;amount formatted:$11.00;id:1;category id:0;
+incomeName:whoopsinc;amount:343;date:1/21/2024 9:41:32PM;rate:3;amount formatted:$343.00;id:2;category id:1;

@@ -23,10 +23,9 @@ namespace BudgetApp.App
                 case (int)IncomeOption.RemoveIncome:
                     RemoveIncome();
                     break;
-                //case 4:
-                //    // TO DO
-                //    Console.WriteLine("Add method for updating income details");
-                //    break;
+                case (int)IncomeOption.UpdateIncomeDetails:
+                    UpdateIncomeDetails();
+                    break;
                 case (int)IncomeOption.Logout:
                     AppScreen.LogoutProgress();
                     Run();
@@ -137,6 +136,79 @@ namespace BudgetApp.App
             income.CategoryId = category.Id;
 
             return income;
+        }
+
+        private void UpdateIncomeDetails()
+        {
+            var income = FindIncome();
+
+            AppScreen.DisplayIncomeUpdateDetails();
+
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    UpdateIncomeAmount(income);
+                    break;
+                case 2:
+                    UpdateIncomeName(income);
+                    break;
+                case 3:
+                    UpdateIncomeRate(income);
+                    break;
+                case 4:
+                    UpdateIncomeDate(income);
+                    break;
+                case 5:
+                    UpdateIncomeCategory(income);
+                    break;
+                case 6:
+                    UpdateAllIncomeDetails(income);
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    UpdateIncomeDetails();
+                    break;
+            }
+        }
+
+        private void UpdateIncomeAmount(Income income)
+        {
+            var amount = Validator.Convert<decimal>("new amount");
+            income.Amount = amount;
+            income.AmountFormatted = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
+        }
+
+        private void UpdateIncomeName(Income income)
+        {
+            var name = Utilities.GetUserInput("new name");
+            income.IncomeName = name;
+        }
+
+        private void UpdateIncomeRate(Income income)
+        {
+            var rate = ProcessRateOption();
+            income.Rate = rate;
+        }
+
+        private void UpdateIncomeDate(Income income)
+        {
+            var date = Utilities.ConstructDate();
+            income.Date = date;
+        }
+
+        private void UpdateIncomeCategory(Income income)
+        {
+            var categoryId = AssignTransactionCategory().Id;
+            income.CategoryId = categoryId;
+        }
+
+        private void UpdateAllIncomeDetails(Income income)
+        {
+            UpdateIncomeAmount(income);
+            UpdateIncomeName(income);
+            UpdateIncomeRate(income);
+            UpdateIncomeDate(income);
+            UpdateIncomeCategory(income);
         }
 
         void CalculateIncomesForEachRate()

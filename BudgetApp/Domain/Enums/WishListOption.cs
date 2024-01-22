@@ -11,6 +11,8 @@ namespace BudgetApp.Domain.Enums
         AddWishlistItem,
         [Description("Pay For Wishlist Item")]
         PayForWishlistItem,
+        [Description("Update Item Details")]
+        UpdateItemDetails,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]

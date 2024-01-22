@@ -1,0 +1,2 @@
+expenseName:e1;amount:2;date:1/21/2024 9:41:07PM;rate:4;amount formatted:$2.00;id:1;category id:0;
+expenseName:stuffex;amount:56;date:12/12/2001 12:00:00AM;rate:5;amount formatted:$56.00;id:2;category id:2;

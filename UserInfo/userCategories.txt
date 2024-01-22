@@ -1,1 +1,3 @@
 categoryName:No Category;amount:0;
+categoryName:whoops;amount:1;
+categoryName:stuuff;amount:2;

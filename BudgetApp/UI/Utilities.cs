@@ -70,7 +70,6 @@ namespace BudgetApp.UI
             }
             return input.ToString();
         }
-        
 
         public static void PrintMessage(string msg, bool success, bool next = false)
         {
@@ -146,6 +145,10 @@ namespace BudgetApp.UI
                 int totalLogin = int.Parse(userAccountInfoSplits[4].Substring(userAccountInfoSplits[4].IndexOf(':') + 1));
                 decimal balance = decimal.Parse(userAccountInfoSplits[5].Substring(userAccountInfoSplits[5].IndexOf(':') + 1));
                 string directory = userAccountInfoSplits[6].Substring(userAccountInfoSplits[6].IndexOf(':') + 1);
+                int incomeId = int.Parse(userAccountInfoSplits[7].Substring(userAccountInfoSplits[7].IndexOf(':') + 1));
+                int expenseId = int.Parse(userAccountInfoSplits[8].Substring(userAccountInfoSplits[8].IndexOf(':') + 1));
+                int wishlistId = int.Parse(userAccountInfoSplits[9].Substring(userAccountInfoSplits[9].IndexOf(':') + 1));
+
 
                 userAccount.FullName = fullName;
                 userAccount.Passcode = passcode;
@@ -154,6 +157,9 @@ namespace BudgetApp.UI
                 userAccount.TotalLogin = totalLogin;
                 userAccount.Balance = balance;
                 userAccount.Directory = directory;
+                userAccount.IncomeId = incomeId;
+                userAccount.ExpenseId = expenseId;
+                userAccount.WishlistId = wishlistId;
             }
             if (File.Exists(expensesPath))
             {
@@ -169,7 +175,8 @@ namespace BudgetApp.UI
                     Rate rate = (Rate)int.Parse(expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1));
                     string amountFormatted = expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
-                   
+                    int categoryId = int.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
+
                     userAccount.ExpenseList.Add(new Expense()
                     {
                         ExpenseName = expenseName,
@@ -177,7 +184,8 @@ namespace BudgetApp.UI
                         Date = date,
                         Rate = rate,
                         AmountFormatted = amountFormatted,
-                        Id = id
+                        Id = id,
+                        CategoryId = categoryId
                     });
                 }
             }
@@ -195,6 +203,7 @@ namespace BudgetApp.UI
                     Rate rate = (Rate)int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
                     string amountFormatted = incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
+                    int categoryId = int.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
 
                     userAccount.IncomeList.Add(new Income()
                     {
@@ -203,7 +212,8 @@ namespace BudgetApp.UI
                         Date = date,
                         Rate = rate,
                         AmountFormatted = amountFormatted,
-                        Id = id
+                        Id = id,
+                        CategoryId = categoryId
                     });
                 }
             }
@@ -270,6 +280,10 @@ namespace BudgetApp.UI
             userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
             userInfoSB.Append($"balance:{userAccount.Balance};");
             userInfoSB.Append($"directory:{userAccount.Directory};");
+            userInfoSB.Append($"income id:{userAccount.IncomeId};");
+            userInfoSB.Append($"expense id:{userAccount.ExpenseId};");
+            userInfoSB.Append($"wishlist id:{userAccount.WishlistId};");
+
             userInfoSB.Append(Environment.NewLine);
 
             foreach (Expense e in userAccount.ExpenseList)
@@ -280,6 +294,7 @@ namespace BudgetApp.UI
                 expensesSB.Append($"rate:{(int)e.Rate};");
                 expensesSB.Append($"amount formatted:{e.AmountFormatted};");
                 expensesSB.Append($"id:{e.Id};");
+                expensesSB.Append($"category id:{e.CategoryId};");
                 expensesSB.Append(Environment.NewLine);
             }
             foreach (Income i in userAccount.IncomeList)
@@ -290,6 +305,7 @@ namespace BudgetApp.UI
                 incomesSB.Append($"rate:{(int)i.Rate};");
                 incomesSB.Append($"amount formatted:{i.AmountFormatted};");
                 incomesSB.Append($"id:{i.Id};");
+                incomesSB.Append($"category id:{i.CategoryId};");
                 incomesSB.Append(Environment.NewLine);
             }
             foreach (TransactionCategory c in userAccount.TransactionCategoryList)
@@ -314,7 +330,6 @@ namespace BudgetApp.UI
             File.WriteAllText(wishlistPath, wishlistSB.ToString());
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Saved user info successfully!");
-
         }
 
         public static void CheckForExistingUserFile(UserAccount userAccount)
@@ -327,6 +342,8 @@ namespace BudgetApp.UI
             bool existingIncomesFileFound = File.Exists(incomesPath);
             string wishlistPath = $"{userAccount.Directory}{wishlistInfoFileName}";
             bool existingWishlistFileFound = File.Exists(wishlistPath);
+            string categoryPath = $"{userAccount.Directory}{categoriesInfoFileName}";
+            bool existingCategoryFileFound = File.Exists(categoryPath);
 
             if (existingBasicUserInfoFileFound)
             {
@@ -345,6 +362,12 @@ namespace BudgetApp.UI
             {
                 Console.WriteLine("Existing file for wishlist found");
             }
+
+            if (existingCategoryFileFound)
+            {
+                Console.WriteLine("Existing file for categories found");
+
+            }
             if (!Directory.Exists(userAccount.Directory))
             {
                 Directory.CreateDirectory(userAccount.Directory);
@@ -354,7 +377,7 @@ namespace BudgetApp.UI
             }
         }
 
-        public static string PromptYesONo(string prompt)
+        public static string PromptYesOrNo(string prompt)
         {
             Console.Clear();
             string response = string.Empty;

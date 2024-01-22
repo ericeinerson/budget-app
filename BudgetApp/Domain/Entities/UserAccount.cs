@@ -14,8 +14,6 @@ namespace BudgetApp.Domain.Entities
 			Balance = 0;
 			TotalLogin = 0;
 			IsLocked = true;
-			TotalExpenses = 0;
-			TotalIncomes = 0;
 			IncomeId = 0;
 			ExpenseId = 0;
 			WishlistId = 0;

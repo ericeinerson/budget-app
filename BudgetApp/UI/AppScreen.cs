@@ -44,7 +44,7 @@ namespace BudgetApp.UI
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
             Console.Clear();
-            string logoutOption = Utilities.PromptYesONo("Would you like to exit the app?").ToLower();
+            string logoutOption = Utilities.PromptYesOrNo("Would you like to exit the app?").ToLower();
 
             if (logoutOption == "y")
             {
@@ -137,6 +137,50 @@ namespace BudgetApp.UI
             Console.WriteLine("6. All                                      ");
         }
 
+        internal static void DisplayIncomeUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Amount                                   ");
+            Console.WriteLine("2. Name                                     ");
+            Console.WriteLine("3. Rate                                     ");
+            Console.WriteLine("4. Date                                     ");
+            Console.WriteLine("5. Category                                 ");
+            Console.WriteLine("6. All                                      ");
+        }
+
+        internal static void DisplayWishlistUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Item                                     ");
+            Console.WriteLine("2. Cost                                     ");
+            Console.WriteLine("3. Priority                                 ");
+            Console.WriteLine("4. All                                      ");
+        }
+
+        internal static void DisplayItemUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an item update option.   \n\n");
+
+            Console.WriteLine("1. Name                             ");
+            Console.WriteLine("2. Cost                             ");
+            Console.WriteLine("3. Priority                         ");
+            Console.WriteLine("4. All                              ");
+        }
+
+        internal static void DisplayCategoryUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Name                                     ");
+            
+        }
+
         internal static void DisplayWishlistOptions()
         {
             Console.Clear();
@@ -191,22 +235,6 @@ namespace BudgetApp.UI
 
                 Console.WriteLine(menuLine);
             }
-        }
-
-        internal static void DisplayIncomeUpdateOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an income update option. \n\n");
-
-            Console.WriteLine("1. Name                             ");
-            Console.WriteLine("2. Amount                           ");
-            Console.WriteLine("3. Rate                             ");
-            Console.WriteLine("4. Logout                           ");
-        }
-
-        internal static void DisplayBudgetSummary()
-        {
-            //Add console table in to display budget summary
         }
 
         internal static void ViewActivity()
