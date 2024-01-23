@@ -1,9 +1,6 @@
-﻿using System;
-using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.Extensions;
-using BudgetApp.App;
-using BudgetApp;
 
 namespace BudgetApp.UI
 {

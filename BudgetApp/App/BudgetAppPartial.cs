@@ -1,12 +1,7 @@
-﻿using System;
-using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Entities.Interfaces;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
-using BudgetApp.Domain;
-using ConsoleTables;
-using System.Reflection.Emit;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
 {
@@ -150,9 +145,6 @@ namespace BudgetApp.App
                 case (int)AppMenu.Logout:
                     AppScreen.LogoutProgress();
                     Run();
-                    break;
-                case (int)AppMenu.UpdateBalance:
-                    UpdateBalance();
                     break;
                 case (int)AppMenu.SaveInfo:
                     Utilities.SaveUserInformation(selectedAccount);
@@ -579,5 +571,7 @@ namespace BudgetApp.App
         }
         #endregion
     }
+
+    // TODO: Add logic to do time-span-based calculations with budget summary, expenses, incomes, categories, and wishlist
 }
 

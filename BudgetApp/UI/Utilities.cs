@@ -1,12 +1,7 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using BudgetApp.Domain.Entities;
-using System.Collections.Generic;
-using BudgetApp.UI;
-using BudgetApp;
 using BudgetApp.Domain.Enums;
-using System.ComponentModel;
 
 namespace BudgetApp.UI
 {
@@ -31,7 +26,7 @@ namespace BudgetApp.UI
             bool isPrompt = true;
             string asterics = string.Empty;
 
-            StringBuilder input = new StringBuilder();
+            StringBuilder input = new();
 
             while (true)
             {
@@ -115,7 +110,7 @@ namespace BudgetApp.UI
 
         public static string FormatAmount(decimal amt)
         {
-            return String.Format(culture, "{0:C2}", amt);
+            return string.Format(culture, "{0:C2}", amt);
         }
 
         public static UserAccount LoadUserInformation(UserAccount userAccount)
@@ -138,16 +133,16 @@ namespace BudgetApp.UI
                     userAccountInfoSplits = userAccountInfoAsString[i].Split(';').ToList<string>();
                 }
 
-                string fullName = userAccountInfoSplits[0].Substring(userAccountInfoSplits[0].IndexOf(':') + 1);
-                string passcode = userAccountInfoSplits[1].Substring(userAccountInfoSplits[1].IndexOf(':') + 1);
-                int id = int.Parse(userAccountInfoSplits[2].Substring(userAccountInfoSplits[2].IndexOf(':') + 1));
-                bool isLocked = bool.Parse(userAccountInfoSplits[3].Substring(userAccountInfoSplits[3].IndexOf(':') + 1));
-                int totalLogin = int.Parse(userAccountInfoSplits[4].Substring(userAccountInfoSplits[4].IndexOf(':') + 1));
-                decimal balance = decimal.Parse(userAccountInfoSplits[5].Substring(userAccountInfoSplits[5].IndexOf(':') + 1));
-                string directory = userAccountInfoSplits[6].Substring(userAccountInfoSplits[6].IndexOf(':') + 1);
-                int incomeId = int.Parse(userAccountInfoSplits[7].Substring(userAccountInfoSplits[7].IndexOf(':') + 1));
-                int expenseId = int.Parse(userAccountInfoSplits[8].Substring(userAccountInfoSplits[8].IndexOf(':') + 1));
-                int wishlistId = int.Parse(userAccountInfoSplits[9].Substring(userAccountInfoSplits[9].IndexOf(':') + 1));
+                string fullName = userAccountInfoSplits[0][(userAccountInfoSplits[0].IndexOf(':') + 1)..];
+                string passcode = userAccountInfoSplits[1][(userAccountInfoSplits[1].IndexOf(':') + 1)..];
+                int id = int.Parse(userAccountInfoSplits[2][(userAccountInfoSplits[2].IndexOf(':') + 1)..]);
+                bool isLocked = bool.Parse(userAccountInfoSplits[3].AsSpan(userAccountInfoSplits[3].IndexOf(':') + 1));
+                int totalLogin = int.Parse(userAccountInfoSplits[4][(userAccountInfoSplits[4].IndexOf(':') + 1)..]);
+                decimal balance = decimal.Parse(userAccountInfoSplits[5][(userAccountInfoSplits[5].IndexOf(':') + 1)..]);
+                string directory = userAccountInfoSplits[6][(userAccountInfoSplits[6].IndexOf(':') + 1)..];
+                int incomeId = int.Parse(userAccountInfoSplits[7][(userAccountInfoSplits[7].IndexOf(':') + 1)..]);
+                int expenseId = int.Parse(userAccountInfoSplits[8][(userAccountInfoSplits[8].IndexOf(':') + 1)..]);
+                int wishlistId = int.Parse(userAccountInfoSplits[9][(userAccountInfoSplits[9].IndexOf(':') + 1)..]);
 
 
                 userAccount.FullName = fullName;
@@ -263,15 +258,15 @@ namespace BudgetApp.UI
         public static void SaveUserInformation(UserAccount userAccount)
         {
             string userInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
-            StringBuilder userInfoSB = new StringBuilder();
+            StringBuilder userInfoSB = new();
             string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
-            StringBuilder expensesSB = new StringBuilder();
+            StringBuilder expensesSB = new();
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
-            StringBuilder incomesSB = new StringBuilder();
+            StringBuilder incomesSB = new();
             string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
-            StringBuilder categoriesSB = new StringBuilder();
+            StringBuilder categoriesSB = new();
             string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
-            StringBuilder wishlistSB = new StringBuilder();
+            StringBuilder wishlistSB = new();
 
             userInfoSB.Append($"fullName:{userAccount.FullName};");
             userInfoSB.Append($"passcode:{userAccount.Passcode.ToString()};");

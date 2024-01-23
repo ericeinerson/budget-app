@@ -1,6 +1,7 @@
 ﻿using System;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
+using ConsoleTables;
 
 namespace BudgetApp.App
 {
@@ -32,7 +33,12 @@ namespace BudgetApp.App
 
         public void ViewBalance()
         {
-            Console.WriteLine(selectedAccount.Balance);
+            var balanceTable = new ConsoleTable("Current Balance");
+            var formattedBalance = Utilities.FormatAmount(selectedAccount.Balance);
+            balanceTable.AddRow(formattedBalance);
+
+            balanceTable.Write();
+
             Utilities.PressEnterToContinue();
         }
 
