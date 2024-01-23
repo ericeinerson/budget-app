@@ -19,8 +19,6 @@ namespace BudgetApp.Domain.Enums
         Wishlist,
         [Description("Logout")]
         Logout,
-        [Description("Update Balance")]
-        UpdateBalance,
         [Description("Save Info")]
         SaveInfo,
         [Description("Load Info")]

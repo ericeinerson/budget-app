@@ -1,5 +1,4 @@
-﻿using System;
-using BudgetApp.Domain.Enums;
+﻿using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
 
