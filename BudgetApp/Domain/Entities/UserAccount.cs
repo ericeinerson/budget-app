@@ -18,9 +18,9 @@ namespace BudgetApp.Domain.Entities
 			ExpenseId = 0;
 			WishlistId = 0;
 			Wishlist = new Wishlist();
-			IncomeList = new List<Income>();
-			ExpenseList = new List<Expense>();
-			TransactionCategoryList = new List<TransactionCategory>();
+			IncomeList = new List<Transaction>();
+			ExpenseList = new List<Transaction>();
+			CategoryList = new List<Category>();
 		}
 		public int Id { get; set; }
 		public string Directory { get; set; }
@@ -35,9 +35,10 @@ namespace BudgetApp.Domain.Entities
 		public int ExpenseId { get; set; }
 		public int WishlistId { get; set; }
 		public Wishlist Wishlist {get;set;}
-		public List<Income> IncomeList { get; set; }
-        public List<Expense> ExpenseList { get; set; }
-		public List<TransactionCategory> TransactionCategoryList { get; set; }
+		public List<Transaction> IncomeList { get; set; }
+        public List<Transaction> ExpenseList { get; set; }
+		public List<Category> CategoryList { get; set; }
+		public DateTime LastLoginDate { get; set; }
     }
 }
 

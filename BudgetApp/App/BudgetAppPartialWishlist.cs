@@ -31,8 +31,7 @@ namespace BudgetApp.App
                     UpdateItemDetails();
                     break;
                 case (int)WishlistOption.Logout:
-                    AppScreen.LogoutProgress();
-                    Run();
+                    LogoutProgress();
                     break;
                 case (int)WishlistOption.GoBack:
                     GoBackToAppScreen();

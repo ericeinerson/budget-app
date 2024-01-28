@@ -1,9 +1,9 @@
 ﻿using System;
 namespace BudgetApp.Domain.Entities
 {
-	public class TransactionCategory
+	public class Category
 	{
-		public TransactionCategory()
+		public Category()
 		{
 			Name = "test category";
 		}

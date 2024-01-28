@@ -36,23 +36,6 @@ namespace BudgetApp.UI
             Utilities.PrintDotAnimation();
         }
 
-        internal static void LogoutProgress()
-        {
-            Console.WriteLine("Thank you for using My Budget App.");
-            Utilities.PrintDotAnimation();
-            Console.Clear();
-            string logoutOption = Utilities.PromptYesOrNo("Would you like to exit the app?").ToLower();
-
-            if (logoutOption == "y")
-            {
-                Environment.Exit(1);
-            }
-
-            Utilities.PrintMessage("You have successfully logged out.", true);
-            //var budgetApp = new BudgetApp.App.BudgetApp();
-            //budgetApp.Run();
-        }
-
         internal static void PrintLockScreen()
         {
             Console.Clear();
@@ -80,12 +63,12 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayExpenseOptions()
+        internal static void DisplayTransactionOptions()
         {
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
 
-            foreach (ExpenseOption menuItem in Enum.GetValues<ExpenseOption>())
+            foreach (TransactionOption menuItem in Enum.GetValues<TransactionOption>())
             {
                 var menuDescription = menuItem.GetDescription();
                 var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
@@ -108,33 +91,7 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayExpenseUpdateOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an update option. \n\n");
-
-            Console.WriteLine("1. Pay All/Remaining                        ");
-            Console.WriteLine("2. Pay Partial                              ");
-            Console.WriteLine("3. Enter new amount                         ");
-            Console.WriteLine("4. Logout                                   ");
-            Console.WriteLine("5. Add to expense list                      ");
-
-        }
-
-        internal static void DisplayExpenseUpdateDetails()
-        {
-            Console.Clear();
-            Console.WriteLine("Select a detail to update. \n\n");
-
-            Console.WriteLine("1. Amount                                   ");
-            Console.WriteLine("2. Name                                     ");
-            Console.WriteLine("3. Rate                                     ");
-            Console.WriteLine("4. Date                                     ");
-            Console.WriteLine("5. Category                                 ");
-            Console.WriteLine("6. All                                      ");
-        }
-
-        internal static void DisplayIncomeUpdateDetails()
+        internal static void DisplayTransactionUpdateDetails()
         {
             Console.Clear();
             Console.WriteLine("Select a detail to update. \n\n");
@@ -198,20 +155,6 @@ namespace BudgetApp.UI
             Console.WriteLine("Select a budget summary option. \n\n");
 
             foreach (BudgetSummaryOption menuItem in Enum.GetValues<BudgetSummaryOption>())
-            {
-                var menuDescription = menuItem.GetDescription();
-                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
-
-                Console.WriteLine(menuLine);
-            }
-        }
-
-        internal static void DisplayIncomeOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an income option.  \n\n");
-
-            foreach (IncomeOption menuItem in Enum.GetValues<IncomeOption>())
             {
                 var menuDescription = menuItem.GetDescription();
                 var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);

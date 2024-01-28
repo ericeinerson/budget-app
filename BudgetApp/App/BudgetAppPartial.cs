@@ -15,8 +15,18 @@ namespace BudgetApp.App
             AppScreen.Welcome();
             CheckUserPasscode();
             AppScreen.WelcomeCustomer(selectedAccount.FullName!);
+            bool isSavedData = Utilities.CheckForExistingUserFile(selectedAccount);
+            if (isSavedData)
+            {
+                Utilities.SaveUserInfoOnlyWithNewLoginTime(selectedAccount);
+                PromptUserToLoadData();
+            }
+            else
+            {
+                Utilities.PrintMessage("No save data found", true, true);
+            }
+            Utilities.PressEnterToContinue();
             AppScreen.DisplayAppMenu();
-            Utilities.CheckForExistingUserFile(selectedAccount);
             ProcessAppMenuOption();
         }
 
@@ -33,11 +43,13 @@ namespace BudgetApp.App
                 IsLocked = false,
                 TotalLogin = 0,
                 TotalIncomes = 0,
-                ExpenseList = new List<Expense>(),
+                ExpenseList = new List<Transaction>(),
+                ExpenseId = 0,
                 Wishlist = new Wishlist(),
-                IncomeList = new List<Income>(),
-                TransactionCategoryList = new List<TransactionCategory>() { new TransactionCategory() { Name = "No Category", Id = 0 } },
-                IncomeId = 0
+                IncomeList = new List<Transaction>(),
+                CategoryList = new List<Category>() { new Category() { Name = "No Category", Id = 0 } },
+                IncomeId = 0,
+                LastLoginDate = new DateTime(2019, 02, 01)
             };
 
             userAccountList = new List<UserAccount>
@@ -131,10 +143,10 @@ namespace BudgetApp.App
                     Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.Incomes:
-                    ProcessIncomeOption();
+                    ProcessTransactionOption(TransactionType.Income);
                     break;
                 case (int)AppMenu.Expenses:
-                    ProcessExpenseOption();
+                    ProcessTransactionOption(TransactionType.Expense);
                     break;
                 case (int)AppMenu.Categories:
                     ProcessCategoryOption();
@@ -143,8 +155,8 @@ namespace BudgetApp.App
                     ProcessWishlistOption();
                     break;
                 case (int)AppMenu.Logout:
-                    AppScreen.LogoutProgress();
-                    Run();
+                    PromptUserToSave();
+                    LogoutProgress();
                     break;
                 case (int)AppMenu.SaveInfo:
                     Utilities.SaveUserInformation(selectedAccount);
@@ -168,16 +180,10 @@ namespace BudgetApp.App
             ProcessAppMenuOption();
         }
 
-        private void ProcessExpenseOption()
+        private void ProcessTransactionOption(TransactionType transactionType)
         {
-            AppScreen.DisplayExpenseOptions();
-            ProcessExpenseMenuOption();
-        }
-
-        private void ProcessIncomeOption()
-        {
-            AppScreen.DisplayIncomeOptions();
-            ProcessIncomeMenuOption();
+            AppScreen.DisplayTransactionOptions();
+            ProcessTransactionMenuOption(transactionType);
         }
 
         private void ProcessCategoryOption()
@@ -197,6 +203,67 @@ namespace BudgetApp.App
             AppScreen.DisplayBudgetSummaryOptions();
             ProcessBudgetSummaryMenuOption();
         }
+
+        public void PromptUserToSave()
+        {
+            string prompt = Utilities.PromptYesOrNo("Would you like to save your data?");
+
+            if (prompt == "y")
+            {
+                Utilities.SaveUserInformation(selectedAccount);
+            }
+            else if (prompt == "n")
+            {
+                return;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+        public void LogoutProgress()
+        {
+            Console.WriteLine("Thank you for using My Budget App.");
+            Utilities.PrintDotAnimation();
+            Console.Clear();
+            //selectedAccount.LastLoginDate = DateTime.Now;
+            string logoutOption = Utilities.PromptYesOrNo("Would you like to exit the app?").ToLower();
+
+            if (logoutOption == "y")
+            {
+                Environment.Exit(1);
+            }
+
+            Utilities.PrintMessage("You have successfully logged out.", true);
+            Run();
+            //var budgetApp = new BudgetApp.App.BudgetApp();
+            //budgetApp.Run();
+        }
+
+        public void PromptUserToLoadData()
+        {
+            string prompt = Utilities.PromptYesOrNo("Would you like to load your saved data? ");
+
+            if (prompt == "y")
+            {
+                selectedAccount = Utilities.LoadUserInformation(selectedAccount);
+            }
+            else if (prompt == "n")
+            {
+                return;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+
+        //public void CreateTransactionsOverTime()
+        //{
+
+        //}
 
         //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
         //{

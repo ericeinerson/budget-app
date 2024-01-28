@@ -17,8 +17,7 @@ namespace BudgetApp.App
                     UpdateBalance();
                     break;
                 case (int)BudgetSummaryOption.Logout:
-                    AppScreen.LogoutProgress();
-                    Run();
+                    LogoutProgress();
                     break;
                 case (int)BudgetSummaryOption.GoBack:
                     GoBackToAppScreen();

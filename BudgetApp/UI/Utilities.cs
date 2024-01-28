@@ -115,6 +115,7 @@ namespace BudgetApp.UI
 
         public static UserAccount LoadUserInformation(UserAccount userAccount)
         {
+            bool isLoaded = false;
             string userAccountInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
             string expensesPath = @$"{userAccount.Directory}{expensesInfoFileName}";
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
@@ -130,7 +131,7 @@ namespace BudgetApp.UI
 
                 for (int i = 0; i < userAccountInfoAsString.Length; i++)
                 {
-                    userAccountInfoSplits = userAccountInfoAsString[i].Split(';').ToList<string>();
+                    userAccountInfoSplits = userAccountInfoAsString[i].Split(';').ToList();
                 }
 
                 string fullName = userAccountInfoSplits[0][(userAccountInfoSplits[0].IndexOf(':') + 1)..];
@@ -143,6 +144,7 @@ namespace BudgetApp.UI
                 int incomeId = int.Parse(userAccountInfoSplits[7][(userAccountInfoSplits[7].IndexOf(':') + 1)..]);
                 int expenseId = int.Parse(userAccountInfoSplits[8][(userAccountInfoSplits[8].IndexOf(':') + 1)..]);
                 int wishlistId = int.Parse(userAccountInfoSplits[9][(userAccountInfoSplits[9].IndexOf(':') + 1)..]);
+                DateTime lastLoginDate = DateTime.Parse(userAccountInfoSplits[10][(userAccountInfoSplits[10].IndexOf(':') + 1)..]);
 
 
                 userAccount.FullName = fullName;
@@ -155,6 +157,17 @@ namespace BudgetApp.UI
                 userAccount.IncomeId = incomeId;
                 userAccount.ExpenseId = expenseId;
                 userAccount.WishlistId = wishlistId;
+                userAccount.LastLoginDate = lastLoginDate;
+
+                if (userAccountInfoAsString.Length > 0)
+                {
+                    PrintMessage("User account loaded!", true, true);
+                    isLoaded = true;
+                }
+                else
+                {
+                    PrintMessage("No user account info found", false, true);
+                }
             }
             if (File.Exists(expensesPath))
             {
@@ -172,9 +185,9 @@ namespace BudgetApp.UI
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
 
-                    userAccount.ExpenseList.Add(new Expense()
+                    userAccount.ExpenseList.Add(new Transaction()
                     {
-                        ExpenseName = expenseName,
+                        Name = expenseName,
                         Amount = amount,
                         Date = date,
                         Rate = rate,
@@ -182,6 +195,15 @@ namespace BudgetApp.UI
                         Id = id,
                         CategoryId = categoryId
                     });
+                }
+                if (expensesAsString.Length > 0)
+                {
+                    PrintMessage("Expenses loaded!", true, true);
+                    isLoaded = true;
+                }
+                else
+                {
+                    PrintMessage("No expenses found", false, true);
                 }
             }
             if (File.Exists(incomesPath))
@@ -200,9 +222,9 @@ namespace BudgetApp.UI
                     int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
 
-                    userAccount.IncomeList.Add(new Income()
+                    userAccount.IncomeList.Add(new Transaction()
                     {
-                        IncomeName = incomeName,
+                        Name = incomeName,
                         Amount = amount,
                         Date = date,
                         Rate = rate,
@@ -210,6 +232,16 @@ namespace BudgetApp.UI
                         Id = id,
                         CategoryId = categoryId
                     });
+                }
+
+                if (incomesAsString.Length > 0)
+                {
+                    PrintMessage("Incomes loaded!", true, true);
+                    isLoaded = true;
+                }
+                else
+                {
+                    PrintMessage("No incomes found", false, true);
                 }
             }
             if (File.Exists(categoriesPath))
@@ -223,11 +255,20 @@ namespace BudgetApp.UI
                     string categoryName = categoriesSplits[0].Substring(categoriesSplits[0].IndexOf(':') + 1);
                     int id = int.Parse(categoriesSplits[1].Substring(categoriesSplits[1].IndexOf(':') + 1));
                     
-                    userAccount.TransactionCategoryList.Add(new TransactionCategory()
+                    userAccount.CategoryList.Add(new Category()
                     {
                         Name = categoryName,
                         Id = id
                     });
+                }
+                if (categoriesAsString.Length > 0)
+                {
+                    PrintMessage("Categories loaded!", true, true);
+                    isLoaded = true;
+                }
+                else
+                {
+                    PrintMessage("No categories found", false, true);
                 }
             }
             if (File.Exists(wishlistPath))
@@ -251,7 +292,26 @@ namespace BudgetApp.UI
                         Priority = priority
                     });
                 }
+                if(wishlistAsString.Length > 0)
+                {
+                    PrintMessage("Wishlist loaded!", true, true);
+                    isLoaded = true;
+                }
+                else
+                {
+                    PrintMessage("No wishlist found", false, true);
+                }
             }
+
+            if (isLoaded)
+            {
+                PrintMessage("User data successfully loaded", true, true);
+            }
+            else
+            {
+                PrintMessage("User data not found", false, true);
+            }
+
             return userAccount;
         }
 
@@ -278,12 +338,13 @@ namespace BudgetApp.UI
             userInfoSB.Append($"income id:{userAccount.IncomeId};");
             userInfoSB.Append($"expense id:{userAccount.ExpenseId};");
             userInfoSB.Append($"wishlist id:{userAccount.WishlistId};");
+            userInfoSB.Append($"last login date:{userAccount.LastLoginDate};");
 
             userInfoSB.Append(Environment.NewLine);
 
-            foreach (Expense e in userAccount.ExpenseList)
+            foreach (Transaction e in userAccount.ExpenseList)
             {
-                expensesSB.Append($"expenseName:{e.ExpenseName};");
+                expensesSB.Append($"expenseName:{e.Name};");
                 expensesSB.Append($"amount:{e.Amount};");
                 expensesSB.Append($"date:{e.Date};");
                 expensesSB.Append($"rate:{(int)e.Rate};");
@@ -292,9 +353,9 @@ namespace BudgetApp.UI
                 expensesSB.Append($"category id:{e.CategoryId};");
                 expensesSB.Append(Environment.NewLine);
             }
-            foreach (Income i in userAccount.IncomeList)
+            foreach (Transaction i in userAccount.IncomeList)
             {
-                incomesSB.Append($"incomeName:{i.IncomeName};");
+                incomesSB.Append($"incomeName:{i.Name};");
                 incomesSB.Append($"amount:{i.Amount};");
                 incomesSB.Append($"date:{i.Date};");
                 incomesSB.Append($"rate:{(int)i.Rate};");
@@ -303,7 +364,7 @@ namespace BudgetApp.UI
                 incomesSB.Append($"category id:{i.CategoryId};");
                 incomesSB.Append(Environment.NewLine);
             }
-            foreach (TransactionCategory c in userAccount.TransactionCategoryList)
+            foreach (Category c in userAccount.CategoryList)
             {
                 categoriesSB.Append($"categoryName:{c.Name};");
                 categoriesSB.Append($"amount:{c.Id};");
@@ -327,8 +388,36 @@ namespace BudgetApp.UI
             Console.WriteLine("Saved user info successfully!");
         }
 
-        public static void CheckForExistingUserFile(UserAccount userAccount)
+        public static void SaveUserInfoOnlyWithNewLoginTime(UserAccount userAccount)
         {
+            DateTime loginDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            userAccount.LastLoginDate = loginDate;
+
+            string userInfoPath = @$"{userAccount.Directory}{basicUserInfoFileName}";
+            StringBuilder userInfoSB = new();
+
+            userInfoSB.Append($"fullName:{userAccount.FullName};");
+            userInfoSB.Append($"passcode:{userAccount.Passcode.ToString()};");
+            userInfoSB.Append($"id:{userAccount.Id};");
+            userInfoSB.Append($"isLocked:{userAccount.IsLocked};");
+            userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
+            userInfoSB.Append($"balance:{userAccount.Balance};");
+            userInfoSB.Append($"directory:{userAccount.Directory};");
+            userInfoSB.Append($"income id:{userAccount.IncomeId};");
+            userInfoSB.Append($"expense id:{userAccount.ExpenseId};");
+            userInfoSB.Append($"wishlist id:{userAccount.WishlistId};");
+            userInfoSB.Append($"last login date:{userAccount.LastLoginDate};");
+            userInfoSB.Append(Environment.NewLine);
+
+            File.WriteAllText(userInfoPath, userInfoSB.ToString());
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"Saved user account info successfully with new login time of {userAccount.LastLoginDate}!");
+        }
+
+        public static bool CheckForExistingUserFile(UserAccount userAccount)
+        {
+            bool isSavedData = false;
             string basicUserInfoPath = $"{userAccount.Directory}{basicUserInfoFileName}.txt";
             bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
             string expensesPath = $"{userAccount.Directory}{expensesInfoFileName}";
@@ -343,34 +432,55 @@ namespace BudgetApp.UI
             if (existingBasicUserInfoFileFound)
             {
                 Console.WriteLine("Existing file for basic user info found");
+                isSavedData = true;
             }
             if (existingExpensesFileFound)
             {
                 Console.WriteLine("Existing file for expenses found");
+                isSavedData = true;
             }
             if (existingIncomesFileFound)
             {
                 Console.WriteLine("Existing file for incomes found");
+                isSavedData = true;
             }
 
             if (existingWishlistFileFound)
             {
                 Console.WriteLine("Existing file for wishlist found");
+                isSavedData = true;
             }
 
             if (existingCategoryFileFound)
             {
                 Console.WriteLine("Existing file for categories found");
+                isSavedData = true;
 
             }
             if (!Directory.Exists(userAccount.Directory))
             {
-                Directory.CreateDirectory(userAccount.Directory);
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("Directory is ready for saving expenses info files");
-                Console.ResetColor();
+                string prompt = PromptYesOrNo("No directory found. Would you like to create a directory?");
+                if (prompt == "y")
+                {
+                    Directory.CreateDirectory(userAccount.Directory);
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Directory is ready for saving expenses info files");
+                    Console.ResetColor();
+                }
+                else if (prompt == "n")
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
+
+            return isSavedData;
         }
+
+
 
         public static string PromptYesOrNo(string prompt)
         {
@@ -448,6 +558,11 @@ namespace BudgetApp.UI
 
             return date;
         }
+
+        //public bool CreatedSinceLastLogin(DateTime lastLoginDate, DateTime transactionDate)
+        //{
+
+        //}
     }
 }
 

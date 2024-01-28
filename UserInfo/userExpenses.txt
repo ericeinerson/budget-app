@@ -1,2 +1,5 @@
 expenseName:e1;amount:2;date:1/21/2024 9:41:07PM;rate:4;amount formatted:$2.00;id:1;category id:0;
 expenseName:stuffex;amount:56;date:12/12/2001 12:00:00AM;rate:5;amount formatted:$56.00;id:2;category id:2;
+expenseName:expense4;amount:234;date:1/23/2024 8:25:11PM;rate:4;amount formatted:$234.00;id:3;category id:1;
+expenseName:expense5;amount:23;date:1/1/0001 12:00:00AM;rate:5;amount formatted:$23.00;id:4;category id:0;
+expenseName:expense6;amount:12345;date:10/10/0010 12:00:00AM;rate:5;amount formatted:$12,345.00;id:1;category id:1;

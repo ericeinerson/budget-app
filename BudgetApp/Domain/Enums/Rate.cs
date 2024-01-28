@@ -1,14 +1,22 @@
 ﻿using System;
+using System.ComponentModel;
+
 namespace BudgetApp.Domain.Enums
 {
 	public enum Rate
 	{
-		Weekly = 1,
-		Biweekly,
-		Monthly,
-		Yearly,
+        [Description("Weekly")]
+        Weekly = 1,
+        [Description("Biweekly")]
+        Biweekly,
+        [Description("Monthly")]
+        Monthly,
+        [Description("Yearly")]
+        Yearly,
+		[Description("No Rate")]
 		NoRate,
-		Other
+        [Description("Other")]
+        Other
 	}
 }
 
