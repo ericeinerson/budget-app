@@ -202,6 +202,7 @@ namespace BudgetApp.App
                 }
             }
         }
+
         public void RemoveTransaction(TransactionType transactionType)
         {
             Transaction transaction = FindTransaction(transactionType);
@@ -245,6 +246,45 @@ namespace BudgetApp.App
             }
 
             return transaction;
+        }
+
+        public void SetFutureTransactionsForNextYear(Transaction transaction)
+        {
+            var transactionListExpenses = selectedAccount.ExpenseList.Select(t =>
+            t.Date >= DateTime.Now.AddYears(-1) || t.Date <= DateTime.Now.AddYears(1));
+
+            var transactionListIncomes = selectedAccount.IncomeList.Select(t =>
+            t.Date >= DateTime.Now.AddYears(-1) || t.Date <= DateTime.Now.AddYears(1));
+
+
+        }
+
+        public void GetDatesForTransactions(Transaction transaction)
+        {
+            var listOfDates = new List<DateTime>();
+
+            var endDay = Validator.Convert<int>("end day");
+            var endMonth = Validator.Convert<int>("end month");
+            var endYear = Validator.Convert<int>("end year");
+
+            var endDate = new DateTime(endYear, endMonth, endDay);
+
+            switch (transaction.Rate)
+            {
+                case Rate.Weekly:
+                    break;
+                case Rate.Biweekly:
+                    break;
+                case Rate.Monthly:
+                    break;
+                case Rate.Yearly:
+                    break;
+            }
+
+            foreach (DateTime date in listOfDates)
+            {
+                Console.WriteLine(date.ToString("MMMM dd, yyyy"));
+            }
         }
 
         public Transaction ConstructTransaction(TransactionType transactionType)
