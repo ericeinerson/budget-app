@@ -21,6 +21,7 @@ namespace BudgetApp.Domain.Entities
 			IncomeList = new List<Transaction>();
 			ExpenseList = new List<Transaction>();
 			CategoryList = new List<Category>();
+			Status = Status.Pending;
 		}
 		public int Id { get; set; }
 		public string Directory { get; set; }
@@ -39,6 +40,7 @@ namespace BudgetApp.Domain.Entities
         public List<Transaction> ExpenseList { get; set; }
 		public List<Category> CategoryList { get; set; }
 		public DateTime LastLoginDate { get; set; }
+		public Status Status { get; set; }
     }
 }
 

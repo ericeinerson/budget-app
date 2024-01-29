@@ -34,7 +34,7 @@ namespace BudgetApp.App
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
+                    ProcessTransactionMenuOption(transactionType);
                     break;
             }
         }
@@ -84,6 +84,124 @@ namespace BudgetApp.App
             Utilities.PrintMessage($"You have succcessfully added {transaction.Name} with a value of {transaction.AmountFormatted}. This transaction will be done on {transaction.Date.ToString("MMMM dd, yyyy")}!", true, false);
         }
 
+        public void VerifyTransactionStatus()
+        {
+            var transactionsPending = new List<Transaction>();
+
+            foreach (Transaction transaction in selectedAccount.ExpenseList)
+            {
+                if (transaction.Date <= DateTime.Now.AddDays(1) && transaction.Status == Status.Pending)
+                {
+                    transactionsPending.Add(transaction);
+                }
+            }
+
+            foreach (Transaction transaction in selectedAccount.IncomeList)
+            {
+                if (transaction.Date <= DateTime.Now.AddDays(1) && transaction.Status == Status.Pending)
+                {
+                    transactionsPending.Add(transaction);
+                }
+            }
+            if (!transactionsPending.Any())
+            {
+                return;
+            }
+
+            Console.WriteLine("Post these expenses?");
+            foreach (Transaction transaction in transactionsPending)
+            {
+                Console.WriteLine($"{transaction.Name}, {transaction.Amount}, {transaction.Date}, {transaction.Id}");
+            }
+            Utilities.PressEnterToContinue();
+
+            AppScreen.DisplayPostingOptions();
+            switch(Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    PostAllTransactions(transactionsPending);
+                    break;
+                case 2:
+                    PostSomeTransactions(transactionsPending);
+                    break;
+                case 3:
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
+
+        public void PostAllTransactions(List<Transaction> transactionsPending)
+        {
+            foreach(Transaction transaction in transactionsPending)
+            {
+                transaction.Status = Status.Posted;
+            }
+        }
+
+        public void PostSomeTransactions(List<Transaction> transactionsPending)
+        {
+            string goThroughEachTransaction = Utilities.PromptYesOrNo("Go through each transaction?");
+
+            if (goThroughEachTransaction == "y")
+            {
+                foreach (Transaction transaction in transactionsPending)
+                {
+                    Console.WriteLine($"{transaction.Name}, {transaction.Amount}, {transaction.Date}, {transaction.Id}");
+                    string prompt = Utilities.PromptYesOrNo("Post this transaction?");
+                    if (prompt == "y")
+                    {
+                        transaction.Status = Status.Posted;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                string selection = string.Empty;
+                Console.WriteLine("Enter transaction id, name, amount, and/or date to post. Press d to exit");
+
+                while (transactionsPending.Any() && selection.ToLower() != "d")
+                {
+
+                    selection = Utilities.GetUserInput("a detail");
+
+                    var transactionFound = transactionsPending.Find(t => t.Name == selection);
+                    if(transactionFound == null)
+                    {
+                        transactionFound = transactionsPending.Find(t => t.Id.ToString() == selection);
+                    }
+                    if (transactionFound == null)
+                    {
+                        transactionFound = transactionsPending.Find(t => t.Amount.ToString() == selection);
+                    }
+                    if (transactionFound == null)
+                    {
+                        transactionFound = transactionsPending.Find(t => t.Date.ToString() == selection);
+                    }
+                    if (transactionFound != null)
+                    {
+                        Console.WriteLine($"{transactionFound.Name}, {transactionFound.Amount}, {transactionFound.Date}, {transactionFound.Id}");
+                        string postTransaction = Utilities.PromptYesOrNo("Post this transaction?");
+                        if(postTransaction == "y")
+                        {
+                            transactionFound.Status = Status.Posted;
+                            transactionsPending.Remove(transactionFound);
+                            Console.WriteLine($"{transactionFound.Name} flipped from pending to posted!");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{transactionFound.Name} remains pending");
+                        }
+                    }
+                }
+            }
+        }
         public void RemoveTransaction(TransactionType transactionType)
         {
             Transaction transaction = FindTransaction(transactionType);
@@ -132,7 +250,7 @@ namespace BudgetApp.App
         public Transaction ConstructTransaction(TransactionType transactionType)
         {
             Transaction transaction = new Transaction();
-            var transactionList = GetTransactionList(transactionType);
+
             int id;
 
             if (transactionType == TransactionType.Expense)
@@ -153,6 +271,7 @@ namespace BudgetApp.App
             decimal amount = Validator.Convert<decimal>("amount");
             string formattedAmount = string.Format(new CultureInfo("en-US"), "{0:c}", amount);
             Category category = AssignTransactionCategory();
+            Status status;
 
             //TEST CODE REMOVE LATER START
             if (category != null)
@@ -183,6 +302,8 @@ namespace BudgetApp.App
                 date = Utilities.ConstructDate();
             }
 
+            status = date > DateTime.Now ? Status.Pending : Status.Posted;
+
             transaction.Id = id;
             transaction.Name = name;
             transaction.Amount = amount;
@@ -190,6 +311,8 @@ namespace BudgetApp.App
             transaction.Rate = rate;
             transaction.Date = date;
             transaction.CategoryId = category == null ? 0 : category.Id;
+            transaction.TransactionType = transactionType;
+            transaction.Status = status;
 
             return transaction;
         }

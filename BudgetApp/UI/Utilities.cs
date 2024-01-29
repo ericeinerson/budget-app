@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net.NetworkInformation;
 using System.Text;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
@@ -184,6 +185,8 @@ namespace BudgetApp.UI
                     string amountFormatted = expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
+                    TransactionType transactionType = (TransactionType)int.Parse(expensesSplits[7].Substring(expensesSplits[7].IndexOf(':') + 1));
+                    Status status = (Status)int.Parse(expensesSplits[8].Substring(expensesSplits[8].IndexOf(':') + 1));
 
                     userAccount.ExpenseList.Add(new Transaction()
                     {
@@ -193,7 +196,9 @@ namespace BudgetApp.UI
                         Rate = rate,
                         AmountFormatted = amountFormatted,
                         Id = id,
-                        CategoryId = categoryId
+                        CategoryId = categoryId,
+                        TransactionType = transactionType,
+                        Status = status
                     });
                 }
                 if (expensesAsString.Length > 0)
@@ -221,6 +226,9 @@ namespace BudgetApp.UI
                     string amountFormatted = incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
+                    TransactionType transactionType = (TransactionType)int.Parse(incomesSplits[7].Substring(incomesSplits[7].IndexOf(':') + 1));
+                    Status status = (Status)int.Parse(incomesSplits[8].Substring(incomesSplits[8].IndexOf(':') + 1));
+
 
                     userAccount.IncomeList.Add(new Transaction()
                     {
@@ -230,7 +238,9 @@ namespace BudgetApp.UI
                         Rate = rate,
                         AmountFormatted = amountFormatted,
                         Id = id,
-                        CategoryId = categoryId
+                        CategoryId = categoryId,
+                        TransactionType = transactionType,
+                        Status = status
                     });
                 }
 
@@ -351,6 +361,8 @@ namespace BudgetApp.UI
                 expensesSB.Append($"amount formatted:{e.AmountFormatted};");
                 expensesSB.Append($"id:{e.Id};");
                 expensesSB.Append($"category id:{e.CategoryId};");
+                expensesSB.Append($"transaction type:{(int)e.TransactionType};");
+                expensesSB.Append($"status:{(int)e.Status};");
                 expensesSB.Append(Environment.NewLine);
             }
             foreach (Transaction i in userAccount.IncomeList)
@@ -362,6 +374,8 @@ namespace BudgetApp.UI
                 incomesSB.Append($"amount formatted:{i.AmountFormatted};");
                 incomesSB.Append($"id:{i.Id};");
                 incomesSB.Append($"category id:{i.CategoryId};");
+                incomesSB.Append($"transaction type:{(int)i.TransactionType};");
+                incomesSB.Append($"status:{(int)i.Status};");
                 incomesSB.Append(Environment.NewLine);
             }
             foreach (Category c in userAccount.CategoryList)
@@ -413,6 +427,7 @@ namespace BudgetApp.UI
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"Saved user account info successfully with new login time of {userAccount.LastLoginDate}!");
+            PressEnterToContinue();
         }
 
         public static bool CheckForExistingUserFile(UserAccount userAccount)
@@ -484,7 +499,6 @@ namespace BudgetApp.UI
 
         public static string PromptYesOrNo(string prompt)
         {
-            Console.Clear();
             string response = string.Empty;
 
             while (response != "y" || response != "n")

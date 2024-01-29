@@ -8,7 +8,7 @@ namespace BudgetApp.App
     public partial class BudgetApp : IUserLogin, ITransaction
     {
         private List<UserAccount>? userAccountList;
-        protected UserAccount selectedAccount = new UserAccount();
+        protected UserAccount selectedAccount = new();
         
         public void Run()
         {
@@ -26,6 +26,7 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("No save data found", true, true);
             }
             Utilities.PressEnterToContinue();
+            VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
@@ -33,7 +34,7 @@ namespace BudgetApp.App
         #region Initialize Data
         public void InitializeData()
         {
-            UserAccount self = new UserAccount()
+            UserAccount self = new()
             {
                 Id = 1,
                 Directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo/",
@@ -43,13 +44,86 @@ namespace BudgetApp.App
                 IsLocked = false,
                 TotalLogin = 0,
                 TotalIncomes = 0,
-                ExpenseList = new List<Transaction>(),
+                ExpenseList = new List<Transaction>() {
+                    new Transaction() {
+                        Amount = 111,
+                        Name = "expense1",
+                        AmountFormatted = "$111",
+                        Rate = Rate.NoRate,
+                        Id = 1,
+                        Date = new DateTime(2020, 12, 15),
+                        CategoryId = 2,
+                        TransactionType = TransactionType.Expense,
+                        Status = Status.Pending
+                    },
+                    new Transaction() {
+                        Amount = 112,
+                        Name = "expense2",
+                        AmountFormatted = "$112",
+                        Rate = Rate.Biweekly,
+                        Id = 2,
+                        Date = new DateTime(2018, 1, 31),
+                        CategoryId = 1,
+                        TransactionType = TransactionType.Expense,
+                        Status = Status.Pending
+                    },
+                    new Transaction() {
+                        Amount = 112,
+                        Name = "expense3",
+                        AmountFormatted = "$131",
+                        Rate = Rate.Monthly,
+                        Id = 3,
+                        Date = new DateTime(1999, 4, 30),
+                        CategoryId = 0,
+                        TransactionType = TransactionType.Expense,
+                        Status = Status.Pending
+                    }
+                },
+                IncomeList = new List<Transaction>() {
+                    new Transaction() {
+                        Amount = 111,
+                        Name = "income1",
+                        AmountFormatted = "$222",
+                        Rate = Rate.Yearly,
+                        Id = 1,
+                        Date = new DateTime(2021, 11, 11),
+                        CategoryId = 2,
+                        TransactionType = TransactionType.Income,
+                        Status = Status.Pending
+                    },
+                    new Transaction() {
+                        Amount = 112,
+                        Name = "income22",
+                        AmountFormatted = "$1122",
+                        Rate = Rate.NoRate,
+                        Id = 0,
+                        Date = new DateTime(2000, 2, 29),
+                        CategoryId = 1,
+                        TransactionType = TransactionType.Income,
+                        Status = Status.Pending
+                    },
+                    new Transaction() {
+                        Amount = 112,
+                        Name = "income3",
+                        AmountFormatted = "$1331",
+                        Rate = Rate.Monthly,
+                        Id = 3,
+                        Date = new DateTime(199, 1, 30),
+                        CategoryId = 0,
+                        TransactionType = TransactionType.Income,
+                        Status = Status.Pending
+                    }
+                },
                 ExpenseId = 0,
                 Wishlist = new Wishlist(),
-                IncomeList = new List<Transaction>(),
-                CategoryList = new List<Category>() { new Category() { Name = "No Category", Id = 0 } },
+                CategoryList = new List<Category>() {
+                    new Category() { Name = "No Category", Id = 0 },
+                    new Category() { Name = "cat1", Id = 1 },
+                    new Category() { Name = "cat2", Id = 2 },
+                },
                 IncomeId = 0,
-                LastLoginDate = new DateTime(2019, 02, 01)
+                LastLoginDate = new DateTime(2019, 02, 01),
+                Status = Status.Pending
             };
 
             userAccountList = new List<UserAccount>

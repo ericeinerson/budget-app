@@ -177,6 +177,16 @@ namespace BudgetApp.UI
             }
         }
 
+        internal static void DisplayPostingOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a posting option. \n\n");
+
+            Console.WriteLine("1. All                              ");
+            Console.WriteLine("2. Some                             ");
+            Console.WriteLine("3. None                             ");
+        }
+
         internal static void ViewActivity()
         {
             //Add console table in to display past expenses, incomes, and updates
