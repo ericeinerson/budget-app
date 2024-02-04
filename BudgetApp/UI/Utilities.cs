@@ -155,9 +155,9 @@ namespace BudgetApp.UI
                 userAccount.TotalLogin = totalLogin;
                 userAccount.Balance = balance;
                 userAccount.Directory = directory;
-                userAccount.IncomeId = incomeId;
-                userAccount.ExpenseId = expenseId;
-                userAccount.WishlistId = wishlistId;
+                userAccount.IncomeIdCounter = incomeId;
+                userAccount.ExpenseIdCounter = expenseId;
+                userAccount.WishlistIdCounter = wishlistId;
                 userAccount.LastLoginDate = lastLoginDate;
 
                 if (userAccountInfoAsString.Length > 0)
@@ -185,20 +185,15 @@ namespace BudgetApp.UI
                     string amountFormatted = expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
-                    TransactionType transactionType = (TransactionType)int.Parse(expensesSplits[7].Substring(expensesSplits[7].IndexOf(':') + 1));
-                    Status status = (Status)int.Parse(expensesSplits[8].Substring(expensesSplits[8].IndexOf(':') + 1));
 
-                    userAccount.ExpenseList.Add(new Transaction()
+                    userAccount.ExpenseList.Add(new Expense()
                     {
                         Name = expenseName,
                         Amount = amount,
-                        Date = date,
+                        StartDate = date,
                         Rate = rate,
-                        AmountFormatted = amountFormatted,
                         Id = id,
                         CategoryId = categoryId,
-                        TransactionType = transactionType,
-                        Status = status
                     });
                 }
                 if (expensesAsString.Length > 0)
@@ -221,26 +216,20 @@ namespace BudgetApp.UI
 
                     string incomeName = incomesSplits[0].Substring(incomesSplits[0].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(incomesSplits[1].Substring(incomesSplits[1].IndexOf(':') + 1));
-                    DateTime date = DateTime.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
+                    DateTime startDate = DateTime.Parse(incomesSplits[2].Substring(incomesSplits[2].IndexOf(':') + 1));
                     Rate rate = (Rate)int.Parse(incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1));
-                    string amountFormatted = incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1);
                     int id = int.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
                     int categoryId = int.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
-                    TransactionType transactionType = (TransactionType)int.Parse(incomesSplits[7].Substring(incomesSplits[7].IndexOf(':') + 1));
-                    Status status = (Status)int.Parse(incomesSplits[8].Substring(incomesSplits[8].IndexOf(':') + 1));
 
 
-                    userAccount.IncomeList.Add(new Transaction()
+                    userAccount.IncomeList.Add(new Income()
                     {
                         Name = incomeName,
                         Amount = amount,
-                        Date = date,
+                        StartDate = startDate,
                         Rate = rate,
-                        AmountFormatted = amountFormatted,
                         Id = id,
                         CategoryId = categoryId,
-                        TransactionType = transactionType,
-                        Status = status
                     });
                 }
 
@@ -345,37 +334,31 @@ namespace BudgetApp.UI
             userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
             userInfoSB.Append($"balance:{userAccount.Balance};");
             userInfoSB.Append($"directory:{userAccount.Directory};");
-            userInfoSB.Append($"income id:{userAccount.IncomeId};");
-            userInfoSB.Append($"expense id:{userAccount.ExpenseId};");
-            userInfoSB.Append($"wishlist id:{userAccount.WishlistId};");
+            userInfoSB.Append($"income id:{userAccount.IncomeIdCounter};");
+            userInfoSB.Append($"expense id:{userAccount.ExpenseIdCounter};");
+            userInfoSB.Append($"wishlist id:{userAccount.WishlistIdCounter};");
             userInfoSB.Append($"last login date:{userAccount.LastLoginDate};");
 
             userInfoSB.Append(Environment.NewLine);
 
-            foreach (Transaction e in userAccount.ExpenseList)
+            foreach (BudgetItem b in userAccount.ExpenseList)
             {
-                expensesSB.Append($"expenseName:{e.Name};");
-                expensesSB.Append($"amount:{e.Amount};");
-                expensesSB.Append($"date:{e.Date};");
-                expensesSB.Append($"rate:{(int)e.Rate};");
-                expensesSB.Append($"amount formatted:{e.AmountFormatted};");
-                expensesSB.Append($"id:{e.Id};");
-                expensesSB.Append($"category id:{e.CategoryId};");
-                expensesSB.Append($"transaction type:{(int)e.TransactionType};");
-                expensesSB.Append($"status:{(int)e.Status};");
+                expensesSB.Append($"expenseName:{b.Name};");
+                expensesSB.Append($"amount:{b.Amount};");
+                expensesSB.Append($"date:{b.StartDate};");
+                expensesSB.Append($"rate:{(int)b.Rate};");
+                expensesSB.Append($"id:{b.Id};");
+                expensesSB.Append($"category id:{b.CategoryId};");
                 expensesSB.Append(Environment.NewLine);
             }
-            foreach (Transaction i in userAccount.IncomeList)
+            foreach (BudgetItem b in userAccount.IncomeList)
             {
-                incomesSB.Append($"incomeName:{i.Name};");
-                incomesSB.Append($"amount:{i.Amount};");
-                incomesSB.Append($"date:{i.Date};");
-                incomesSB.Append($"rate:{(int)i.Rate};");
-                incomesSB.Append($"amount formatted:{i.AmountFormatted};");
-                incomesSB.Append($"id:{i.Id};");
-                incomesSB.Append($"category id:{i.CategoryId};");
-                incomesSB.Append($"transaction type:{(int)i.TransactionType};");
-                incomesSB.Append($"status:{(int)i.Status};");
+                incomesSB.Append($"incomeName:{b.Name};");
+                incomesSB.Append($"amount:{b.Amount};");
+                incomesSB.Append($"date:{b.StartDate};");
+                incomesSB.Append($"rate:{(int)b.Rate};");
+                incomesSB.Append($"id:{b.Id};");
+                incomesSB.Append($"category id:{b.CategoryId};");
                 incomesSB.Append(Environment.NewLine);
             }
             foreach (Category c in userAccount.CategoryList)
@@ -417,9 +400,9 @@ namespace BudgetApp.UI
             userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");
             userInfoSB.Append($"balance:{userAccount.Balance};");
             userInfoSB.Append($"directory:{userAccount.Directory};");
-            userInfoSB.Append($"income id:{userAccount.IncomeId};");
-            userInfoSB.Append($"expense id:{userAccount.ExpenseId};");
-            userInfoSB.Append($"wishlist id:{userAccount.WishlistId};");
+            userInfoSB.Append($"income id:{userAccount.IncomeIdCounter};");
+            userInfoSB.Append($"expense id:{userAccount.ExpenseIdCounter};");
+            userInfoSB.Append($"wishlist id:{userAccount.WishlistIdCounter};");
             userInfoSB.Append($"last login date:{userAccount.LastLoginDate};");
             userInfoSB.Append(Environment.NewLine);
 

@@ -53,7 +53,7 @@ namespace BudgetApp.App
 
         private void AddWishlistItem()
         {
-            selectedAccount.WishlistId++;
+            selectedAccount.WishlistIdCounter++;
             string newItemName = Utilities.GetUserInput("item name");
             decimal newItemCost = Validator.Convert<decimal>("item cost");
             int newItemPriority = Validator.Convert<int>("item priority");
@@ -65,7 +65,7 @@ namespace BudgetApp.App
                     Utilities.PrintMessage($"{item.Item}'s new priority is {item.Priority}", true);
                 }
             }
-            selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = selectedAccount.WishlistId });
+            selectedAccount.Wishlist.Items.Add(new WishlistItem { Item = newItemName, Cost = newItemCost, Priority = newItemPriority, Id = selectedAccount.WishlistIdCounter });
         }
 
         private void PayForWishlistItem()

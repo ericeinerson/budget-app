@@ -26,7 +26,8 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("No save data found", true, true);
             }
             Utilities.PressEnterToContinue();
-            VerifyTransactionStatus();
+            //CreatePendingTransactions();
+            //VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
@@ -43,87 +44,68 @@ namespace BudgetApp.App
                 Balance = 0,
                 IsLocked = false,
                 TotalLogin = 0,
-                TotalIncomes = 0,
-                ExpenseList = new List<Transaction>() {
-                    new Transaction() {
+                ExpenseList = new List<BudgetItem>() {
+                    new Expense() {
                         Amount = 111,
                         Name = "expense1",
-                        AmountFormatted = "$111",
                         Rate = Rate.NoRate,
                         Id = 1,
-                        Date = new DateTime(2020, 12, 15),
+                        StartDate = new DateTime(2020, 12, 15),
                         CategoryId = 2,
-                        TransactionType = TransactionType.Expense,
-                        Status = Status.Pending
                     },
-                    new Transaction() {
+                    new Expense() {
                         Amount = 112,
                         Name = "expense2",
-                        AmountFormatted = "$112",
                         Rate = Rate.Biweekly,
                         Id = 2,
-                        Date = new DateTime(2018, 1, 31),
+                        StartDate = new DateTime(2018, 1, 31),
                         CategoryId = 1,
-                        TransactionType = TransactionType.Expense,
-                        Status = Status.Pending
                     },
-                    new Transaction() {
+                    new Expense() {
                         Amount = 112,
                         Name = "expense3",
-                        AmountFormatted = "$131",
                         Rate = Rate.Monthly,
                         Id = 3,
-                        Date = new DateTime(1999, 4, 30),
+                        StartDate = new DateTime(1999, 4, 30),
                         CategoryId = 0,
-                        TransactionType = TransactionType.Expense,
-                        Status = Status.Pending
                     }
                 },
-                IncomeList = new List<Transaction>() {
-                    new Transaction() {
+                IncomeList = new List<BudgetItem>() {
+                    new Income() {
                         Amount = 111,
                         Name = "income1",
-                        AmountFormatted = "$222",
                         Rate = Rate.Yearly,
                         Id = 1,
-                        Date = new DateTime(2021, 11, 11),
+                        StartDate = new DateTime(2021, 11, 11),
                         CategoryId = 2,
-                        TransactionType = TransactionType.Income,
-                        Status = Status.Pending
                     },
-                    new Transaction() {
+                    new Income() {
                         Amount = 112,
                         Name = "income22",
-                        AmountFormatted = "$1122",
                         Rate = Rate.NoRate,
                         Id = 0,
-                        Date = new DateTime(2000, 2, 29),
+                        StartDate = new DateTime(2000, 2, 29),
                         CategoryId = 1,
-                        TransactionType = TransactionType.Income,
-                        Status = Status.Pending
                     },
-                    new Transaction() {
+                    new Income() {
                         Amount = 112,
                         Name = "income3",
-                        AmountFormatted = "$1331",
                         Rate = Rate.Monthly,
                         Id = 3,
-                        Date = new DateTime(199, 1, 30),
+                        StartDate = new DateTime(199, 1, 30),
                         CategoryId = 0,
-                        TransactionType = TransactionType.Income,
-                        Status = Status.Pending
                     }
                 },
-                ExpenseId = 0,
+                ExpenseIdCounter = 0,
                 Wishlist = new Wishlist(),
                 CategoryList = new List<Category>() {
                     new Category() { Name = "No Category", Id = 0 },
                     new Category() { Name = "cat1", Id = 1 },
                     new Category() { Name = "cat2", Id = 2 },
                 },
-                IncomeId = 0,
+                IncomeIdCounter = 0,
+                TransactionIdCounter = 0,
                 LastLoginDate = new DateTime(2019, 02, 01),
-                Status = Status.Pending
             };
 
             userAccountList = new List<UserAccount>
@@ -137,8 +119,6 @@ namespace BudgetApp.App
                     Balance = 0,
                     IsLocked = false,
                     TotalLogin = 0,
-                    TotalExpenses = 0,
-                    TotalIncomes = 0
                 },
                 new UserAccount
                 {
@@ -148,8 +128,6 @@ namespace BudgetApp.App
                     Balance = 0,
                     IsLocked = false,
                     TotalLogin = 0,
-                    TotalExpenses = 0,
-                    TotalIncomes = 0
                 }
             };
             #endregion
@@ -217,10 +195,10 @@ namespace BudgetApp.App
                     Utilities.PressEnterToContinue();
                     break;
                 case (int)AppMenu.Incomes:
-                    ProcessTransactionOption(TransactionType.Income);
+                    ProcessBudgetItemOption(BudgetItemType.Income);
                     break;
                 case (int)AppMenu.Expenses:
-                    ProcessTransactionOption(TransactionType.Expense);
+                    ProcessBudgetItemOption(BudgetItemType.Expense);
                     break;
                 case (int)AppMenu.Categories:
                     ProcessCategoryOption();
@@ -254,10 +232,10 @@ namespace BudgetApp.App
             ProcessAppMenuOption();
         }
 
-        private void ProcessTransactionOption(TransactionType transactionType)
+        private void ProcessBudgetItemOption(BudgetItemType type)
         {
             AppScreen.DisplayTransactionOptions();
-            ProcessTransactionMenuOption(transactionType);
+            ProcessBudgetItemMenuOption(type);
         }
 
         private void ProcessCategoryOption()
@@ -333,13 +311,88 @@ namespace BudgetApp.App
             }
         }
 
+        //public void CreatePendingTransactions(int daysInFuture)
+        //{
+        //    var dateToMatchTransaction = DateTime.Now;
+
+        //    Console.WriteLine("Enter the date range you'd like to create pending transactions");
+        //    int startDateMonth = Validator.Convert<int>("month of start date");
+        //    int startDateDay = Validator.Convert<int>("day of start date");
+        //    int startDateYear = Validator.Convert<int>("year of start date");
+        //    int endDateMonth = Validator.Convert<int>("month of end date");
+        //    int endDateDay = Validator.Convert<int>("day of end date");
+        //    int endDateYear = Validator.Convert<int>("year of end date");
+
+        //    var startDate = new DateTime(startDateYear, startDateMonth, startDateDay);
+        //    var endDate = new DateTime(endDateYear, endDateMonth, endDateDay);
+
+        //    foreach (Transaction transaction in selectedAccount.TransactionList)
+        //    {
+        //        var listOfDatesToMatch = FindDatesOfTransactionsInTimeRange(transaction, startDate, endDate);
+
+        //        if (TransationList.Find)
+        //    }
+
+        //    foreach (Transaction transaction in selectedAccount.IncomeList)
+        //    {
+
+        //    }
+        //}
+
+        //public List<DateTime> FindDatesOfTransactionsInTimeRange(Transaction transaction, DateTime startDate, DateTime endDate)
+        //{
+        //    int daysBetweenIntervals = 0;
+        //    var datesList = new List<DateTime>();
+        //    var roughDate = new DateTime(Math.Max(startDate.Ticks, transaction.Date.Ticks));
+        //    var exactDate = transaction.Date;
+
+        //    switch (transaction.Rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+        //            break;
+        //        case Rate.Other:
+        //        case Rate.NoRate:
+        //            Utilities.PrintMessage("Invalid transaction due to inconsistent or nonexistent rate.", false, false);
+        //            break;
+        //    }
+
+        //    if(roughDate != transaction.Date)
+        //    {
+        //        while(exactDate < roughDate)
+        //        {
+        //            exactDate = exactDate.AddDays(daysBetweenIntervals);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        exactDate = roughDate.Date;
+        //    }
+
+        //    while(exactDate < endDate)
+        //    {
+        //        datesList.Add(exactDate);
+        //        exactDate = exactDate.AddDays(daysBetweenIntervals);
+        //    }
+
+        //    return datesList;
+        //}
 
         //public void CreateTransactionsOverTime()
         //{
 
         //}
 
-        //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange,Income income)
+        //public decimal CalculateIncomeByRateAndTime(TimeRange timeRange, Income income)
         //{
         //    DateTime currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
         //    DateTime currentYearEnd = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
@@ -367,7 +420,7 @@ namespace BudgetApp.App
         //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
         //            break;
         //        case Rate.Yearly:
-        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366: 365;
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
         //            break;
         //    }
         //    switch (timeRange)
@@ -393,7 +446,7 @@ namespace BudgetApp.App
         //            break;
         //    }
 
-        //    while(currentPayPeriod < startTimeSpan)
+        //    while (currentPayPeriod < startTimeSpan)
         //    {
         //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
         //    }

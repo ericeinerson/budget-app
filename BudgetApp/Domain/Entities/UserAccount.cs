@@ -14,14 +14,17 @@ namespace BudgetApp.Domain.Entities
 			Balance = 0;
 			TotalLogin = 0;
 			IsLocked = true;
-			IncomeId = 0;
-			ExpenseId = 0;
-			WishlistId = 0;
-			Wishlist = new Wishlist();
-			IncomeList = new List<Transaction>();
-			ExpenseList = new List<Transaction>();
+			IncomeIdCounter = 0;
+			ExpenseIdCounter = 0;
+			BudgetItemIdCounter = 0;
+			TransactionIdCounter = 0;
+			WishlistIdCounter = 0;
+            TransactionIdCounter = 0;
+            Wishlist = new Wishlist();
+			IncomeList = new List<BudgetItem>();
+			ExpenseList = new List<BudgetItem>();
+			TransactionList = new List<Transaction>();
 			CategoryList = new List<Category>();
-			Status = Status.Pending;
 		}
 		public int Id { get; set; }
 		public string Directory { get; set; }
@@ -30,17 +33,17 @@ namespace BudgetApp.Domain.Entities
 		public decimal Balance { get; set; }
 		public int TotalLogin { get; set; }
 		public bool IsLocked { get; set; }
-		public decimal TotalExpenses { get; set; }
-		public decimal TotalIncomes { get; set; }
-		public int IncomeId { get; set; }
-		public int ExpenseId { get; set; }
-		public int WishlistId { get; set; }
+		public int IncomeIdCounter { get; set; }
+		public int ExpenseIdCounter { get; set; }
+		public int BudgetItemIdCounter { get; set; }
+		public int TransactionIdCounter { get; set; }
+		public int WishlistIdCounter { get; set; }
 		public Wishlist Wishlist {get;set;}
-		public List<Transaction> IncomeList { get; set; }
-        public List<Transaction> ExpenseList { get; set; }
+		public List<BudgetItem> IncomeList { get; set; }
+        public List<BudgetItem> ExpenseList { get; set; }
 		public List<Category> CategoryList { get; set; }
+		public List<Transaction> TransactionList { get; set; }
 		public DateTime LastLoginDate { get; set; }
-		public Status Status { get; set; }
     }
 }
 

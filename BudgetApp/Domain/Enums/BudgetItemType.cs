@@ -1,10 +1,11 @@
 ﻿using System;
 namespace BudgetApp.Domain.Enums
 {
-	public enum TransactionType
+	public enum BudgetItemType
 	{
 		Expense = 1,
-		Income
+		Income,
+		All
 	}
 }
 

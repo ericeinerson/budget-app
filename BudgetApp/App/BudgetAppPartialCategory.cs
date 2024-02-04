@@ -51,19 +51,19 @@ namespace BudgetApp.App
             if (category != null && category.Id != 0)
             {
                 selectedAccount.CategoryList.Remove(category);
-                foreach (Transaction transaction in selectedAccount.ExpenseList)
+                foreach (BudgetItem item in selectedAccount.ExpenseList)
                 {
-                    if (transaction.CategoryId == category.Id)
+                    if (item.CategoryId == category.Id)
                     {
-                        transaction.CategoryId = 0;
+                        item.CategoryId = 0;
                     }
                 }
 
-                foreach (Transaction transaction in selectedAccount.IncomeList)
+                foreach (BudgetItem item in selectedAccount.IncomeList)
                 {
-                    if (transaction.CategoryId == category.Id)
+                    if (item.CategoryId == category.Id)
                     {
-                        transaction.CategoryId = 0;
+                        item.CategoryId = 0;
                     }
                 }
 

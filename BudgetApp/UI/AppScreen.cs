@@ -68,7 +68,7 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
 
-            foreach (TransactionOption menuItem in Enum.GetValues<TransactionOption>())
+            foreach (BudgetItemType menuItem in Enum.GetValues<BudgetItemType>())
             {
                 var menuDescription = menuItem.GetDescription();
                 var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
@@ -91,7 +91,7 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayTransactionUpdateDetails()
+        internal static void DisplayBudgetItemUpdateDetails()
         {
             Console.Clear();
             Console.WriteLine("Select a detail to update. \n\n");

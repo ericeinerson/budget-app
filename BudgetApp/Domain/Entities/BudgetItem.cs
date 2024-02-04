@@ -1,22 +1,22 @@
 ﻿using System;
 using BudgetApp.Domain.Enums;
+
 namespace BudgetApp.Domain.Entities
 {
-	public class Transaction
+	public class BudgetItem
 	{
-        public Transaction()
+		public BudgetItem()
         {
             Name = "test name";
         }
+
         public string Name { get; set; }
         public decimal Amount { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime PostedDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public Rate Rate { get; set; }
         public int Id { get; set; }
         public int CategoryId { get; set; }
-        public int BudgetItemId { get; set; }
-        public BudgetItemType BudgetItemType { get; set; }
-        public Status Status { get; set; }
-    }
+	}
 }
 
