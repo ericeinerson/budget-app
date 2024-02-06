@@ -27,17 +27,17 @@ namespace BudgetApp.Domain.Entities
 			CategoryList = new List<Category>();
 		}
 		public int Id { get; set; }
-		public string Directory { get; set; }
-		public string Passcode { get; set; }
-		public string FullName { get; set; }
-		public decimal Balance { get; set; }
-		public int TotalLogin { get; set; }
-		public bool IsLocked { get; set; }
+        public string FullName { get; set; }
+        public string Passcode { get; set; }
+        public bool IsLocked { get; set; }
+        public int TotalLogin { get; set; }
+        public decimal Balance { get; set; }
+        public string Directory { get; set; }
 		public int IncomeIdCounter { get; set; }
 		public int ExpenseIdCounter { get; set; }
-		public int BudgetItemIdCounter { get; set; }
+        public int WishlistIdCounter { get; set; }
+        public int BudgetItemIdCounter { get; set; }
 		public int TransactionIdCounter { get; set; }
-		public int WishlistIdCounter { get; set; }
 		public Wishlist Wishlist {get;set;}
 		public List<BudgetItem> IncomeList { get; set; }
         public List<BudgetItem> ExpenseList { get; set; }
