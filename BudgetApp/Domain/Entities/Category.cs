@@ -6,6 +6,7 @@ namespace BudgetApp.Domain.Entities
 		public Category()
 		{
 			Name = "test category";
+			Id = 0;
 		}
 
 		public string Name { get; set; }

@@ -3,20 +3,21 @@ using System.ComponentModel;
 
 namespace BudgetApp.Domain.Enums
 {
-	public enum BudgetItemOption
-	{
-        [Description("View Budget Items")]
+	
+    public enum BudgetItemOption
+    {
+        [Description("View Items")]
         ViewBudgetItem = 1,
-        [Description("Add A Budget Item")]
+        [Description("Add An Item")]
         AddBudgetItem,
-        [Description("Remove A Budget Item")]
+        [Description("Remove An Item")]
         RemoveBudgetItem,
-        [Description("Update A Budget Item's Details")]
+        [Description("Update An Item's Details")]
         UpdateBudgetItemDetails,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]
         GoBack
-	}
+    }
 }
 

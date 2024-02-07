@@ -63,7 +63,7 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayTransactionOptions()
+        internal static void DisplayInitialTransactionOptions()
         {
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
@@ -77,7 +77,22 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayCategoryOptions()
+        internal static void DisplayInitialBudgetItemOptions(BudgetItemType type)
+        {
+            Console.Clear();
+            Console.WriteLine("Select an option. \n\n");
+            
+            foreach (BudgetItemOption menuItem in Enum.GetValues<BudgetItemOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
+                    
+        }
+
+        internal static void DisplayInitialCategoryOptions()
         {
             Console.Clear();
             Console.WriteLine("Select an option. \n\n");
@@ -135,7 +150,7 @@ namespace BudgetApp.UI
             
         }
 
-        internal static void DisplayWishlistOptions()
+        internal static void DisplayInitialWishlistOptions()
         {
             Console.Clear();
             Console.WriteLine("Select a wishlist option. \n\n");
@@ -149,7 +164,7 @@ namespace BudgetApp.UI
             }
         }
 
-        internal static void DisplayBudgetSummaryOptions()
+        internal static void DisplayInitialBudgetSummaryOptions()
         {
             Console.Clear();
             Console.WriteLine("Select a budget summary option. \n\n");

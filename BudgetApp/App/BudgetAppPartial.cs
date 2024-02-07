@@ -234,25 +234,25 @@ namespace BudgetApp.App
 
         private void ProcessBudgetItemOption(BudgetItemType type)
         {
-            AppScreen.DisplayTransactionOptions();
+            AppScreen.DisplayInitialBudgetItemOptions(type);
             ProcessBudgetItemMenuOption(type);
         }
 
         private void ProcessCategoryOption()
         {
-            AppScreen.DisplayCategoryOptions();
+            AppScreen.DisplayInitialCategoryOptions();
             ProcessCategoryMenuOption();
         }
 
         public void ProcessWishlistOption()
         {
-            AppScreen.DisplayWishlistOptions();
+            AppScreen.DisplayInitialWishlistOptions();
             ProcessWishlistMenuOption();
         }
 
         public void ProcessBudgetSummaryOption()
         {
-            AppScreen.DisplayBudgetSummaryOptions();
+            AppScreen.DisplayInitialBudgetSummaryOptions();
             ProcessBudgetSummaryMenuOption();
         }
 

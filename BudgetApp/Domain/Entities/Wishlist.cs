@@ -6,8 +6,8 @@ namespace BudgetApp.Domain.Entities
 		public WishlistItem()
 		{
 			Item = "test item";
-			Cost = 0;
-			Id = 0;
+			Cost = 0.00M;
+			Id = -1;
 			Priority = 0;
 		}
 		public string Item { get; set; }
