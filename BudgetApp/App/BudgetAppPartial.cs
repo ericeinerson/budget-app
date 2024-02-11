@@ -9,6 +9,7 @@ namespace BudgetApp.App
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new();
+        private DateTime dateTimeConstant = new DateTime(1234);
         
         public void Run()
         {

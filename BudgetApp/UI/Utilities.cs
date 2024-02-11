@@ -373,7 +373,7 @@ namespace BudgetApp.UI
             string incomesPath = @$"{userAccount.Directory}{incomesInfoFileName}";
             StringBuilder incomesSB = new();
             string transactionsPath = $@"{userAccount.Directory}{transactionsInfoFileName}";
-            StringBuilder transacctionsSB = new();
+            StringBuilder transactionsSB = new();
             string categoriesPath = @$"{userAccount.Directory}{categoriesInfoFileName}";
             StringBuilder categoriesSB = new();
             string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
@@ -395,19 +395,74 @@ namespace BudgetApp.UI
 
             userInfoSB.Append(Environment.NewLine);
 
-            foreach (Expense b in userAccount.ExpenseList)
+            ConstructExpensesStringBuilder(userAccount, expensesSB);
+            ConstructIncomesStringBuilder(userAccount, incomesSB);
+            ConstructTransactionsStringBuilder(userAccount, transactionsSB);
+            ConstructCategoriesStringBuilder(userAccount, categoriesSB);
+            ConstructWishlistStringBuilder(userAccount, wishlistSB);
+
+            File.WriteAllText(userInfoPath, userInfoSB.ToString());
+            File.WriteAllText(expensesPath, expensesSB.ToString());
+            File.WriteAllText(incomesPath, incomesSB.ToString());
+            File.WriteAllText(transactionsPath, transactionsSB.ToString());
+            File.WriteAllText(categoriesPath, categoriesSB.ToString());
+            File.WriteAllText(wishlistPath, wishlistSB.ToString());
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Saved user info successfully!");
+        }
+
+        private static void ConstructWishlistStringBuilder(UserAccount userAccount, StringBuilder wishlistSB)
+        {
+            foreach (WishlistItem w in userAccount.Wishlist.Items)
             {
-                expensesSB.Append($"id:{b.Id};");//0
-                expensesSB.Append($"expense id:{b.ExpenseId};");//1
-                expensesSB.Append($"category id:{b.CategoryId};");//2
-                expensesSB.Append($"expenseName:{b.Name};");//3
-                expensesSB.Append($"amount:{b.Amount};");//4
-                expensesSB.Append($"start date:{b.StartDate};");//5
-                expensesSB.Append($"end date:{b.EndDate};");//6
-                expensesSB.Append($"rate:{(int)b.Rate};");//7
-                expensesSB.Append(Environment.NewLine);
+                wishlistSB.Append($"id:{w.Id};");//0
+                wishlistSB.Append($"itemName:{w.Item};");//1
+                wishlistSB.Append($"cost:{w.Cost};");//2
+                wishlistSB.Append($"priority:{w.Priority};");//3
+                wishlistSB.Append(Environment.NewLine);
             }
-            foreach (Income b in userAccount.IncomeList)
+        }
+
+        private static void ConstructCategoriesStringBuilder(UserAccount userAccount, StringBuilder categoriesSB)
+        {
+            foreach (Category c in userAccount.CategoryList)
+            {
+                categoriesSB.Append($"amount:{c.Id};");//0
+                categoriesSB.Append($"categoryName:{c.Name};");//1
+                categoriesSB.Append(Environment.NewLine);
+            }
+        }
+
+        private static void ConstructTransactionsStringBuilder(UserAccount userAccount, StringBuilder transactionsSB)
+        {
+            foreach (Transaction t in userAccount.TransactionList)
+            {
+                string id = string.IsNullOrEmpty(t.Id.ToString()) ? "null" : t.Id.ToString();
+                string categoryId = string.IsNullOrEmpty(t.CategoryId.ToString()) ? "null" : t.CategoryId.ToString();
+                string budgetItemId = string.IsNullOrEmpty(t.BudgetItemType.ToString()) ? "null" : t.BudgetItemId.ToString();
+                string name = string.IsNullOrEmpty(t.Name.ToString()) ? "null" : t.Name.ToString();
+                string amount = string.IsNullOrEmpty(t.Amount.ToString()) ? "null" : t.Amount.ToString();
+                string createdDate = string.IsNullOrEmpty(t.CreatedDate.ToString()) ? "null" : t.CreatedDate.ToString();
+                string postedDate = string.IsNullOrEmpty(t.PostedDate.ToString()) ? "null" : t.PostedDate.ToString();
+                string budgetItemType = string.IsNullOrEmpty(t.BudgetItemType.ToString()) ? "null" : ((int)t.BudgetItemType).ToString();
+                string status = string.IsNullOrEmpty(t.Status.ToString()) ? "null" : ((int)t.Status).ToString();
+
+                transactionsSB.Append($"id:{id};"); //0
+                transactionsSB.Append($"category id:{categoryId};"); //1
+                transactionsSB.Append($"budget item id:{budgetItemId};"); //2
+                transactionsSB.Append($"incomeName:{name};");//3
+                transactionsSB.Append($"amount:{amount};");//4
+                transactionsSB.Append($"created date:{createdDate};");//5
+                transactionsSB.Append($"posted date:{postedDate}");//6
+                transactionsSB.Append($"budget item type:{budgetItemType}");//7
+                transactionsSB.Append($"status:{status}");//8
+                transactionsSB.Append(Environment.NewLine);
+            }
+        }
+
+        private static void ConstructIncomesStringBuilder(UserAccount userAccount, StringBuilder incomesSB)
+        {
+            foreach (Income b in userAccount.IncomeList.Cast<Income>())
             {
                 incomesSB.Append($"id:{b.Id};");//0
                 incomesSB.Append($"income id:{b.IncomeId};");//1
@@ -419,42 +474,22 @@ namespace BudgetApp.UI
                 incomesSB.Append($"rate:{(int)b.Rate};");//7
                 incomesSB.Append(Environment.NewLine);
             }
-            foreach (Transaction t in userAccount.TransactionList)
-            {
-                incomesSB.Append($"id:{t.Id};"); //0
-                incomesSB.Append($"category id:{t.CategoryId};"); //1
-                incomesSB.Append($"budget item id:{t.BudgetItemId};"); //2
-                incomesSB.Append($"incomeName:{t.Name};");//3
-                incomesSB.Append($"amount:{t.Amount};");//4
-                incomesSB.Append($"created date:{t.CreatedDate};");//5
-                incomesSB.Append($"posted date:{t.PostedDate}");//6
-                incomesSB.Append($"budget item type:{(int)t.BudgetItemType}");//7
-                incomesSB.Append($"status:{(int)t.Status}");//8
-                incomesSB.Append(Environment.NewLine);
-            }
-            foreach (Category c in userAccount.CategoryList)
-            {
-                categoriesSB.Append($"amount:{c.Id};");//0
-                categoriesSB.Append($"categoryName:{c.Name};");//1
-                categoriesSB.Append(Environment.NewLine);
-            }
-            foreach (WishlistItem w in userAccount.Wishlist.Items)
-            {
-                wishlistSB.Append($"id:{w.Id};");//0
-                wishlistSB.Append($"itemName:{w.Item};");//1
-                wishlistSB.Append($"cost:{w.Cost};");//2
-                wishlistSB.Append($"priority:{w.Priority};");//3
-                wishlistSB.Append(Environment.NewLine);
-            }
+        }
 
-            File.WriteAllText(userInfoPath, userInfoSB.ToString());
-            File.WriteAllText(expensesPath, expensesSB.ToString());
-            File.WriteAllText(incomesPath, incomesSB.ToString());
-            File.WriteAllText(transactionsPath, transacctionsSB.ToString());
-            File.WriteAllText(categoriesPath, categoriesSB.ToString());
-            File.WriteAllText(wishlistPath, wishlistSB.ToString());
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Saved user info successfully!");
+        private static void ConstructExpensesStringBuilder(UserAccount userAccount, StringBuilder expensesSB)
+        {
+            foreach (Expense b in userAccount.ExpenseList.Cast<Expense>())
+            {
+                expensesSB.Append($"id:{b.Id};");//0
+                expensesSB.Append($"expense id:{b.ExpenseId};");//1
+                expensesSB.Append($"category id:{b.CategoryId};");//2
+                expensesSB.Append($"expenseName:{b.Name};");//3
+                expensesSB.Append($"amount:{b.Amount};");//4
+                expensesSB.Append($"start date:{b.StartDate};");//5
+                expensesSB.Append($"end date:{b.EndDate};");//6
+                expensesSB.Append($"rate:{(int)b.Rate};");//7
+                expensesSB.Append(Environment.NewLine);
+            }
         }
 
         public static void SaveUserInfoOnlyWithNewLoginTime(UserAccount userAccount)
