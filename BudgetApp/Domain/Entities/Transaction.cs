@@ -23,7 +23,8 @@ namespace BudgetApp.Domain.Entities
         public string Name { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime PostedDate { get; set; }
+        public DateTime? ScheduledDate { get; set; }
+        public DateTime? PostedDate { get; set; }
         public BudgetItemType BudgetItemType { get; set; }
         public Status Status { get; set; }
     }

@@ -136,7 +136,7 @@ namespace BudgetApp.UI
                 {
                     userAccountInfoSplits = userAccountInfoAsString[i].Split(';').ToList();
                 }
-                int id = int.Parse(userAccountInfoSplits[0][(userAccountInfoSplits[0].IndexOf(':') + 1)..]);
+                int id = userAccountInfoSplits[0][(userAccountInfoSplits[0].IndexOf(':') + 1)..] == "null" ? -1 : int.Parse(userAccountInfoSplits[0][(userAccountInfoSplits[0].IndexOf(':') + 1)..]);
                 string fullName = userAccountInfoSplits[1][(userAccountInfoSplits[1].IndexOf(':') + 1)..];
                 string passcode = userAccountInfoSplits[2][(userAccountInfoSplits[2].IndexOf(':') + 1)..];
                 bool isLocked = bool.Parse(userAccountInfoSplits[3].AsSpan(userAccountInfoSplits[3].IndexOf(':') + 1));
@@ -188,7 +188,7 @@ namespace BudgetApp.UI
                     string expenseName = expensesSplits[3].Substring(expensesSplits[3].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(expensesSplits[4].Substring(expensesSplits[4].IndexOf(':') + 1));
                     DateTime startDate = DateTime.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
-                    DateTime endDate = DateTime.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
+                    DateTime? endDate = expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1) == "null" ? null : DateTime.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
                     Rate rate = (Rate)int.Parse(expensesSplits[7].Substring(expensesSplits[7].IndexOf(':') + 1));
 
                     userAccount.ExpenseList.Add(new Expense()
@@ -227,7 +227,7 @@ namespace BudgetApp.UI
                     string incomeName = incomesSplits[3].Substring(incomesSplits[3].IndexOf(':') + 1);
                     decimal amount = decimal.Parse(incomesSplits[4].Substring(incomesSplits[4].IndexOf(':') + 1));
                     DateTime startDate = DateTime.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
-                    DateTime endDate = DateTime.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
+                    DateTime? endDate = incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1) == "null" ? null : DateTime.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
                     Rate rate = (Rate)int.Parse(incomesSplits[7].Substring(incomesSplits[7].IndexOf(':') + 1));
 
                     userAccount.IncomeList.Add(new Income()
@@ -266,9 +266,10 @@ namespace BudgetApp.UI
                     string transactionName = transactionsSplits[3][(transactionsSplits[3].IndexOf(':') + 1)..];
                     decimal amount = decimal.Parse(transactionsSplits[4][(transactionsSplits[4].IndexOf(':') + 1)..]);
                     DateTime createdDate = DateTime.Parse(transactionsSplits[5][(transactionsSplits[5].IndexOf(':') + 1)..]);
-                    DateTime postedDate = DateTime.Parse(transactionsSplits[6][(transactionsSplits[6].IndexOf(':') + 1)..]);
-                    BudgetItemType type = (BudgetItemType)int.Parse(transactionsSplits[7].Substring(transactionsSplits[7].IndexOf(':') + 1));
-                    Status status = (Status)int.Parse(transactionsSplits[8][(transactionsSplits[8].IndexOf(':') + 1)..]);
+                    DateTime? postedDate = transactionsSplits[6][(transactionsSplits[6].IndexOf(':') + 1)..] == "null" ? null : DateTime.Parse(transactionsSplits[7][(transactionsSplits[7].IndexOf(':') + 1)..]);
+                    DateTime? scheduledDate = transactionsSplits[7][(transactionsSplits[7].IndexOf(':') + 1)..] == "null" ? null : DateTime.Parse(transactionsSplits[6][(transactionsSplits[6].IndexOf(':') + 1)..]);
+                    BudgetItemType type = (BudgetItemType)int.Parse(transactionsSplits[8].Substring(transactionsSplits[8].IndexOf(':') + 1));
+                    Status status = (Status)int.Parse(transactionsSplits[9][(transactionsSplits[9].IndexOf(':') + 1)..]);
 
                     userAccount.TransactionList.Add(new Transaction()
                     {
@@ -278,6 +279,7 @@ namespace BudgetApp.UI
                         Name = transactionName,
                         Amount = amount,
                         CreatedDate = createdDate,
+                        ScheduledDate = scheduledDate,
                         PostedDate = postedDate,
                         BudgetItemType = type,
                         Status = status
@@ -379,22 +381,7 @@ namespace BudgetApp.UI
             string wishlistPath = @$"{userAccount.Directory}{wishlistInfoFileName}";
             StringBuilder wishlistSB = new();
 
-            userInfoSB.Append($"id:{userAccount.Id};");//0
-            userInfoSB.Append($"fullName:{userAccount.FullName};");//1
-            userInfoSB.Append($"passcode:{userAccount.Passcode.ToString()};");//2
-            userInfoSB.Append($"isLocked:{userAccount.IsLocked};");//3
-            userInfoSB.Append($"totalLogin:{userAccount.TotalLogin};");//4
-            userInfoSB.Append($"balance:{userAccount.Balance};");//5
-            userInfoSB.Append($"directory:{userAccount.Directory};");//6
-            userInfoSB.Append($"income id:{userAccount.IncomeIdCounter};");//7
-            userInfoSB.Append($"expense id:{userAccount.ExpenseIdCounter};");//8
-            userInfoSB.Append($"wishlist id:{userAccount.WishlistIdCounter};");//9
-            userInfoSB.Append($"budget item id:{userAccount.BudgetItemIdCounter};");//10
-            userInfoSB.Append($"transaction id:{userAccount.TransactionIdCounter};");//11
-            userInfoSB.Append($"last login date:{userAccount.LastLoginDate};");//12
-
-            userInfoSB.Append(Environment.NewLine);
-
+            ConstructUserInfoStringBuilder(userAccount, userInfoSB);
             ConstructExpensesStringBuilder(userAccount, expensesSB);
             ConstructIncomesStringBuilder(userAccount, incomesSB);
             ConstructTransactionsStringBuilder(userAccount, transactionsSB);
@@ -411,8 +398,53 @@ namespace BudgetApp.UI
             Console.WriteLine("Saved user info successfully!");
         }
 
+        private static void ConstructUserInfoStringBuilder(UserAccount userAccount, StringBuilder userInfoSB)
+        {
+            string id = string.IsNullOrEmpty(userAccount.Id.ToString()) ? "null" : userAccount.Id.ToString();
+            string fullName = string.IsNullOrEmpty(userAccount.FullName.ToString()) ? "null" : userAccount.FullName.ToString();
+            string passcode = string.IsNullOrEmpty(userAccount.Passcode.ToString()) ? "null" : userAccount.Passcode.ToString();
+            string isLocked = string.IsNullOrEmpty(userAccount.IsLocked.ToString()) ? "null" : userAccount.IsLocked.ToString();
+            string totalLogin = string.IsNullOrEmpty(userAccount.TotalLogin.ToString()) ? "null" : userAccount.TotalLogin.ToString();
+            string balance = string.IsNullOrEmpty(userAccount.Balance.ToString()) ? "null" : userAccount.Balance.ToString();
+            string directory = string.IsNullOrEmpty(userAccount.Directory.ToString()) ? "null" : userAccount.Directory.ToString();
+            string incomeIdCounter = string.IsNullOrEmpty(userAccount.IncomeIdCounter.ToString()) ? "null" : userAccount.IncomeIdCounter.ToString();
+            string expenseIdCounter = string.IsNullOrEmpty(userAccount.ExpenseIdCounter.ToString()) ? "null" : userAccount.ExpenseIdCounter.ToString();
+            string wishlistIdCounter = string.IsNullOrEmpty(userAccount.WishlistIdCounter.ToString()) ? "null" : userAccount.WishlistIdCounter.ToString();
+            string budgetItemIdCounter = string.IsNullOrEmpty(userAccount.BudgetItemIdCounter.ToString()) ? "null" : userAccount.BudgetItemIdCounter.ToString();
+            string transactionIdCounter = string.IsNullOrEmpty(userAccount.TransactionIdCounter.ToString()) ? "null" : userAccount.TransactionIdCounter.ToString();
+            string lastLoginDate = string.IsNullOrEmpty(userAccount.LastLoginDate.ToString()) ? "null" : userAccount.LastLoginDate.ToString();
+
+            userInfoSB.Append($"id:{id};");//0
+            userInfoSB.Append($"fullName:{fullName};");//1
+            userInfoSB.Append($"passcode:{passcode};");//2
+            userInfoSB.Append($"isLocked:{isLocked};");//3
+            userInfoSB.Append($"totalLogin:{totalLogin};");//4
+            userInfoSB.Append($"balance:{balance};");//5
+            userInfoSB.Append($"directory:{directory};");//6
+            userInfoSB.Append($"income id:{incomeIdCounter};");//7
+            userInfoSB.Append($"expense id:{expenseIdCounter};");//8
+            userInfoSB.Append($"wishlist id:{wishlistIdCounter};");//9
+            userInfoSB.Append($"budget item id:{budgetItemIdCounter};");//10
+            userInfoSB.Append($"transaction id:{transactionIdCounter};");//11
+            userInfoSB.Append($"last login date:{lastLoginDate};");//12
+            userInfoSB.Append(Environment.NewLine);
+        }
+
         private static void ConstructWishlistStringBuilder(UserAccount userAccount, StringBuilder wishlistSB)
         {
+            foreach (WishlistItem w in userAccount.Wishlist.Items)
+            {
+                string id = string.IsNullOrEmpty(w.Id.ToString()) ? "null" : w.Id.ToString();
+                string item = string.IsNullOrEmpty(w.Item.ToString()) ? "null" : w.Item.ToString();
+                string cost = string.IsNullOrEmpty(w.Cost.ToString()) ? "null" : w.Cost.ToString();
+                string priority = string.IsNullOrEmpty(w.Priority.ToString()) ? "null" : w.Priority.ToString();
+
+                wishlistSB.Append($"id:{id};"); //0
+                wishlistSB.Append($"wishlist name:{item};"); //1
+                wishlistSB.Append($"cost:{cost};"); //2
+                wishlistSB.Append($"priority:{priority};"); //3
+                wishlistSB.Append(Environment.NewLine);
+            }
             foreach (WishlistItem w in userAccount.Wishlist.Items)
             {
                 wishlistSB.Append($"id:{w.Id};");//0
@@ -427,8 +459,11 @@ namespace BudgetApp.UI
         {
             foreach (Category c in userAccount.CategoryList)
             {
-                categoriesSB.Append($"amount:{c.Id};");//0
-                categoriesSB.Append($"categoryName:{c.Name};");//1
+                string id = string.IsNullOrEmpty(c.Id.ToString()) ? "null" : c.Id.ToString();
+                string name = string.IsNullOrEmpty(c.Name.ToString()) ? "null" : c.Name.ToString();
+
+                categoriesSB.Append($"id:{id};"); //0
+                categoriesSB.Append($"category name:{name};"); //1
                 categoriesSB.Append(Environment.NewLine);
             }
         }
@@ -443,51 +478,71 @@ namespace BudgetApp.UI
                 string name = string.IsNullOrEmpty(t.Name.ToString()) ? "null" : t.Name.ToString();
                 string amount = string.IsNullOrEmpty(t.Amount.ToString()) ? "null" : t.Amount.ToString();
                 string createdDate = string.IsNullOrEmpty(t.CreatedDate.ToString()) ? "null" : t.CreatedDate.ToString();
-                string postedDate = string.IsNullOrEmpty(t.PostedDate.ToString()) ? "null" : t.PostedDate.ToString();
+                string? postedDate = string.IsNullOrEmpty(t.PostedDate.ToString()) ? "null" : t.PostedDate.ToString();
+                string? scheduledDate = string.IsNullOrEmpty(t.ScheduledDate.ToString()) ? "null" : t.ScheduledDate.ToString();
                 string budgetItemType = string.IsNullOrEmpty(t.BudgetItemType.ToString()) ? "null" : ((int)t.BudgetItemType).ToString();
                 string status = string.IsNullOrEmpty(t.Status.ToString()) ? "null" : ((int)t.Status).ToString();
 
                 transactionsSB.Append($"id:{id};"); //0
                 transactionsSB.Append($"category id:{categoryId};"); //1
                 transactionsSB.Append($"budget item id:{budgetItemId};"); //2
-                transactionsSB.Append($"incomeName:{name};");//3
+                transactionsSB.Append($"transaction name:{name};");//3
                 transactionsSB.Append($"amount:{amount};");//4
                 transactionsSB.Append($"created date:{createdDate};");//5
                 transactionsSB.Append($"posted date:{postedDate}");//6
-                transactionsSB.Append($"budget item type:{budgetItemType}");//7
-                transactionsSB.Append($"status:{status}");//8
+                transactionsSB.Append($"posted date:{scheduledDate}");//7
+                transactionsSB.Append($"budget item type:{budgetItemType}");//8
+                transactionsSB.Append($"status:{status}");//9
                 transactionsSB.Append(Environment.NewLine);
             }
         }
 
         private static void ConstructIncomesStringBuilder(UserAccount userAccount, StringBuilder incomesSB)
         {
-            foreach (Income b in userAccount.IncomeList.Cast<Income>())
+            foreach (Income i in userAccount.IncomeList.Cast<Income>())
             {
-                incomesSB.Append($"id:{b.Id};");//0
-                incomesSB.Append($"income id:{b.IncomeId};");//1
-                incomesSB.Append($"category id:{b.CategoryId};");//2
-                incomesSB.Append($"incomeName:{b.Name};");//3
-                incomesSB.Append($"amount:{b.Amount};");//4
-                incomesSB.Append($"start date:{b.StartDate};");//5
-                incomesSB.Append($"end date:{b.EndDate};");//6
-                incomesSB.Append($"rate:{(int)b.Rate};");//7
+                string id = string.IsNullOrEmpty(i.Id.ToString()) ? "null" : i.Id.ToString();
+                string incomeId = string.IsNullOrEmpty(i.IncomeId.ToString()) ? "null" : i.IncomeId.ToString();
+                string categoryId = string.IsNullOrEmpty(i.CategoryId.ToString()) ? "null" : i.CategoryId.ToString();
+                string name = string.IsNullOrEmpty(i.Name.ToString()) ? "null" : i.Name.ToString();
+                string amount = string.IsNullOrEmpty(i.Amount.ToString()) ? "null" : i.Amount.ToString();
+                string startDate = string.IsNullOrEmpty(i.StartDate.ToString()) ? "null" : i.StartDate.ToString();
+                string? endDate = string.IsNullOrEmpty(i.EndDate.ToString()) ? "null" : i.EndDate.ToString();
+                string rate = string.IsNullOrEmpty(i.Rate.ToString()) ? "null" : ((int)i.Rate).ToString();
+
+                incomesSB.Append($"id:{id};"); //0
+                incomesSB.Append($"incomeId:{incomeId};"); //1
+                incomesSB.Append($"budget item id:{categoryId};"); //2
+                incomesSB.Append($"incomeName:{name};");//3
+                incomesSB.Append($"amount:{amount};");//4
+                incomesSB.Append($"created date:{startDate};");//5
+                incomesSB.Append($"posted date:{endDate}");//6
+                incomesSB.Append($"budget item type:{rate}");//7
                 incomesSB.Append(Environment.NewLine);
             }
         }
 
         private static void ConstructExpensesStringBuilder(UserAccount userAccount, StringBuilder expensesSB)
         {
-            foreach (Expense b in userAccount.ExpenseList.Cast<Expense>())
+            foreach (Expense e in userAccount.ExpenseList.Cast<Expense>())
             {
-                expensesSB.Append($"id:{b.Id};");//0
-                expensesSB.Append($"expense id:{b.ExpenseId};");//1
-                expensesSB.Append($"category id:{b.CategoryId};");//2
-                expensesSB.Append($"expenseName:{b.Name};");//3
-                expensesSB.Append($"amount:{b.Amount};");//4
-                expensesSB.Append($"start date:{b.StartDate};");//5
-                expensesSB.Append($"end date:{b.EndDate};");//6
-                expensesSB.Append($"rate:{(int)b.Rate};");//7
+                string id = string.IsNullOrEmpty(e.Id.ToString()) ? "null" : e.Id.ToString();
+                string expenseId = string.IsNullOrEmpty(e.ExpenseId.ToString()) ? "null" : e.ExpenseId.ToString();
+                string categoryId = string.IsNullOrEmpty(e.CategoryId.ToString()) ? "null" : e.CategoryId.ToString();
+                string name = string.IsNullOrEmpty(e.Name.ToString()) ? "null" : e.Name.ToString();
+                string amount = string.IsNullOrEmpty(e.Amount.ToString()) ? "null" : e.Amount.ToString();
+                string startDate = string.IsNullOrEmpty(e.StartDate.ToString()) ? "null" : e.StartDate.ToString();
+                string? endDate = string.IsNullOrEmpty(e.EndDate.ToString()) ? "null" : e.EndDate.ToString();
+                string rate = string.IsNullOrEmpty(e.Rate.ToString()) ? "null" : ((int)e.Rate).ToString();
+
+                expensesSB.Append($"id:{id};"); //0
+                expensesSB.Append($"expenseId:{expenseId};"); //1
+                expensesSB.Append($"budget item id:{categoryId};"); //2
+                expensesSB.Append($"expense name:{name};");//3
+                expensesSB.Append($"amount:{amount};");//4
+                expensesSB.Append($"created date:{startDate};");//5
+                expensesSB.Append($"posted date:{endDate}");//6
+                expensesSB.Append($"budget item type:{rate}");//7
                 expensesSB.Append(Environment.NewLine);
             }
         }

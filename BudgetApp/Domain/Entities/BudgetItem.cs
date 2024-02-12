@@ -20,7 +20,7 @@ namespace BudgetApp.Domain.Entities
         public string Name { get; set; }
         public decimal Amount { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public Rate Rate { get; set; }
 	}
 }

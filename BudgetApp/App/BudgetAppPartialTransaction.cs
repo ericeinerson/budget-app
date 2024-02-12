@@ -7,54 +7,54 @@ namespace BudgetApp.App
 {
 	public partial class BudgetApp
     {
-        //public void VerifyTransactionStatus()
-        //{
-        //    var transactionsPending = new List<Transaction>();
+        public void VerifyTransactionStatus()
+        {
+            var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
+            IndividuallySelectTransactionStatus(transactionsFlagged);
 
-        //    foreach (Transaction transaction in selectedAccount.ExpenseList)
-        //    {
-        //        if (transaction.Date <= DateTime.Now.AddDays(1) && transaction.Status == Status.Pending)
-        //        {
-        //            transactionsPending.Add(transaction);
-        //        }
-        //    }
+            Utilities.PressEnterToContinue();
 
-        //    foreach (Transaction transaction in selectedAccount.IncomeList)
-        //    {
-        //        if (transaction.Date <= DateTime.Now.AddDays(1) && transaction.Status == Status.Pending)
-        //        {
-        //            transactionsPending.Add(transaction);
-        //        }
-        //    }
-        //    if (!transactionsPending.Any())
-        //    {
-        //        return;
-        //    }
+            AppScreen.DisplayPostingOptions();
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    PostAllTransactions(transactionsPending);
+                    break;
+                case 2:
+                    PostSomeTransactions(transactionsPending);
+                    break;
+                case 3:
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+        }
 
-        //    Console.WriteLine("Post these expenses?");
-        //    foreach (Transaction transaction in transactionsPending)
-        //    {
-        //        Console.WriteLine($"{transaction.Name}, {transaction.Amount}, {transaction.Date}, {transaction.Id}");
-        //    }
-        //    Utilities.PressEnterToContinue();
+        private void IndividuallySelectTransactionStatus(List<Transaction> transactionsFlagged)
+        {
+            foreach (var t in transactionsFlagged)
+            {
+                if ((t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now)
+                {
+                    string promptToPost = Utilities.PromptYesOrNo($"Post this transaction? Name: {t.Name} Amount: {t.Amount} Id: {t.Id}");
+                    if (promptToPost == "y")
+                    {
+                        t.Status = Status.Posted;
+                    }
+                }
 
-        //    AppScreen.DisplayPostingOptions();
-        //    switch (Validator.Convert<int>("an option"))
-        //    {
-        //        case 1:
-        //            PostAllTransactions(transactionsPending);
-        //            break;
-        //        case 2:
-        //            PostSomeTransactions(transactionsPending);
-        //            break;
-        //        case 3:
-        //            break;
-        //        default:
-        //            Utilities.PrintMessage("Invalid Option. Try again", false);
-        //            ProcessWishlistOption();
-        //            break;
-        //    }
-        //}
+                if (t.Status == Status.Scheduled && t.ScheduledDate <= DateTime.Now.AddMonths(1) && t.ScheduledDate > DateTime.Now)
+                {
+                    string promptToPending = Utilities.PromptYesOrNo($"Post this transaction? Name: {t.Name} Amount: {t.Amount} Id: {t.Id}");
+                    if (promptToPending == "y")
+                    {
+                        t.Status = Status.Pending;
+                    }
+                }
+            }
+        }
 
         //public void PostAllTransactions(List<Transaction> transactionsPending)
         //{
