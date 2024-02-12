@@ -27,8 +27,7 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("No save data found", true, true);
             }
             Utilities.PressEnterToContinue();
-            //CreatePendingTransactions();
-            //VerifyTransactionStatus();
+            VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }

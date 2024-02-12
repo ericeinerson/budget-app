@@ -10,18 +10,14 @@ namespace BudgetApp.App
         public void VerifyTransactionStatus()
         {
             var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
-            IndividuallySelectTransactionStatus(transactionsFlagged);
-
-            Utilities.PressEnterToContinue();
-
             AppScreen.DisplayPostingOptions();
             switch (Validator.Convert<int>("an option"))
             {
                 case 1:
-                    PostAllTransactions(transactionsPending);
+                    PostAllFlaggedTransactions(transactionsFlagged);
                     break;
                 case 2:
-                    PostSomeTransactions(transactionsPending);
+                    IndividuallySelectTransactionStatus(transactionsFlagged);
                     break;
                 case 3:
                     break;
@@ -30,6 +26,8 @@ namespace BudgetApp.App
                     ProcessWishlistOption();
                     break;
             }
+
+            Utilities.PressEnterToContinue();
         }
 
         private void IndividuallySelectTransactionStatus(List<Transaction> transactionsFlagged)
@@ -56,14 +54,43 @@ namespace BudgetApp.App
             }
         }
 
-        //public void PostAllTransactions(List<Transaction> transactionsPending)
-        //{
-        //    foreach(Transaction transaction in transactionsPending)
-        //    {
-        //        transaction.Status = Status.Posted;
-        //    }
-        //}
+        private void PostAllFlaggedTransactions(List<Transaction> transactionsFlagged)
+        {
+            foreach(var transaction in transactionsFlagged)
+            {
+                transaction.Status = Status.Posted;
+                Console.WriteLine($"transaction posted: {transaction.Name} {transaction.Amount} {transaction.Id}");
+            }
+        }
 
+        private Transaction ConstructTransaction()
+        {
+            var transaction = new Transaction();
+
+            int id = -1;
+            string name = Utilities.GetUserInput("name");
+            decimal amount = Validator.Convert<decimal>("amount");
+            Category category = AssignTransactionCategory();
+
+            //TEST CODE REMOVE LATER START
+            
+            //TEST CODE REMOVE LATER END
+
+            DateTime createdDate = DateTime.Now;
+
+            transaction.Id = id;
+            transaction.CategoryId = categoryId;
+            transaction.BudgetItemId = budgetItemId;
+            transaction.Name = name;
+            transaction.Amount = amount;
+            transaction.CreatedDate = createdDate;
+            transaction.ScheduledDate = null;
+            transaction.PostedDate = null;
+            transaction.BudgetItemType = BudgetItemType.All;
+            transaction.Status = Status.Scheduled;
+
+            return transaction;
+        }
         //public void PostSomeTransactions(List<Transaction> transactionsPending)
         //{
         //    string goThroughEachTransaction = Utilities.PromptYesOrNo("Go through each transaction?");
