@@ -5,7 +5,8 @@ namespace BudgetApp.Domain.Enums
 	{
 		Expense = 1,
 		Income,
-		All
+		All,
+		None
 	}
 }
 

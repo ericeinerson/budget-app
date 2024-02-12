@@ -6,7 +6,8 @@ namespace BudgetApp.Domain.Enums
 		Pending = 1,
 		Posted,
 		Scheduled,
-		Cancelled
+		Cancelled,
+		None
 	}
 }
 
