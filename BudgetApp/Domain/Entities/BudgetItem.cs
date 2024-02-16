@@ -12,7 +12,6 @@ namespace BudgetApp.Domain.Entities
             Name = "test name";
             Amount = 0.00M;
             StartDate = DateTime.MinValue;
-            EndDate = DateTime.MaxValue;
             Rate = Rate.NoRate;
         }
         public int Id { get; set; }
@@ -22,6 +21,7 @@ namespace BudgetApp.Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Rate Rate { get; set; }
+        public DateTime? MarkerDate { get; set; }
 	}
 }
 

@@ -140,6 +140,14 @@ namespace BudgetApp.App
             return transaction;
         }
 
+        public void UpdateTransactionsForTimePeriod(int daysInPast = 183, int daysInFuture = 365)
+        {
+            foreach(var expense in selectedAccount.ExpenseList)
+            {
+                var transactionsExpected = new List<Transaction>();
+            }
+        }
+
         //public void PostSomeTransactions(List<Transaction> transactionsPending)
         //{
         //    string goThroughEachTransaction = Utilities.PromptYesOrNo("Go through each transaction?");

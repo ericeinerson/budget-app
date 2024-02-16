@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Net.NetworkInformation;
 using System.Text;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
