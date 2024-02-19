@@ -145,6 +145,81 @@ namespace BudgetApp.App
             foreach(var expense in selectedAccount.ExpenseList)
             {
                 var transactionsExpected = new List<Transaction>();
+                var rate = expense.Rate;
+                var transactionDay = expense.StartDate;
+                var daysBetweenTransactions = 0;
+
+                switch (rate)
+                {
+                    case Rate.Weekly:
+                        daysBetweenTransactions = 7;
+                        break;
+                    case Rate.Biweekly:
+                        daysBetweenTransactions = 14;
+                        break;
+                    case Rate.Monthly:
+                        break;
+                    case Rate.Yearly:
+                        daysBetweenTransactions = 365;
+                        break;
+                    default:
+                        throw new Exception();
+                }
+
+                while (transactionDay < DateTime.Now.AddDays(-1 * daysInPast))
+                {
+                    if(rate != Rate.Monthly && rate != Rate.Yearly)
+                    {
+                        transactionDay.AddDays(daysBetweenTransactions);
+                    }
+                    else if(rate != Rate.Monthly)
+                    {
+                        if (DateTime.IsLeapYear(transactionDay.Year))
+                        {
+                            daysBetweenTransactions = 366;
+                        }
+                        transactionDay.AddDays(daysBetweenTransactions);
+                    }
+                    else if(rate == Rate.Monthly)
+                    {
+                        transactionDay.AddDays(DateTime.DaysInMonth(transactionDay.Year, transactionDay.Month));
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                while(transactionDay < DateTime.Now.AddDays(daysInFuture))
+                {
+                    transactionsExpected.Add(new Transaction()
+                    {
+                        CreatedDate = transactionDay
+                    });
+
+                    Console.WriteLine($"Transaction created. Date: {transactionDay}");
+
+                    if (rate != Rate.Monthly && rate != Rate.Yearly)
+                    {
+                        transactionDay.AddDays(daysBetweenTransactions);
+                    }
+                    else if (rate != Rate.Monthly)
+                    {
+                        if (DateTime.IsLeapYear(transactionDay.Year))
+                        {
+                            daysBetweenTransactions = 366;
+                        }
+                        transactionDay.AddDays(daysBetweenTransactions);
+                    }
+                    else if (rate == Rate.Monthly)
+                    {
+                        transactionDay.AddDays(DateTime.DaysInMonth(transactionDay.Year, transactionDay.Month));
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
             }
         }
 
