@@ -43,7 +43,7 @@ namespace BudgetApp.App
             foreach (BudgetItem item in GetBudgetItemList(type))
             {
                 string amountFormatted = Utilities.FormatAmount(item.Amount);
-                string? endDate = string.IsNullOrEmpty(item.EndDate.ToString()) ? "No End Date" : item.EndDate.ToString("MMMM dd, yyyy");
+                string? endDate = string.IsNullOrEmpty(item.EndDate.ToString()) ? "No End Date" : item.EndDate?.ToString("MMMM dd, yyyy");
                 Category? category = selectedAccount.CategoryList.Find(t => t.Id == item.CategoryId);
                 var categoryName = category != null ? category.Name : string.Empty;
 

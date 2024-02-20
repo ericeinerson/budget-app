@@ -488,10 +488,10 @@ namespace BudgetApp.UI
                 transactionsSB.Append($"transaction name:{name};");//3
                 transactionsSB.Append($"amount:{amount};");//4
                 transactionsSB.Append($"created date:{createdDate};");//5
-                transactionsSB.Append($"posted date:{postedDate}");//6
-                transactionsSB.Append($"posted date:{scheduledDate}");//7
-                transactionsSB.Append($"budget item type:{budgetItemType}");//8
-                transactionsSB.Append($"status:{status}");//9
+                transactionsSB.Append($"posted date:{postedDate};");//6
+                transactionsSB.Append($"posted date:{scheduledDate};");//7
+                transactionsSB.Append($"budget item type:{budgetItemType};");//8
+                transactionsSB.Append($"status:{status};");//9
                 transactionsSB.Append(Environment.NewLine);
             }
         }
@@ -515,8 +515,8 @@ namespace BudgetApp.UI
                 incomesSB.Append($"incomeName:{name};");//3
                 incomesSB.Append($"amount:{amount};");//4
                 incomesSB.Append($"created date:{startDate};");//5
-                incomesSB.Append($"posted date:{endDate}");//6
-                incomesSB.Append($"budget item type:{rate}");//7
+                incomesSB.Append($"posted date:{endDate};");//6
+                incomesSB.Append($"budget item type:{rate};");//7
                 incomesSB.Append(Environment.NewLine);
             }
         }
@@ -540,8 +540,8 @@ namespace BudgetApp.UI
                 expensesSB.Append($"expense name:{name};");//3
                 expensesSB.Append($"amount:{amount};");//4
                 expensesSB.Append($"created date:{startDate};");//5
-                expensesSB.Append($"posted date:{endDate}");//6
-                expensesSB.Append($"budget item type:{rate}");//7
+                expensesSB.Append($"posted date:{endDate};");//6
+                expensesSB.Append($"budget item type:{rate};");//7
                 expensesSB.Append(Environment.NewLine);
             }
         }

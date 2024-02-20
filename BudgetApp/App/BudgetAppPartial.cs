@@ -20,14 +20,18 @@ namespace BudgetApp.App
             if (isSavedData)
             {
                 Utilities.SaveUserInfoOnlyWithNewLoginTime(selectedAccount);
-                PromptUserToLoadData();
+                var loadData = PromptUserToLoadData();
+                if (loadData)
+                {
+                    UpdateTransactionsForTimePeriod();
+                }
             }
             else
             {
                 Utilities.PrintMessage("No save data found", true, true);
             }
             Utilities.PressEnterToContinue();
-            VerifyTransactionStatus();
+            //VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
@@ -68,6 +72,15 @@ namespace BudgetApp.App
                         Id = 3,
                         StartDate = new DateTime(1999, 4, 30),
                         CategoryId = 0,
+                    },
+                    new Expense()
+                    {
+                        Amount = 112,
+                        Name = "expense4.3.1415",
+                        Rate = Rate.Weekly,
+                        Id = 4,
+                        StartDate = new DateTime(1952, 4, 30),
+                        CategoryId = 1,
                     }
                 },
                 IncomeList = new List<BudgetItem>() {
@@ -293,17 +306,18 @@ namespace BudgetApp.App
             //budgetApp.Run();
         }
 
-        public void PromptUserToLoadData()
+        public bool PromptUserToLoadData()
         {
             string prompt = Utilities.PromptYesOrNo("Would you like to load your saved data? ");
 
             if (prompt == "y")
             {
                 selectedAccount = Utilities.LoadUserInformation(selectedAccount);
+                return true;
             }
             else if (prompt == "n")
             {
-                return;
+                return false;
             }
             else
             {
