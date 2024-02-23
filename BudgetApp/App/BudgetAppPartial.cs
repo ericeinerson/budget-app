@@ -75,7 +75,7 @@ namespace BudgetApp.App
                     },
                     new Expense()
                     {
-                        Amount = 112,
+                        Amount = 345,
                         Name = "expense4.3.1415",
                         Rate = Rate.Weekly,
                         Id = 4,
