@@ -1,6 +1,6 @@
-﻿using System;
-using BudgetApp.Domain.Entities;
-using BudgetApp.App;
+﻿using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.Enums;
+using BudgetApp.Extensions;
 
 namespace BudgetApp.UI
 {
@@ -8,7 +8,7 @@ namespace BudgetApp.UI
 	{
         internal const string cur = "$";
 
-		internal static void Welcome()
+        internal static void Welcome()
         {
             Console.Clear();
             Console.Title = "My Budget App";
@@ -21,10 +21,11 @@ namespace BudgetApp.UI
 
         internal static UserAccount UserLoginForm()
         {
-            UserAccount tempUserAccount = new UserAccount();
-
-            tempUserAccount.FullName = Validator.Convert<string>("your name.").ToLower();
-            tempUserAccount.Passcode = Convert.ToInt32(Utilities.GetSecretInput("Enter your passcode."));
+            UserAccount tempUserAccount = new()
+            {
+                FullName = Utilities.GetUserInput("your name.").ToLower(),
+                Passcode = Utilities.GetSecretInput("Enter your passcode.")
+            };
 
             return tempUserAccount;
         }
@@ -53,80 +54,128 @@ namespace BudgetApp.UI
         {
             Console.Clear();
             Console.WriteLine("-------My Budget App Menu-------");
-            Console.WriteLine("1. Budget Summary               ");
-            Console.WriteLine("2. Instructions/App Description ");
-            Console.WriteLine("3. Incomes                      ");
-            Console.WriteLine("4. Categorized Expenses         ");
-            Console.WriteLine("5. Wishlist/Future              ");
-            Console.WriteLine("6. Logout                       ");
-            Console.WriteLine("7. Update Balance               ");
+            foreach(AppMenu menuItem in Enum.GetValues<AppMenu>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}",(int)menuItem, menuDescription);
 
+                Console.WriteLine(menuLine);
+            }
         }
 
-        internal static void DisplayExpenseOptions()
+        internal static void DisplayInitialTransactionOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an expense to update. \n\n");
+            Console.WriteLine("Select an option. \n\n");
 
-            Console.WriteLine("1. Rent/Utilities           6. Medical      ");
-            Console.WriteLine("2. Credit Cards             7. Insurance    ");
-            Console.WriteLine("3. Food/General             8. Subscriptions");
-            Console.WriteLine("4. Loans                    9. Gym          ");
-            Console.WriteLine("5. Gas                      10. Other       ");
-            Console.WriteLine("11. Logout                  12. App Menu    ");
+            foreach (BudgetItemType menuItem in Enum.GetValues<BudgetItemType>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
 
+                Console.WriteLine(menuLine);
+            }
         }
 
-        internal static void DisplayExpenseUpdateOptions()
+        internal static void DisplayInitialBudgetItemOptions(BudgetItemType type)
         {
             Console.Clear();
-            Console.WriteLine("Select an update option. \n\n");
+            Console.WriteLine("Select an option. \n\n");
+            
+            foreach (BudgetItemOption menuItem in Enum.GetValues<BudgetItemOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
 
-            Console.WriteLine("1. Pay All/Remaining                        ");
-            Console.WriteLine("2. Pay Partial                              ");
-            Console.WriteLine("3. Enter new amount                         ");
-            Console.WriteLine("4. Logout                                   ");
-            Console.WriteLine("5. Add to expense list                      ");
-
+                Console.WriteLine(menuLine);
+            }
+                    
         }
 
-        internal static void DisplayIncomeOptions()
+        internal static void DisplayInitialCategoryOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an income to update. \n\n");
+            Console.WriteLine("Select an option. \n\n");
 
-            Console.WriteLine("1. Paychecks             ");
-            Console.WriteLine("2. Taxes                 ");
-            Console.WriteLine("3. Other                 ");
-            Console.WriteLine("4. Return To Main Menu   ");
-            Console.WriteLine("5. Exit App              ");
+            foreach (CategoryOption menuItem in Enum.GetValues<CategoryOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
-        internal static void DisplayWishlistOptions()
+        internal static void DisplayBudgetItemUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Amount                                   ");
+            Console.WriteLine("2. Name                                     ");
+            Console.WriteLine("3. Rate                                     ");
+            Console.WriteLine("4. Date                                     ");
+            Console.WriteLine("5. Category                                 ");
+            Console.WriteLine("6. All                                      ");
+        }
+
+        internal static void DisplayWishlistUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Item                                     ");
+            Console.WriteLine("2. Cost                                     ");
+            Console.WriteLine("3. Priority                                 ");
+            Console.WriteLine("4. All                                      ");
+        }
+
+        internal static void DisplayItemUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an item update option.   \n\n");
+
+            Console.WriteLine("1. Name                             ");
+            Console.WriteLine("2. Cost                             ");
+            Console.WriteLine("3. Priority                         ");
+            Console.WriteLine("4. All                              ");
+        }
+
+        internal static void DisplayCategoryUpdateDetails()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a detail to update. \n\n");
+
+            Console.WriteLine("1. Name                                     ");
+            
+        }
+
+        internal static void DisplayInitialWishlistOptions()
         {
             Console.Clear();
             Console.WriteLine("Select a wishlist option. \n\n");
 
-            Console.WriteLine("1. View Wishlist               ");
-            Console.WriteLine("2. Add Wishlist Item           ");
-            Console.WriteLine("3. Make Wishlist Expense       ");
-            Console.WriteLine("4. Logout                      ");
+            foreach (WishlistOption menuItem in Enum.GetValues<WishlistOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
-        internal static void DisplayExpenseSummary()
-        {
-            //Add console table in to display expenses
-        }
-
-        internal static void DisplayIncomeMenu()
+        internal static void DisplayInitialBudgetSummaryOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an income option. \n\n");
+            Console.WriteLine("Select a budget summary option. \n\n");
 
-            Console.WriteLine("1. View Incomes               ");
-            Console.WriteLine("2. Add an Income              ");
-            Console.WriteLine("3. Update an Income           ");
-            Console.WriteLine("4. Logout                     ");
+            foreach (BudgetSummaryOption menuItem in Enum.GetValues<BudgetSummaryOption>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
+
+                Console.WriteLine(menuLine);
+            }
         }
 
         internal static void DisplayRateOptions()
@@ -134,72 +183,28 @@ namespace BudgetApp.UI
             Console.Clear();
             Console.WriteLine("Select a rate option. \n\n");
 
-            Console.WriteLine("1. Weekly                     ");
-            Console.WriteLine("2. Biweekly                   ");
-            Console.WriteLine("3. Monthly                    ");
-            Console.WriteLine("4. Yearly                     ");
-            Console.WriteLine("5. Logout                     ");
+            foreach (Rate menuItem in Enum.GetValues<Rate>())
+            {
+                var menuDescription = menuItem.GetDescription();
+                var menuLine = string.Format("{0}. {1}", (int)menuItem, menuDescription);
 
-
+                Console.WriteLine(menuLine);
+            }
         }
 
-        internal static void DisplayIncomeUpdateOptions()
+        internal static void DisplayPostingOptions()
         {
             Console.Clear();
-            Console.WriteLine("Select an income update option. \n\n");
+            Console.WriteLine("Select a posting option. \n\n");
 
-            Console.WriteLine("1. Name                     ");
-            Console.WriteLine("2. Amount                   ");
-            Console.WriteLine("3. Rate                    ");
-            Console.WriteLine("4. Logout                     ");
-        }
-
-        internal static void DisplayBudgetSummaryOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("Select an option. \n\n                        ");
-
-            Console.WriteLine("1. Budget Summary For Current Month And Year  ");
-            Console.WriteLine("2. Budget Summary At Specified Future Date    ");
-            Console.WriteLine("3. View Previous Transactions                 ");
-            Console.WriteLine("4. Logout                                     ");
-            Console.WriteLine("5. App Menu                                   ");
-        }
-
-        internal static void DisplayBudgetSummary()
-        {
-            //Add console table in to display budget summary
+            Console.WriteLine("1. All                              ");
+            Console.WriteLine("2. Some                             ");
+            Console.WriteLine("3. None                             ");
         }
 
         internal static void ViewActivity()
         {
             //Add console table in to display past expenses, incomes, and updates
-        }
-
-        internal static void LogoutProgress()
-        {
-            Console.WriteLine("Thank you for using My Budget App.");
-            Utilities.PrintDotAnimation();
-            Console.Clear();
-            Console.WriteLine("Would you like to exit the app (Y/N)?");
-            string response = string.Empty;
-
-            while (response != "Y" || response != "N") {
-
-                response = Console.ReadLine()!;
-
-                if (response == "Y")
-                {
-                    Environment.Exit(1);
-                }
-                else if (response == "N")
-                {
-                    break;
-
-                }
-                Utilities.PrintMessage("Invalid entry. Try again", false, true);
-                continue;
-            }
         }
     }
 }
