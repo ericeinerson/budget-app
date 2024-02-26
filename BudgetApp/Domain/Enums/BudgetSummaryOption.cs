@@ -9,6 +9,8 @@ namespace BudgetApp.Domain.Enums
 		ViewCurrentBalance = 1,
         [Description("Update Current Balance")]
         UpdateCurrentBalance,
+        [Description("View Summary of Expenses, Incomes, and Balance")]
+        ViewMainSummary,
         [Description("Logout")]
         Logout,
         [Description("Go Back")]

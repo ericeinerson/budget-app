@@ -3,6 +3,7 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
 {
@@ -31,15 +32,106 @@ namespace BudgetApp.App
             Utilities.PressEnterToContinue();
         }
 
-        public void AddTransaction(BudgetItem item)
+        public void AddSingleTransaction(BudgetItem item, BudgetItemType type)
         {
-            Transaction transaction = ConstructTransaction(item);
+
+            Transaction transaction = ConstructSingleTransaction(item, type);
             selectedAccount.TransactionList.Add(transaction);
             Utilities.PrintMessage($"Successfully created transaction with " +
                 $"name: {transaction.Name}, " +
                 $"amount: {transaction.Amount} " +
                 $"budget item id: {transaction.BudgetItemId}," +
-                $"id: {transaction.Id}!", true, false);
+            $"id: {transaction.Id}!", true, false);
+        }
+
+        public void CreateMultipleTransactions(BudgetItem item, BudgetItemType type)
+        {
+            var curDate = item.StartDate;
+            var daysBetweenTransactions = 0;
+            var postedDateString = string.Empty;
+
+            switch (item.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenTransactions = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenTransactions = 14;
+                    break;
+                case Rate.Monthly:
+                    break;
+                case Rate.Yearly:
+                    daysBetweenTransactions = 365;
+                    break;
+                case Rate.NoRate:
+                case Rate.Other:
+                    Console.WriteLine($"Cannot predict rate for other or no rate");
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            while (curDate < item.EndDate)
+            {
+                var transaction = new Transaction();
+                transaction.Id = AssignTransactionId();
+                transaction.Name = item.Name;
+                transaction.CategoryId = item.CategoryId;
+                transaction.Amount = item.Amount;
+                transaction.BudgetItemId = item.Id;
+                transaction.BudgetItemType = type;
+                transaction.CreatedDate = DateTime.Now;
+                transaction.ScheduledDate = curDate;
+
+                if (item.AmountVariable)
+                {
+                    Console.WriteLine($"Name: {item.Name}, Date: {curDate}, BudgetItemId: {item.Id}, Current Amount: {item.Amount}, Budget Item Type: {type}");
+                    string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {item.Amount}?");
+                    if(isDifferentPrompt == "y")
+                    {
+                        transaction.Amount = Validator.Convert<decimal>("amount for this transaction");
+                    }
+                    Console.WriteLine();
+                }
+                if (item.Rate == Rate.Monthly)
+                {
+                    daysBetweenTransactions = DateTime.DaysInMonth(curDate.Year, curDate.Month);
+                }
+                if (curDate <= DateTime.Now)
+                {
+                    transaction.PostedDate = DateTime.Now;
+                    transaction.Status = Status.Posted;
+                    postedDateString = transaction.PostedDate.ToString();
+                }
+                else
+                {
+                    transaction.PostedDate = null;
+                    transaction.Status = Status.Scheduled;
+                    postedDateString = "Not Posted Yet";
+                }
+                selectedAccount.TransactionList.Add(transaction);      
+
+                curDate = curDate.AddDays(daysBetweenTransactions);
+
+                Utilities.PrintMessage($"Successfully created transaction! Id: " +
+                    $"{transaction.Id}, " +
+                    $"Name: {transaction.Name}, " +
+                    $"Category Id: {transaction.CategoryId}, " +
+                    $"Amount: {transaction.Amount}, " +
+                    $"Budget Item Id: {transaction.BudgetItemId}," +
+                    $"Budget Item Type: {transaction.BudgetItemType}," +
+                    $"Created Date: {transaction.CreatedDate}," +
+                    $"Name: {transaction.ScheduledDate}," +
+                    $"Name: {postedDateString}," +
+                    $"Status: {transaction.Status}", true, true);
+                Console.WriteLine();
+            }
+        }
+
+        private int AssignTransactionId()
+        {
+            selectedAccount.TransactionIdCounter++;
+            return selectedAccount.TransactionIdCounter;
         }
 
         private void IndividuallySelectTransactionStatus(List<Transaction> transactionsFlagged)
@@ -80,10 +172,18 @@ namespace BudgetApp.App
             }
         }
 
-        private Transaction ConstructTransaction(BudgetItem item)
+        private Transaction ConstructSingleTransaction(BudgetItem item, BudgetItemType type)
         {
+            if(item.Rate == Rate.Other)
+            {
+                Utilities.PrintMessage("WARNING: This transaction is being associated with an irregular rate. Make sure this isn't duplicated or incorrect", false, true);
+            }
+            else if(item.Rate != Rate.NoRate)
+            {
+                throw new Exception("This method can only be used for budget items with no rate or an other rate");
+            }
             var transaction = new Transaction();
-
+            
             int id;
             string name = item.Name;
             decimal amount = item.Amount;
@@ -100,7 +200,7 @@ namespace BudgetApp.App
 
             if(postedToday == "y")
             {
-                transaction.ScheduledDate = DateTime.Now;
+                transaction.ScheduledDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
                 transaction.Status = Status.Posted;
             }
             else
@@ -120,11 +220,11 @@ namespace BudgetApp.App
                 }
             }
 
-            if (item is Income)
+            if (type == BudgetItemType.Income)
             {
                 budgetItemType = BudgetItemType.Income;
             }
-            else if(item is Expense)
+            else if(type == BudgetItemType.Expense)
             {
                 budgetItemType = BudgetItemType.Expense;
             }

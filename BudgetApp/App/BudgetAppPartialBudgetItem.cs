@@ -76,6 +76,16 @@ namespace BudgetApp.App
         public void AddBudgetItem(BudgetItemType type)
         {
             BudgetItem item = ConstructBudgetItem(type);
+
+            if(item.Rate == Rate.NoRate)
+            {
+                AddSingleTransaction(item, type);
+            }
+            else
+            {
+                CreateMultipleTransactions(item, type);
+            }
+
             var amountFormatted = Utilities.FormatAmount(item.Amount);
             string endDateString = string.Empty;
             var budgetItemList = GetBudgetItemList(type);
@@ -170,7 +180,8 @@ namespace BudgetApp.App
         public BudgetItem ConstructBudgetItem(BudgetItemType type)
         {
             var item = new BudgetItem();
-
+            var categoryId = 0;
+            var amountVariable = false;
             int id;
 
             if (type == BudgetItemType.Expense)
@@ -189,12 +200,18 @@ namespace BudgetApp.App
             }
             string name = Utilities.GetUserInput("name");
             decimal amount = Validator.Convert<decimal>("amount");
+            string amountVariablePrompt = Utilities.PromptYesOrNo("Is this a variable amount?");
+            if(amountVariablePrompt == "y")
+            {
+                amountVariable = true;
+            }
+
             Category category = AssignTransactionCategory();
 
             //TEST CODE REMOVE LATER START
             if (category != null)
             {
-                var categoryId = category.Id;
+                categoryId = category.Id;
                 var categoryName = category.Name;
 
                 Console.WriteLine(categoryId);
@@ -208,8 +225,8 @@ namespace BudgetApp.App
             //TEST CODE REMOVE LATER END
 
             Rate rate = ProcessRateOption();
-            DateTime startDate = DateTime.MinValue;
-            DateTime endDate = DateTime.MaxValue;
+            DateTime startDate = DateTime.Now;
+            DateTime endDate = DateTime.Now;
 
             string todayOrFuture = Utilities.GetUserInput("whether t for today or f for future").ToLower();
 
@@ -219,7 +236,16 @@ namespace BudgetApp.App
             }
             else if (todayOrFuture == "f")
             {
+                Console.WriteLine("Please specify start date details");
                 startDate = Utilities.ConstructDate();
+            }
+
+            Console.WriteLine("Please specify end date details");
+            endDate = Utilities.ConstructDate();
+
+            if(startDate > endDate)
+            {
+                throw new Exception("Start Date cannot be after End Date");
             }
 
             item.Id = id;
@@ -229,6 +255,7 @@ namespace BudgetApp.App
             item.StartDate = startDate;
             item.EndDate = endDate;
             item.CategoryId = category == null ? 0 : category.Id;
+            item.AmountVariable = amountVariable;
 
             return item;
         }

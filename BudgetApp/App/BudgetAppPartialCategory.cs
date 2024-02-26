@@ -167,7 +167,7 @@ namespace BudgetApp.App
 
             if(category == null)
             {
-                throw new NullReferenceException();
+                category = categoryList[0];
             }
 
             return category;

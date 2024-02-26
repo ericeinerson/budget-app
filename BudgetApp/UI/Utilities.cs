@@ -177,6 +177,7 @@ namespace BudgetApp.UI
             {
                 string[] expensesAsString = File.ReadAllLines(expensesPath);
 
+                //LOOK INTO LINQ FOR DOING THIS
                 for (int i = 0; i < expensesAsString.Length; i++)
                 {
                     List<string>? expensesSplits = expensesAsString[i].Split(';').ToList();
