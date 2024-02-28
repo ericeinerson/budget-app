@@ -231,6 +231,11 @@ namespace BudgetApp.App
                     selectedAccount = Utilities.LoadUserInformation(selectedAccount);
                     Utilities.PressEnterToContinue();
                     break;
+                case (int)AppMenu.Other:
+                    AppScreen.DisplayInitialTransactionOptions();
+                    ProcessTransactionMenuOption();
+                    Utilities.PressEnterToContinue();
+                    break;
                 default:
                     Utilities.PrintMessage("Invalid option.", false);
                     break;

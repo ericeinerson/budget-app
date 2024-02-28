@@ -23,6 +23,32 @@ namespace BudgetApp.Domain.Entities
         public Rate Rate { get; set; }
         public DateTime? MarkerDate { get; set; }
         public bool AmountVariable { get; set; }
-	}
+
+        public void DisplayAllTransactionsForItem(UserAccount selectedAccount)
+        {
+            var transactionsList = selectedAccount.TransactionList.Where(t => t.BudgetItemId == this.Id);
+            var postedDateForTransaction = string.Empty;
+
+            foreach(var transaction in transactionsList)
+            {
+                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : transaction.PostedDate.ToString();
+
+                Console.WriteLine($"" +
+                    $"Name: {transaction.Name}; " +
+                    $"Amount: {transaction.Amount}; " +
+                    $"Id: {transaction.Id}; " +
+                    $"Category Id: {transaction.CategoryId}; " +
+                    $"Scheduled Date: {transaction.ScheduledDate}; " +
+                    $"Created Date: {transaction.CreatedDate}; " +
+                    $"Type: {transaction.BudgetItemType}; " +
+                    $"Scheduled Date: {transaction.ScheduledDate}; " +
+                    $"Status: {transaction.Status}; " +
+                    $"Posted Date: {postedDateForTransaction}; ");
+            }
+        }
+
+
+    }
+
 }
 

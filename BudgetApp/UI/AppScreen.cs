@@ -202,6 +202,17 @@ namespace BudgetApp.UI
             Console.WriteLine("3. None                             ");
         }
 
+        internal static void DisplayTransactionOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select a transaction option.    \n\n");
+
+            Console.WriteLine("1. View Transactions For Budget Item");
+            Console.WriteLine("2. View All Transactions            ");
+            //Console.WriteLine("2. Some                             ");
+            //Console.WriteLine("3. None                             ");
+        }
+
         internal static void ViewActivity()
         {
             //Add console table in to display past expenses, incomes, and updates

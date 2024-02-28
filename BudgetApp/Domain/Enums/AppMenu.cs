@@ -22,7 +22,9 @@ namespace BudgetApp.Domain.Enums
         [Description("Save Info")]
         SaveInfo,
         [Description("Load Info")]
-        LoadInfo
+        LoadInfo,
+        [Description("Other")]
+        Other,
     }
 }
 

@@ -145,9 +145,26 @@ namespace BudgetApp.App
             }
         }
 
-        public BudgetItem FindBudgetItem(BudgetItemType type)
+        public BudgetItem FindBudgetItem(BudgetItemType type = BudgetItemType.None)
         {
             BudgetItem? item = null;
+            if(type == BudgetItemType.None)
+            {
+                string typeSelection = Utilities.GetUserInput("1 for expense, 2 for income");
+                while(typeSelection != "1" && typeSelection != "2")
+                { 
+                    Utilities.PrintMessage("Invalid input. Try again", false, false);
+                    typeSelection = Utilities.GetUserInput("1 for expense, 2 for income");
+                }
+                if(typeSelection == "1")
+                {
+                    type = BudgetItemType.Expense;
+                }
+                else if(typeSelection == "2")
+                {
+                    type = BudgetItemType.Income;
+                }
+            }
             var transactionList = GetBudgetItemList(type);
             while(item == null)
             {

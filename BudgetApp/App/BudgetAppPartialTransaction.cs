@@ -9,6 +9,27 @@ namespace BudgetApp.App
 {
 	public partial class BudgetApp
     {
+        public void ProcessTransactionMenuOption()
+        {
+            AppScreen.DisplayTransactionOptions();
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    var budgetItem = FindBudgetItem();
+                    budgetItem.DisplayAllTransactionsForItem(selectedAccount);
+                    break;
+                case 2:
+                    DisplayAllTransactions();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+
+            Utilities.PressEnterToContinue();
+        }
+
         public void VerifyTransactionStatus()
         {
             var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
@@ -349,6 +370,27 @@ namespace BudgetApp.App
             Console.WriteLine("'\n'\n'\n....\n'  '\n'  '\n'  '\n'  '");
         }
 
+        public void DisplayAllTransactions()
+        {
+            var postedDateForTransaction = string.Empty;
+
+            foreach(var transaction in selectedAccount.TransactionList)
+            {
+                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : transaction.PostedDate.ToString();
+
+                Console.WriteLine($"" +
+                    $"Name: {transaction.Name}; " +
+                    $"Amount: {transaction.Amount}; " +
+                    $"Id: {transaction.Id}; " +
+                    $"Category Id: {transaction.CategoryId}; " +
+                    $"Scheduled Date: {transaction.ScheduledDate}; " +
+                    $"Created Date: {transaction.CreatedDate}; " +
+                    $"Type: {transaction.BudgetItemType}; " +
+                    $"Scheduled Date: {transaction.ScheduledDate}; " +
+                    $"Status: {transaction.Status}; " +
+                    $"Posted Date: {postedDateForTransaction}; ");
+            }
+        }
         //public void PostSomeTransactions(List<Transaction> transactionsPending)
         //{
         //    string goThroughEachTransaction = Utilities.PromptYesOrNo("Go through each transaction?");
