@@ -11,7 +11,7 @@ namespace BudgetApp.App
     {
         public void ProcessTransactionMenuOption()
         {
-            AppScreen.DisplayTransactionOptions();
+            AppScreen.DisplayGeneralOptions();
             switch (Validator.Convert<int>("an option"))
             {
                 case 1:
@@ -57,19 +57,26 @@ namespace BudgetApp.App
         {
 
             Transaction transaction = ConstructSingleTransaction(item, type);
+            var postedDateString = transaction.Status == Status.Posted ? transaction.PostedDate.ToString() : "N/A";
+
             selectedAccount.TransactionList.Add(transaction);
+
             Utilities.PrintMessage($"Successfully created transaction with " +
                 $"name: {transaction.Name}, " +
                 $"amount: {transaction.Amount} " +
                 $"budget item id: {transaction.BudgetItemId}," +
-            $"id: {transaction.Id}!", true, false);
+                $"id: {transaction.Id}," +
+                $"Category Id: {transaction.CategoryId}," +
+                $"Created Date: {transaction.CreatedDate}," +
+                $"Type: {transaction.BudgetItemType}," +
+                $"Scheduled Date: {transaction.ScheduledDate}," +
+                $"Posted Date: {postedDateString}!", true, false);
         }
 
         public void CreateMultipleTransactions(BudgetItem item, BudgetItemType type)
         {
             var curDate = item.StartDate;
             var daysBetweenTransactions = 0;
-            var postedDateString = string.Empty;
 
             switch (item.Rate)
             {
@@ -95,6 +102,7 @@ namespace BudgetApp.App
             while (curDate < item.EndDate)
             {
                 var transaction = new Transaction();
+                var postedDateString = string.Empty;
                 transaction.Id = AssignTransactionId();
                 transaction.Name = item.Name;
                 transaction.CategoryId = item.CategoryId;
@@ -142,8 +150,8 @@ namespace BudgetApp.App
                     $"Budget Item Id: {transaction.BudgetItemId}," +
                     $"Budget Item Type: {transaction.BudgetItemType}," +
                     $"Created Date: {transaction.CreatedDate}," +
-                    $"Name: {transaction.ScheduledDate}," +
-                    $"Name: {postedDateString}," +
+                    $"Scheduled Date: {transaction.ScheduledDate}," +
+                    $"PostedDate: {postedDateString}," +
                     $"Status: {transaction.Status}", true, true);
                 Console.WriteLine();
             }
@@ -188,8 +196,20 @@ namespace BudgetApp.App
         {
             foreach(var transaction in transactionsFlagged)
             {
+
                 transaction.Status = Status.Posted;
-                Console.WriteLine($"transaction posted: {transaction.Name} {transaction.Amount} {transaction.Id}");
+                transaction.PostedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                Console.WriteLine($"transaction posted: " +
+                    $"{transaction.Name}, " +
+                    $"{transaction.Id}," +
+                    $"Category Id: {transaction.CategoryId}, " +
+                    $"Amount: {transaction.Amount}, " +
+                    $"Budget Item Id: {transaction.BudgetItemId}," +
+                    $"Budget Item Type: {transaction.BudgetItemType}," +
+                    $"Created Date: {transaction.CreatedDate}," +
+                    $"Scheduled Date: {transaction.ScheduledDate}," +
+                    $"PostedDate: {transaction.PostedDate}," +
+                    $"Status: {transaction.Status}");
             }
         }
 
