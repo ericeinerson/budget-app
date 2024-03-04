@@ -38,24 +38,25 @@ namespace BudgetApp.App
 
         public void ViewBudgetItems(BudgetItemType type)
         {
-            ConsoleTable allItemsTable = new("Name", "Amount","Start Date", "End Date","Id", "Category", "Budget Item Type");
+            ConsoleTable allItemsTable = new("Name", "Amount","Start Date", "End Date","Id", "Category", "Budget Item Type", "Rate", "Variable?");
 
             foreach (BudgetItem item in GetBudgetItemList(type))
             {
                 string amountFormatted = Utilities.FormatAmount(item.Amount);
                 string? endDate = string.IsNullOrEmpty(item.EndDate.ToString()) ? "No End Date" : item.EndDate?.ToString("MMMM dd, yyyy");
                 Category? category = selectedAccount.CategoryList.Find(t => t.Id == item.CategoryId);
-                var categoryName = category != null ? category.Name : string.Empty;
+                var categoryName = category != null ? category.Name : "No Category";
 
-                allItemsTable.AddRow(item.Name, amountFormatted, item.StartDate.ToString("MMMM dd, yyyy"), endDate, item.Id, categoryName, type);
+                allItemsTable.AddRow(item.Name, amountFormatted, item.StartDate.ToString("MMMM dd, yyyy"), endDate, item.Id, categoryName, type, item.Rate, item.AmountVariable);
             }
             allItemsTable.Write();
             Utilities.PressEnterToContinue();
+            ProcessBudgetItemOption(type);
         }
 
         public List<BudgetItem> GetBudgetItemList(BudgetItemType type)
         {
-            List<BudgetItem> budgetItemList;
+            List<BudgetItem> budgetItemList = new();
 
             if (type == BudgetItemType.Expense)
             {
@@ -67,7 +68,7 @@ namespace BudgetApp.App
             }
             else
             {
-                throw new Exception();
+                Utilities.PrintMessage("Budget item type is not valid", false, false);
             }
 
             return budgetItemList;
@@ -128,7 +129,12 @@ namespace BudgetApp.App
 
             }
 
-            Utilities.PrintMessage($"You have succcessfully added {item.Name} with a value of {amountFormatted}. This transaction will start on {item.StartDate:MMMM dd, yyyy}{endDateString}!", true, false);
+            Utilities.PrintMessage($"You have succcessfully added " +
+                $"{item.Name} with a value of " +
+                $"{amountFormatted}. " +
+                $"This transaction will start on {item.StartDate:MMMM dd, yyyy}{endDateString}" +
+                $"!", true, false);
+            ProcessBudgetItemOption(type);
         }
 
         public void RemoveBudgetItem(BudgetItemType type)
@@ -143,6 +149,7 @@ namespace BudgetApp.App
                 itemList.Remove(item);
                 Utilities.PrintMessage($"You have succcessfully removed {item.Name} with a value of {amountFormatted}!", true, false);
             }
+            ProcessBudgetItemOption(type);
         }
 
         public BudgetItem FindBudgetItem(BudgetItemType type = BudgetItemType.None)
@@ -168,19 +175,87 @@ namespace BudgetApp.App
             var transactionList = GetBudgetItemList(type);
             while(item == null)
             {
-                string itemName = Utilities.GetUserInput("name. If not known, enter n to skip or a to exit to app menu").ToLower();
-                if(itemName == "a")
+                string itemName = Utilities.GetUserInput("name. If not known, enter a to find by amount, i to find by id, or q to exit to app menu").ToLower();
+                var itemList = new List<BudgetItem>();
+                if(itemName == "q")
                 {
                     break;
                 }
-                item = transactionList.FirstOrDefault(t => t.Name.ToLower() == itemName.ToLower());
-                if (itemName == "n")
+                itemList = transactionList.Where(t => t.Name.ToLower() == itemName.ToLower()).ToList();
+                if(itemList.Count > 1)
+                {
+                    foreach(var listItem in itemList)
+                    {
+                        string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
+                            $"Name: {listItem.Name}," +
+                            $"Amount: {listItem.Amount}," +
+                            $"Id: {listItem.Id}," +
+                            $"Variable?: {listItem.AmountVariable}," +
+                            $"Category Id: {listItem.CategoryId}," +
+                            $"Start Date: {listItem.StartDate}," +
+                            $"End Date: {listItem.EndDate}," +
+                            $"Rate: {listItem.Rate}");
+
+                        if(isCorrectItem == "y")
+                        {
+                            item = listItem;
+                            break;
+                        }
+                    }
+                }
+                if (itemName == "a")
                 {
                     decimal amount = Validator.Convert<decimal>("amount");
-                    item = transactionList.FirstOrDefault(t => t.Amount == amount);
-                }
+                    itemList = transactionList.Where(t => t.Amount == amount).ToList();
+                    if (itemList.Count > 1)
+                    {
+                        foreach (var listItem in itemList)
+                        {
+                            string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
+                                $"Name: {listItem.Name}," +
+                                $"Amount: {listItem.Amount}," +
+                                $"Id: {listItem.Id}," +
+                                $"Variable?: {listItem.AmountVariable}," +
+                                $"Category Id: {listItem.CategoryId}," +
+                                $"Start Date: {listItem.StartDate}," +
+                                $"End Date: {listItem.EndDate}," +
+                                $"Rate: {listItem.Rate}");
 
-                if(item == null)
+                            if (isCorrectItem == "y")
+                            {
+                                item = listItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (itemName == "i")
+                {
+                    decimal id = Validator.Convert<decimal>("id");
+                    itemList = transactionList.Where(t => t.Id == id).ToList();
+                    if (itemList.Count > 1)
+                    {
+                        foreach (var listItem in itemList)
+                        {
+                            string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
+                                $"Name: {listItem.Name}," +
+                                $"Amount: {listItem.Amount}," +
+                                $"Id: {listItem.Id}," +
+                                $"Variable?: {listItem.AmountVariable}," +
+                                $"Category Id: {listItem.CategoryId}," +
+                                $"Start Date: {listItem.StartDate}," +
+                                $"End Date: {listItem.EndDate}," +
+                                $"Rate: {listItem.Rate}");
+
+                            if (isCorrectItem == "y")
+                            {
+                                item = listItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (item == null)
                 {
                     Utilities.PrintMessage("Sorry, transaction not found. Please try again", false, false);
                 }
@@ -197,7 +272,6 @@ namespace BudgetApp.App
         public BudgetItem ConstructBudgetItem(BudgetItemType type)
         {
             var item = new BudgetItem();
-            var categoryId = 0;
             var amountVariable = false;
             int id;
 
@@ -213,7 +287,7 @@ namespace BudgetApp.App
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Type must be an expense or income");
             }
             string name = Utilities.GetUserInput("name");
             decimal amount = Validator.Convert<decimal>("amount");
@@ -224,22 +298,6 @@ namespace BudgetApp.App
             }
 
             Category category = AssignTransactionCategory();
-
-            //TEST CODE REMOVE LATER START
-            if (category != null)
-            {
-                categoryId = category.Id;
-                var categoryName = category.Name;
-
-                Console.WriteLine(categoryId);
-                Console.WriteLine(categoryName);
-            }
-            else
-            {
-                Console.WriteLine("Successfully exited the while loop with q");
-            }
-            Utilities.PressEnterToContinue();
-            //TEST CODE REMOVE LATER END
 
             Rate rate = ProcessRateOption();
             DateTime startDate = DateTime.Now;
@@ -266,12 +324,12 @@ namespace BudgetApp.App
             }
 
             item.Id = id;
+            item.CategoryId = category == null ? 0 : category.Id;
             item.Name = name;
             item.Amount = amount;
-            item.Rate = rate;
             item.StartDate = startDate;
             item.EndDate = endDate;
-            item.CategoryId = category == null ? 0 : category.Id;
+            item.Rate = rate;
             item.AmountVariable = amountVariable;
 
             return item;
@@ -308,6 +366,7 @@ namespace BudgetApp.App
                     UpdateBudgetItemDetails(type);
                     break;
             }
+            ProcessBudgetItemOption(type);
         }
 
         private void UpdateBudgetItemAmount(BudgetItem item)

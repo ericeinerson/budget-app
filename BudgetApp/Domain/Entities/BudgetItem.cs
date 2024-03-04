@@ -21,7 +21,6 @@ namespace BudgetApp.Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Rate Rate { get; set; }
-        public DateTime? MarkerDate { get; set; }
         public bool AmountVariable { get; set; }
 
         public void DisplayAllTransactionsForItem(UserAccount selectedAccount)

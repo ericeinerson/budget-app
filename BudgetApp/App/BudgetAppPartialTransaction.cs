@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
@@ -9,27 +10,6 @@ namespace BudgetApp.App
 {
 	public partial class BudgetApp
     {
-        public void ProcessTransactionMenuOption()
-        {
-            AppScreen.DisplayGeneralOptions();
-            switch (Validator.Convert<int>("an option"))
-            {
-                case 1:
-                    var budgetItem = FindBudgetItem();
-                    budgetItem.DisplayAllTransactionsForItem(selectedAccount);
-                    break;
-                case 2:
-                    DisplayAllTransactions();
-                    break;
-                default:
-                    Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
-                    break;
-            }
-
-            Utilities.PressEnterToContinue();
-        }
-
         public void VerifyTransactionStatus()
         {
             var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
@@ -234,8 +214,7 @@ namespace BudgetApp.App
             DateTime createdDate = DateTime.Now;
             Status status = Status.None;
 
-            id = selectedAccount.TransactionIdCounter;
-            selectedAccount.TransactionIdCounter++;
+            id = AssignTransactionId();
 
             string postedToday = Utilities.PromptYesOrNo("Is this transaction posted today?");
 
@@ -279,112 +258,153 @@ namespace BudgetApp.App
             transaction.BudgetItemType = budgetItemType;
             transaction.Status = status;
 
+            var postedDateString = transaction.Status == Status.Posted ? transaction.PostedDate.ToString() : "N/A";
+
+            selectedAccount.TransactionList.Add(transaction);
+
+            Utilities.PrintMessage($"Successfully created transaction with " +
+                $"name: {transaction.Name}, " +
+                $"amount: {transaction.Amount} " +
+                $"budget item id: {transaction.BudgetItemId}," +
+                $"id: {transaction.Id}," +
+                $"Category Id: {transaction.CategoryId}," +
+                $"Created Date: {transaction.CreatedDate}," +
+                $"Type: {transaction.BudgetItemType}," +
+                $"Scheduled Date: {transaction.ScheduledDate}," +
+                $"Posted Date: {postedDateString}!", true, false);
+
             return transaction;
         }
 
         public void UpdateTransactionsForTimePeriod(int daysInPast = 183, int daysInFuture = 365)
         {
-            var transactionsExpected = new List<Transaction>();
-            var rate = new Rate();
+            List<Transaction> transactionsExpected = new();
+            Rate rate = new();
             var transactionDay = new DateTime();
             var daysBetweenTransactions = 0;
-            var transactionsTable = new ConsoleTable("Name", "Created Date", "Amount", "Category Id", "Budget Item Id");
-            foreach(var expense in selectedAccount.ExpenseList)
+            var transactionsTable = new ConsoleTable("Id", "Category Id", "Budget Item Id", "Name", "Amount", "Created Date", "Scheduled Date", "Posted Date", "Budget Item Type", "Status");
+            var lists = new List<IEnumerable<BudgetItem>>
             {
-                transactionsExpected = new List<Transaction>();
-                rate = expense.Rate;
-                transactionDay = expense.StartDate;
-                daysBetweenTransactions = 0;
+                selectedAccount.ExpenseList,
+                selectedAccount.IncomeList
+            };
+            for(var i = 0; i < lists.Count; i++) {
+                var list = lists[i];
+                var budgetItemTypeString = "No Type";
+                var budgetItemType = BudgetItemType.None;
 
-                switch (rate)
-                {
-                    case Rate.Weekly:
-                        daysBetweenTransactions = 7;
-                        break;
-                    case Rate.Biweekly:
-                        daysBetweenTransactions = 14;
-                        break;
-                    case Rate.Monthly:
-                        break;
-                    case Rate.Yearly:
-                        daysBetweenTransactions = 365;
-                        break;
-                    case Rate.NoRate:
-                    case Rate.Other:
-                        Console.WriteLine($"Cannot predict rate for {expense.Name} ");
-                        continue;
-                    default:
-                        throw new Exception();
+                if (list == selectedAccount.ExpenseList) {
+                    budgetItemTypeString = "Expense";
+                    budgetItemType = BudgetItemType.Expense;
                 }
-
-                while (transactionDay < DateTime.Now.AddDays(-1 * daysInPast))
+                else if (list == selectedAccount.IncomeList)
                 {
-                    if(rate == Rate.Weekly || rate == Rate.Biweekly)
+                    budgetItemTypeString = "Income";
+                    budgetItemType = BudgetItemType.Income;
+                }
+                foreach (var item in list)
+                {
+                    transactionsExpected = new List<Transaction>();
+                    rate = item.Rate;
+                    transactionDay = item.StartDate;
+                    daysBetweenTransactions = 0;
+
+                    switch (rate)
                     {
-                        transactionDay = transactionDay.AddDays(daysBetweenTransactions);
+                        case Rate.Weekly:
+                            daysBetweenTransactions = 7;
+                            break;
+                        case Rate.Biweekly:
+                            daysBetweenTransactions = 14;
+                            break;
+                        case Rate.Other:
+                            daysBetweenTransactions = Validator.Convert<int>("Amount of days between transactions");
+                            break;
+                        case Rate.Monthly:
+                        case Rate.Yearly:
+                            continue;
+                        case Rate.NoRate:
+                            Console.WriteLine($"Cannot predict rate for {item.Name} ");
+                            continue;
+                        default:
+                            throw new Exception();
                     }
-                    else if(rate == Rate.Yearly)
+
+                    while (transactionDay < DateTime.Now.AddDays(-1 * daysInPast))
                     {
-                        if (DateTime.IsLeapYear(transactionDay.Year))
+                        if (rate == Rate.Weekly || rate == Rate.Biweekly)
                         {
-                            daysBetweenTransactions = 366;
+                            transactionDay = transactionDay.AddDays(daysBetweenTransactions);
                         }
-                        transactionDay = transactionDay.AddDays(daysBetweenTransactions);
-                    }
-                    else if(rate == Rate.Monthly)
-                    {
-                        transactionDay = transactionDay.AddDays(DateTime.DaysInMonth(transactionDay.Year, transactionDay.Month));
-                    }
-                    else if (rate == Rate.Other || rate == Rate.NoRate)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
-                }
-
-                while(transactionDay < DateTime.Now.AddDays(daysInFuture))
-                {
-                    var transaction = new Transaction()
-                    {
-                        Name = expense.Name,
-                        CreatedDate = transactionDay,
-                        Amount = expense.Amount,
-                        CategoryId = expense.CategoryId,
-                        BudgetItemId = expense.Id,
-                    };
-                    transactionsExpected.Add(transaction);
-
-                    transactionsTable.AddRow(transaction.Name, transaction.CreatedDate, Utilities.FormatAmount(transaction.Amount), transaction.CategoryId, transaction.BudgetItemId);
-
-                    if (rate == Rate.Biweekly || rate == Rate.Weekly)
-                    {
-                        transactionDay = transactionDay.AddDays(daysBetweenTransactions);
-                    }
-                    else if (rate == Rate.Yearly)
-                    {
-                        if (DateTime.IsLeapYear(transactionDay.Year))
+                        else if (rate == Rate.Yearly)
                         {
-                            daysBetweenTransactions = 366;
+                            transactionDay = transactionDay.AddYears(1);
                         }
-                        transactionDay = transactionDay.AddDays(daysBetweenTransactions);
+                        else if (rate == Rate.Monthly)
+                        {
+                            transactionDay = transactionDay.AddMonths(1);
+                        }
+                        else if (rate == Rate.Other || rate == Rate.NoRate)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
                     }
-                    else if (rate == Rate.Monthly)
+                    var status = transactionDay <= DateTime.Now ? Status.Posted : transactionDay <= DateTime.Now.AddMonths(1) ? Status.Pending : Status.Scheduled; 
+
+                    while (transactionDay < DateTime.Now.AddDays(daysInFuture))
                     {
-                        transactionDay = transactionDay.AddDays(DateTime.DaysInMonth(transactionDay.Year, transactionDay.Month));
+                        var transaction = new Transaction()
+                        {
+                            Id = AssignTransactionId(),
+                            CategoryId = item.CategoryId,
+                            BudgetItemId = item.Id,
+                            Name = item.Name,
+                            Amount = item.Amount,
+                            CreatedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
+                            ScheduledDate = transactionDay,
+                            PostedDate = transactionDay >= DateTime.Now ? transactionDay : null,
+                            BudgetItemType = budgetItemType,
+                            Status = status
+                        };
+                        var statusString = status == Status.Posted ? "Posted" : status == Status.Pending ? "Pending" : "Scheduled";
+
+                        var postedDateString = transaction.PostedDate == null ? "No Posted Date" : transaction.PostedDate.ToString();
+
+                        transactionsExpected.Add(transaction);
+
+                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, postedDateString, budgetItemTypeString, statusString );
+
+                        if (rate == Rate.Biweekly || rate == Rate.Weekly)
+                        {
+                            transactionDay = transactionDay.AddDays(daysBetweenTransactions);
+                        }
+                        else if (rate == Rate.Yearly)
+                        {
+                            if (DateTime.IsLeapYear(transactionDay.Year))
+                            {
+                                daysBetweenTransactions = 366;
+                            }
+                            transactionDay = transactionDay.AddDays(daysBetweenTransactions);
+                        }
+                        else if (rate == Rate.Monthly)
+                        {
+                            transactionDay = transactionDay.AddDays(DateTime.DaysInMonth(transactionDay.Year, transactionDay.Month));
+                        }
+                        else if (rate == Rate.Other || rate == Rate.NoRate)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
                     }
-                    else if(rate == Rate.Other || rate == Rate.NoRate)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
+                    transactionsTable.AddRow("break", "", "", "", "");
                 }
-                transactionsTable.AddRow("break", "", "", "", "");
             }
             transactionsTable.Write();
             Console.WriteLine("'\n'\n'\n....\n'  '\n'  '\n'  '\n'  '");

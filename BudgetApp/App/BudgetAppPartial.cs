@@ -9,7 +9,6 @@ namespace BudgetApp.App
     {
         private List<UserAccount>? userAccountList;
         protected UserAccount selectedAccount = new();
-        private DateTime dateTimeConstant = new DateTime(1234);
         
         public void Run()
         {
@@ -233,7 +232,7 @@ namespace BudgetApp.App
                     break;
                 case (int)AppMenu.Other:
                     AppScreen.DisplayInitialTransactionOptions();
-                    ProcessTransactionMenuOption();
+                    ProcessGeneralMenuOption();
                     Utilities.PressEnterToContinue();
                     break;
                 default:
@@ -274,6 +273,27 @@ namespace BudgetApp.App
             ProcessBudgetSummaryMenuOption();
         }
 
+        public void ProcessGeneralMenuOption()
+        {
+            AppScreen.DisplayGeneralOptions();
+            switch (Validator.Convert<int>("an option"))
+            {
+                case 1:
+                    var budgetItem = FindBudgetItem();
+                    budgetItem.DisplayAllTransactionsForItem(selectedAccount);
+                    break;
+                case 2:
+                    DisplayAllTransactions();
+                    break;
+                default:
+                    Utilities.PrintMessage("Invalid Option. Try again", false);
+                    ProcessWishlistOption();
+                    break;
+            }
+
+            Utilities.PressEnterToContinue();
+        }
+
         public void PromptUserToSave()
         {
             string prompt = Utilities.PromptYesOrNo("Would you like to save your data?");
@@ -297,7 +317,6 @@ namespace BudgetApp.App
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
             Console.Clear();
-            //selectedAccount.LastLoginDate = DateTime.Now;
             string logoutOption = Utilities.PromptYesOrNo("Would you like to exit the app?").ToLower();
 
             if (logoutOption == "y")
@@ -307,8 +326,6 @@ namespace BudgetApp.App
 
             Utilities.PrintMessage("You have successfully logged out.", true);
             Run();
-            //var budgetApp = new BudgetApp.App.BudgetApp();
-            //budgetApp.Run();
         }
 
         public bool PromptUserToLoadData()
@@ -649,45 +666,45 @@ namespace BudgetApp.App
         //    return pay;
         //}
 
-        public int CalculateTransactionCounter(DateTime endTimeSpan, Rate rate)
-        {
-            DateTime firstPayPeriod = new(DateTime.Now.Year, 1, 5);
-            DateTime currentPayPeriod = firstPayPeriod;
-            int payPeriodCounter = 0;
-            int daysBetweenIntervals;
+        //public int CalculateTransactionCounter(DateTime endTimeSpan, Rate rate)
+        //{
+        //    DateTime firstPayPeriod = new(DateTime.Now.Year, 1, 5);
+        //    DateTime currentPayPeriod = firstPayPeriod;
+        //    int payPeriodCounter = 0;
+        //    int daysBetweenIntervals;
 
-            switch (rate)
-            {
-                case Rate.Weekly:
-                    daysBetweenIntervals = 7;
-                    break;
-                case Rate.Biweekly:
-                    daysBetweenIntervals = 14;
-                    break;
-                case Rate.Monthly:
-                    daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                    break;
-                case Rate.Yearly:
-                    daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
-                    break;
-                default:
-                    daysBetweenIntervals = 14;
-                    break;
-            }
+        //    switch (rate)
+        //    {
+        //        case Rate.Weekly:
+        //            daysBetweenIntervals = 7;
+        //            break;
+        //        case Rate.Biweekly:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //        case Rate.Monthly:
+        //            daysBetweenIntervals = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        //            break;
+        //        case Rate.Yearly:
+        //            daysBetweenIntervals = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365;
+        //            break;
+        //        default:
+        //            daysBetweenIntervals = 14;
+        //            break;
+        //    }
 
-            while (currentPayPeriod < DateTime.Now)
-            {
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < DateTime.Now)
+        //    {
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            while (currentPayPeriod < endTimeSpan)
-            {
-                payPeriodCounter++;
-                currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
-            }
+        //    while (currentPayPeriod < endTimeSpan)
+        //    {
+        //        payPeriodCounter++;
+        //        currentPayPeriod = currentPayPeriod.AddDays(daysBetweenIntervals);
+        //    }
 
-            return payPeriodCounter;
-        }
+        //    return payPeriodCounter;
+        //}
 
         //private void ShowBudgetForOtherTimeRange()
         //{
