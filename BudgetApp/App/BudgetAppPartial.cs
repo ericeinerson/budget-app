@@ -30,7 +30,7 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("No save data found", true, true);
             }
             Utilities.PressEnterToContinue();
-            //VerifyTransactionStatus();
+            VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
         }
@@ -287,11 +287,9 @@ namespace BudgetApp.App
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
+                    ProcessGeneralMenuOption();
                     break;
             }
-
-            Utilities.PressEnterToContinue();
         }
 
         public void PromptUserToSave()

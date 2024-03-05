@@ -182,18 +182,18 @@ namespace BudgetApp.App
                     break;
                 }
                 itemList = transactionList.Where(t => t.Name.ToLower() == itemName.ToLower()).ToList();
-                if(itemList.Count > 1)
+                if(itemList.Any())
                 {
                     foreach(var listItem in itemList)
                     {
                         string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
-                            $"Name: {listItem.Name}," +
-                            $"Amount: {listItem.Amount}," +
-                            $"Id: {listItem.Id}," +
-                            $"Variable?: {listItem.AmountVariable}," +
-                            $"Category Id: {listItem.CategoryId}," +
-                            $"Start Date: {listItem.StartDate}," +
-                            $"End Date: {listItem.EndDate}," +
+                            $"Name: {listItem.Name}, " +
+                            $"Amount: {listItem.Amount}, " +
+                            $"Id: {listItem.Id}, " +
+                            $"Variable?: {listItem.AmountVariable}, " +
+                            $"Category Id: {listItem.CategoryId}, " +
+                            $"Start Date: {listItem.StartDate}, " +
+                            $"End Date: {listItem.EndDate}, " +
                             $"Rate: {listItem.Rate}");
 
                         if(isCorrectItem == "y")
@@ -207,18 +207,18 @@ namespace BudgetApp.App
                 {
                     decimal amount = Validator.Convert<decimal>("amount");
                     itemList = transactionList.Where(t => t.Amount == amount).ToList();
-                    if (itemList.Count > 1)
+                    if (itemList.Count > 0)
                     {
                         foreach (var listItem in itemList)
                         {
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
-                                $"Name: {listItem.Name}," +
-                                $"Amount: {listItem.Amount}," +
-                                $"Id: {listItem.Id}," +
-                                $"Variable?: {listItem.AmountVariable}," +
-                                $"Category Id: {listItem.CategoryId}," +
-                                $"Start Date: {listItem.StartDate}," +
-                                $"End Date: {listItem.EndDate}," +
+                                $"Name: {listItem.Name}, " +
+                                $"Amount: {listItem.Amount}, " +
+                                $"Id: {listItem.Id}, " +
+                                $"Variable?: {listItem.AmountVariable}, " +
+                                $"Category Id: {listItem.CategoryId}, " +
+                                $"Start Date: {listItem.StartDate}, " +
+                                $"End Date: {listItem.EndDate}, " +
                                 $"Rate: {listItem.Rate}");
 
                             if (isCorrectItem == "y")
@@ -233,18 +233,18 @@ namespace BudgetApp.App
                 {
                     decimal id = Validator.Convert<decimal>("id");
                     itemList = transactionList.Where(t => t.Id == id).ToList();
-                    if (itemList.Count > 1)
+                    if (itemList.Count > 0)
                     {
                         foreach (var listItem in itemList)
                         {
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
-                                $"Name: {listItem.Name}," +
-                                $"Amount: {listItem.Amount}," +
-                                $"Id: {listItem.Id}," +
-                                $"Variable?: {listItem.AmountVariable}," +
-                                $"Category Id: {listItem.CategoryId}," +
-                                $"Start Date: {listItem.StartDate}," +
-                                $"End Date: {listItem.EndDate}," +
+                                $"Name: {listItem.Name}, " +
+                                $"Amount: {listItem.Amount}, " +
+                                $"Id: {listItem.Id}, " +
+                                $"Variable?: {listItem.AmountVariable}, " +
+                                $"Category Id: {listItem.CategoryId}, " +
+                                $"Start Date: {listItem.StartDate}, " +
+                                $"End Date: {listItem.EndDate}, " +
                                 $"Rate: {listItem.Rate}");
 
                             if (isCorrectItem == "y")

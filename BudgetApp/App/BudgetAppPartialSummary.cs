@@ -42,14 +42,16 @@ namespace BudgetApp.App
 
             var mainTable = new ConsoleTable($"Main Summaries for year of {year}");
             var expensesRow = CalculateTotalForRestOfYear(BudgetItemType.Expense);
+            var expensesRowFormatted = Utilities.FormatAmount(expensesRow);
             var incomesRow = CalculateTotalForRestOfYear(BudgetItemType.Income);
-            var currentBalance = selectedAccount.Balance;
-            var projectedBalance = incomesRow - expensesRow + currentBalance;
+            var incomesRowFormatted = Utilities.FormatAmount(incomesRow);
+            var currentBalance = Utilities.FormatAmount(selectedAccount.Balance);
+            var projectedBalance = Utilities.FormatAmount(incomesRow - expensesRow + selectedAccount.Balance);
 
             mainTable.AddRow("Projected Remaining Total Expenses");
-            mainTable.AddRow(expensesRow);
+            mainTable.AddRow(expensesRowFormatted);
             mainTable.AddRow("Projected Remaining Total Incomes");
-            mainTable.AddRow(incomesRow);
+            mainTable.AddRow(incomesRowFormatted);
             mainTable.AddRow($"Projected Balance By End Of {year}");
             mainTable.AddRow(projectedBalance);
             mainTable.AddRow("Current Balance");
@@ -74,9 +76,8 @@ namespace BudgetApp.App
         {
             var _balance = Validator.Convert<decimal>("updated balance");
             selectedAccount.Balance = _balance;
-            Console.WriteLine(_balance);
-            //_currentBalance = Validator.Convert<decimal>("current balance");
-            //Console.WriteLine($"\nYour current balance is {Utilities.FormatAmount(_currentBalance)}");
+            Console.WriteLine(Utilities.FormatAmount(_balance));
+            Utilities.PressEnterToContinue();
         }
 
         public decimal CalculateTotalForRestOfYear(BudgetItemType type)

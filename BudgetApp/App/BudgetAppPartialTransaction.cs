@@ -13,24 +13,34 @@ namespace BudgetApp.App
         public void VerifyTransactionStatus()
         {
             var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
-            AppScreen.DisplayPostingOptions();
-            switch (Validator.Convert<int>("an option"))
+            Console.WriteLine("Some transactions exist that should be posted or pending.");
+            if (transactionsFlagged.Any())
             {
-                case 1:
-                    PostAllFlaggedTransactions(transactionsFlagged);
-                    break;
-                case 2:
-                    IndividuallySelectTransactionStatus(transactionsFlagged);
-                    break;
-                case 3:
-                    break;
-                default:
-                    Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
-                    break;
+                string verificationPrompt = Utilities.PromptYesOrNo("Would you like to verify necessary transactions?");
+                if (verificationPrompt == "y")
+                {
+                    AppScreen.DisplayPostingOptions();
+                    switch (Validator.Convert<int>("an option"))
+                    {
+                        case 1:
+                            PostAllFlaggedTransactions(transactionsFlagged);
+                            break;
+                        case 2:
+                            IndividuallySelectTransactionStatus(transactionsFlagged);
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            Utilities.PrintMessage("Invalid Option. Try again", false);
+                            VerifyTransactionStatus();
+                            break;
+                    }
+                }
+                else
+                {
+                    Utilities.PrintMessage("Transactions left unchanged", true, false);
+                }
             }
-
-            Utilities.PressEnterToContinue();
         }
 
         public void AddSingleTransaction(BudgetItem item, BudgetItemType type)
@@ -43,13 +53,13 @@ namespace BudgetApp.App
 
             Utilities.PrintMessage($"Successfully created transaction with " +
                 $"name: {transaction.Name}, " +
-                $"amount: {transaction.Amount} " +
-                $"budget item id: {transaction.BudgetItemId}," +
-                $"id: {transaction.Id}," +
-                $"Category Id: {transaction.CategoryId}," +
-                $"Created Date: {transaction.CreatedDate}," +
-                $"Type: {transaction.BudgetItemType}," +
-                $"Scheduled Date: {transaction.ScheduledDate}," +
+                $"amount: {transaction.Amount}, " +
+                $"budget item id: {transaction.BudgetItemId}, " +
+                $"id: {transaction.Id}, " +
+                $"Category Id: {transaction.CategoryId}, " +
+                $"Created Date: {transaction.CreatedDate}, " +
+                $"Type: {transaction.BudgetItemType}, " +
+                $"Scheduled Date: {transaction.ScheduledDate}, " +
                 $"Posted Date: {postedDateString}!", true, false);
         }
 
@@ -149,8 +159,18 @@ namespace BudgetApp.App
             {
                 if ((t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now)
                 {
-                    string promptToPost = Utilities.PromptYesOrNo($"Post this transaction? Name: {t.Name} Amount: {t.Amount} Id: {t.Id}");
+                    string promptToPost = Utilities.PromptYesOrNo($"Post this transaction? " +
+                        $"Id: {t.Id} " +
+                        $"Category Id: {t.CategoryId} " +
+                        $"Budget Item Id: {t.BudgetItemId} " +
+                        $"Name: {t.Name} " +
+                        $"Amount: {t.Amount} " +
+                        $"Created Date: {t.CreatedDate} " +
+                        $"Scheduled Date: {t.ScheduledDate} " +
+                        $"Budget Item Type: {t.BudgetItemType}" +
+                        $"Status: {t.Status}");
                     if (promptToPost == "y")
+
                     {
                         t.Status = Status.Posted;
                     }
@@ -163,7 +183,16 @@ namespace BudgetApp.App
 
                 if (t.Status == Status.Scheduled && t.ScheduledDate <= DateTime.Now.AddMonths(1) && t.ScheduledDate > DateTime.Now)
                 {
-                    string promptToPending = Utilities.PromptYesOrNo($"Post this transaction? Name: {t.Name} Amount: {t.Amount} Id: {t.Id}");
+                    string promptToPending = Utilities.PromptYesOrNo($"Make this transaction pending? " +
+                        $"Id: {t.Id} " +
+                        $"Category Id: {t.CategoryId} " +
+                        $"Budget Item Id: {t.BudgetItemId} " +
+                        $"Name: {t.Name} " +
+                        $"Amount: {t.Amount} " +
+                        $"Created Date: {t.CreatedDate} " +
+                        $"Scheduled Date: {t.ScheduledDate} " +
+                        $"Budget Item Type: {t.BudgetItemType}" +
+                        $"Status: {t.Status}");
                     if (promptToPending == "y")
                     {
                         t.Status = Status.Pending;
@@ -195,11 +224,7 @@ namespace BudgetApp.App
 
         private Transaction ConstructSingleTransaction(BudgetItem item, BudgetItemType type)
         {
-            if(item.Rate == Rate.Other)
-            {
-                Utilities.PrintMessage("WARNING: This transaction is being associated with an irregular rate. Make sure this isn't duplicated or incorrect", false, true);
-            }
-            else if(item.Rate != Rate.NoRate)
+            if(item.Rate != Rate.NoRate)
             {
                 throw new Exception("This method can only be used for budget items with no rate or an other rate");
             }
@@ -260,19 +285,6 @@ namespace BudgetApp.App
 
             var postedDateString = transaction.Status == Status.Posted ? transaction.PostedDate.ToString() : "N/A";
 
-            selectedAccount.TransactionList.Add(transaction);
-
-            Utilities.PrintMessage($"Successfully created transaction with " +
-                $"name: {transaction.Name}, " +
-                $"amount: {transaction.Amount} " +
-                $"budget item id: {transaction.BudgetItemId}," +
-                $"id: {transaction.Id}," +
-                $"Category Id: {transaction.CategoryId}," +
-                $"Created Date: {transaction.CreatedDate}," +
-                $"Type: {transaction.BudgetItemType}," +
-                $"Scheduled Date: {transaction.ScheduledDate}," +
-                $"Posted Date: {postedDateString}!", true, false);
-
             return transaction;
         }
 
@@ -332,7 +344,7 @@ namespace BudgetApp.App
 
                     while (transactionDay < DateTime.Now.AddDays(-1 * daysInPast))
                     {
-                        if (rate == Rate.Weekly || rate == Rate.Biweekly)
+                        if (rate == Rate.Weekly || rate == Rate.Biweekly || rate == Rate.Other)
                         {
                             transactionDay = transactionDay.AddDays(daysBetweenTransactions);
                         }
@@ -344,13 +356,14 @@ namespace BudgetApp.App
                         {
                             transactionDay = transactionDay.AddMonths(1);
                         }
-                        else if (rate == Rate.Other || rate == Rate.NoRate)
+                        else if (rate == Rate.NoRate)
                         {
                             break;
                         }
                         else
                         {
-                            throw new Exception();
+                            Utilities.PrintMessage("invalid rate", false, false);
+                            break;
                         }
                     }
                     var status = transactionDay <= DateTime.Now ? Status.Posted : transactionDay <= DateTime.Now.AddMonths(1) ? Status.Pending : Status.Scheduled; 
@@ -403,7 +416,7 @@ namespace BudgetApp.App
                             throw new Exception();
                         }
                     }
-                    transactionsTable.AddRow("break", "", "", "", "");
+                    transactionsTable.AddRow("break", "", "", "", "", "", "", "", "", "");
                 }
             }
             transactionsTable.Write();

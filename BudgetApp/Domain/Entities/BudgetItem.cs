@@ -25,7 +25,7 @@ namespace BudgetApp.Domain.Entities
 
         public void DisplayAllTransactionsForItem(UserAccount selectedAccount)
         {
-            var transactionsList = selectedAccount.TransactionList.Where(t => t.BudgetItemId == this.Id);
+            var transactionsList = selectedAccount.TransactionList.Where(t => t.BudgetItemId == Id);
             var postedDateForTransaction = string.Empty;
 
             foreach(var transaction in transactionsList)
@@ -45,9 +45,6 @@ namespace BudgetApp.Domain.Entities
                     $"Posted Date: {postedDateForTransaction}; ");
             }
         }
-
-
     }
-
 }
 

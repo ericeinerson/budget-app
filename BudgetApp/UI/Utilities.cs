@@ -190,6 +190,7 @@ namespace BudgetApp.UI
                     DateTime startDate = DateTime.Parse(expensesSplits[5].Substring(expensesSplits[5].IndexOf(':') + 1));
                     DateTime? endDate = expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1) == "null" ? null : DateTime.Parse(expensesSplits[6].Substring(expensesSplits[6].IndexOf(':') + 1));
                     Rate rate = (Rate)int.Parse(expensesSplits[7].Substring(expensesSplits[7].IndexOf(':') + 1));
+                    bool amountVariable = bool.Parse(expensesSplits[8].Substring(expensesSplits[8].IndexOf(':') + 1));
 
                     userAccount.ExpenseList.Add(new Expense()
                     {
@@ -201,6 +202,7 @@ namespace BudgetApp.UI
                         StartDate = startDate,
                         EndDate = endDate,
                         Rate = rate,
+                        AmountVariable = amountVariable,
                     });
                 }
                 if (expensesAsString.Length > 0)
@@ -229,6 +231,7 @@ namespace BudgetApp.UI
                     DateTime startDate = DateTime.Parse(incomesSplits[5].Substring(incomesSplits[5].IndexOf(':') + 1));
                     DateTime? endDate = incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1) == "null" ? null : DateTime.Parse(incomesSplits[6].Substring(incomesSplits[6].IndexOf(':') + 1));
                     Rate rate = (Rate)int.Parse(incomesSplits[7].Substring(incomesSplits[7].IndexOf(':') + 1));
+                    bool amountVariable = bool.Parse(incomesSplits[8].Substring(incomesSplits[8].IndexOf(':') + 1));
 
                     userAccount.IncomeList.Add(new Income()
                     {
@@ -240,6 +243,7 @@ namespace BudgetApp.UI
                         StartDate = startDate,
                         EndDate = endDate,
                         Rate = rate,
+                        AmountVariable = amountVariable,
                     });
                 }
                 if (incomesAsString.Length > 0)
@@ -509,6 +513,7 @@ namespace BudgetApp.UI
                 string startDate = string.IsNullOrEmpty(i.StartDate.ToString()) ? "null" : i.StartDate.ToString();
                 string? endDate = string.IsNullOrEmpty(i.EndDate.ToString()) ? "null" : i.EndDate.ToString();
                 string rate = string.IsNullOrEmpty(i.Rate.ToString()) ? "null" : ((int)i.Rate).ToString();
+                string amountVariable = string.IsNullOrEmpty(i.AmountVariable.ToString()) ? "null" : i.AmountVariable.ToString();
 
                 incomesSB.Append($"id:{id};"); //0
                 incomesSB.Append($"incomeId:{incomeId};"); //1
@@ -518,6 +523,7 @@ namespace BudgetApp.UI
                 incomesSB.Append($"created date:{startDate};");//5
                 incomesSB.Append($"posted date:{endDate};");//6
                 incomesSB.Append($"budget item type:{rate};");//7
+                incomesSB.Append($"amount variable:{amountVariable};");//8
                 incomesSB.Append(Environment.NewLine);
             }
         }
@@ -534,6 +540,7 @@ namespace BudgetApp.UI
                 string startDate = string.IsNullOrEmpty(e.StartDate.ToString()) ? "null" : e.StartDate.ToString();
                 string? endDate = string.IsNullOrEmpty(e.EndDate.ToString()) ? "null" : e.EndDate.ToString();
                 string rate = string.IsNullOrEmpty(e.Rate.ToString()) ? "null" : ((int)e.Rate).ToString();
+                string amountVariable = string.IsNullOrEmpty(e.AmountVariable.ToString()) ? "null" : e.AmountVariable.ToString();
 
                 expensesSB.Append($"id:{id};"); //0
                 expensesSB.Append($"expenseId:{expenseId};"); //1
@@ -543,6 +550,7 @@ namespace BudgetApp.UI
                 expensesSB.Append($"created date:{startDate};");//5
                 expensesSB.Append($"posted date:{endDate};");//6
                 expensesSB.Append($"budget item type:{rate};");//7
+                expensesSB.Append($"amount variable:{amountVariable};");//8
                 expensesSB.Append(Environment.NewLine);
             }
         }
@@ -648,8 +656,6 @@ namespace BudgetApp.UI
             return isSavedData;
         }
 
-
-
         public static string PromptYesOrNo(string prompt)
         {
             string response = string.Empty;
@@ -673,20 +679,6 @@ namespace BudgetApp.UI
             }
             return response;
         }
-
-        //static bool IsLeapYear(int year)
-        //{
-        //    if ((year % 400 == 0) ||
-        //       (year % 100 != 0) &&
-        //       (year % 4 == 0))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
 
         public static DateTime ConstructDate()
         {
@@ -725,11 +717,6 @@ namespace BudgetApp.UI
 
             return date;
         }
-
-        //public bool CreatedSinceLastLogin(DateTime lastLoginDate, DateTime transactionDate)
-        //{
-
-        //}
     }
 }
 
