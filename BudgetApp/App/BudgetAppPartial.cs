@@ -47,6 +47,7 @@ namespace BudgetApp.App
                 Balance = 0,
                 IsLocked = false,
                 TotalLogin = 0,
+                BudgetItemIdCounter = 6,
                 ExpenseList = new List<BudgetItem>() {
                     new Expense() {
                         Amount = 111,
