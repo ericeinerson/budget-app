@@ -1,3 +1,4 @@
-id:1;incomeId:-1;budget item id:2;incomeName:income1;amount:111;created date:11/11/2021 12:00:00AM;posted date:null;budget item type:4;
-id:0;incomeId:-1;budget item id:1;incomeName:income22;amount:112;created date:2/29/2000 12:00:00AM;posted date:null;budget item type:5;
-id:3;incomeId:-1;budget item id:0;incomeName:income3;amount:112;created date:1/30/0199 12:00:00AM;posted date:null;budget item type:3;
+id:1;incomeId:-1;budget item id:2;incomeName:income1;amount:111;created date:11/11/2021 12:00:00AM;posted date:null;budget item type:4;amount variable:False;
+id:0;incomeId:-1;budget item id:1;incomeName:income22;amount:112;created date:2/29/2000 12:00:00AM;posted date:null;budget item type:5;amount variable:False;
+id:3;incomeId:-1;budget item id:0;incomeName:income3;amount:112;created date:1/30/0199 12:00:00AM;posted date:null;budget item type:3;amount variable:False;
+id:1;incomeId:-1;budget item id:1;incomeName:i2;amount:12000;created date:3/9/2024 12:00:00AM;posted date:12/12/2024 12:00:00AM;budget item type:3;amount variable:False;

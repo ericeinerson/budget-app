@@ -101,7 +101,7 @@ namespace BudgetApp.App
                 var expenseItem = new Expense()
                 {
                     Id = item.Id,
-                    CategoryId = selectedAccount.ExpenseIdCounter,
+                    CategoryId = item.CategoryId,
                     Name = item.Name,
                     Amount = item.Amount,
                     StartDate = item.StartDate,
@@ -117,7 +117,7 @@ namespace BudgetApp.App
                 var incomeItem = new Income()
                 {
                     Id = item.Id,
-                    CategoryId = selectedAccount.IncomeIdCounter,
+                    CategoryId = item.CategoryId,
                     Name = item.Name,
                     Amount = item.Amount,
                     StartDate = item.StartDate,
@@ -273,26 +273,12 @@ namespace BudgetApp.App
         {
             var item = new BudgetItem();
             var amountVariable = false;
-            int id;
+            int id = AssignBudgetItemId();
 
-            if (type == BudgetItemType.Expense)
-            {
-                selectedAccount.ExpenseIdCounter++;
-                id = selectedAccount.ExpenseIdCounter;
-            }
-            else if (type == BudgetItemType.Income)
-            {
-                selectedAccount.IncomeIdCounter++;
-                id = selectedAccount.IncomeIdCounter;
-            }
-            else
-            {
-                throw new Exception("Type must be an expense or income");
-            }
             string name = Utilities.GetUserInput("name");
             decimal amount = Validator.Convert<decimal>("amount");
             string amountVariablePrompt = Utilities.PromptYesOrNo("Is this a variable amount?");
-            if(amountVariablePrompt == "y")
+            if (amountVariablePrompt == "y")
             {
                 amountVariable = true;
             }
@@ -302,25 +288,15 @@ namespace BudgetApp.App
             Rate rate = ProcessRateOption();
             DateTime startDate = DateTime.Now;
             DateTime endDate = DateTime.Now;
-
-            string todayOrFuture = Utilities.GetUserInput("whether t for today or f for future").ToLower();
-
-            if (todayOrFuture == "t")
-            {
-                startDate = DateTime.Now;
-            }
-            else if (todayOrFuture == "f")
-            {
-                Console.WriteLine("Please specify start date details");
-                startDate = Utilities.ConstructDate();
-            }
+            startDate = AssignDate();
 
             Console.WriteLine("Please specify end date details");
             endDate = Utilities.ConstructDate();
 
-            if(startDate > endDate)
+            while (startDate > endDate)
             {
-                throw new Exception("Start Date cannot be after End Date");
+                Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
+                endDate = Utilities.ConstructDate();
             }
 
             item.Id = id;
@@ -333,6 +309,68 @@ namespace BudgetApp.App
             item.AmountVariable = amountVariable;
 
             return item;
+        }
+
+        private static DateTime AssignDate()
+        {
+            DateTime date = new();
+            string pastPresentOrFuture = Utilities.GetUserInput("t for today, p for a past day, or f for a different day").ToLower();
+            while (pastPresentOrFuture != "t" && pastPresentOrFuture != "p" && pastPresentOrFuture != "f")
+            {
+                Utilities.PrintMessage("Invalid entry. Please try again", false, false);
+                pastPresentOrFuture = Utilities.GetUserInput("t for today, p for a past day, or f for a different day").ToLower();
+            }
+            if (pastPresentOrFuture == "t")
+            {
+                return new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            }
+            else if (pastPresentOrFuture == "p" || pastPresentOrFuture == "f")
+            {
+                Console.WriteLine("Please specify start date details");
+                date = Utilities.ConstructDate();
+                while (pastPresentOrFuture == "p")
+                {
+                    if (date >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day))
+                    {
+                        Utilities.PrintMessage("Specified date is not in the past", false, false);
+                        string goBack = Utilities.PromptYesOrNo("Go back?");
+                        if (goBack == "y")
+                        {
+                            AssignDate();
+                        }
+                        else
+                        {
+                            date = Utilities.ConstructDate();
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                while (pastPresentOrFuture == "f")
+                {
+                    if (date <= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1))
+                    {
+                        Utilities.PrintMessage("Specified date is not in the future", false, false);
+                        string goBack = Utilities.PromptYesOrNo("Go back?");
+                        if (goBack == "y")
+                        {
+                            AssignDate();
+                        }
+                        else
+                        {
+                            date = Utilities.ConstructDate();
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return date;
         }
 
         private void UpdateBudgetItemDetails(BudgetItemType type)
@@ -406,6 +444,12 @@ namespace BudgetApp.App
             UpdateBudgetItemRate(item);
             UpdateBudgetItemDate(item);
             UpdateBudgetItemCategory(item);
+        }
+
+        private int AssignBudgetItemId()
+        {
+            selectedAccount.BudgetItemIdCounter++;
+            return selectedAccount.BudgetItemIdCounter;
         }
     }
 }

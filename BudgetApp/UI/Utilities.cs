@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
@@ -716,6 +717,13 @@ namespace BudgetApp.UI
             var date = new DateTime(year, month, day);
 
             return date;
+        }
+
+        public static bool RateIsInRange(int value)
+        {
+            var values = Enum.GetValues(typeof(Rate)).Cast<int>().OrderBy(x => x);
+
+            return value >= values.First() && value <= values.Last();
         }
     }
 }

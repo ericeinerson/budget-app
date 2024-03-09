@@ -1,4 +1,4 @@
-id:1;expenseId:-1;budget item id:2;expense name:expense1;amount:111;created date:12/15/2020 12:00:00AM;posted date:null;budget item type:5;
-id:2;expenseId:-1;budget item id:1;expense name:expense2;amount:112;created date:1/31/2018 12:00:00AM;posted date:null;budget item type:2;
-id:3;expenseId:-1;budget item id:0;expense name:expense3;amount:112;created date:4/30/1999 12:00:00AM;posted date:null;budget item type:3;
-id:4;expenseId:-1;budget item id:1;expense name:expense4.3.1415;amount:345;created date:4/30/1952 12:00:00AM;posted date:null;budget item type:1;
+id:1;expenseId:-1;budget item id:2;expense name:expense1;amount:111;created date:12/15/2020 12:00:00AM;posted date:null;budget item type:5;amount variable:False;
+id:2;expenseId:-1;budget item id:1;expense name:expense2;amount:112;created date:1/31/2018 12:00:00AM;posted date:null;budget item type:2;amount variable:False;
+id:3;expenseId:-1;budget item id:0;expense name:expense3;amount:112;created date:4/30/1999 12:00:00AM;posted date:null;budget item type:3;amount variable:False;
+id:4;expenseId:-1;budget item id:1;expense name:expense4.3.1415;amount:345;created date:4/30/1952 12:00:00AM;posted date:null;budget item type:1;amount variable:False;

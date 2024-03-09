@@ -59,6 +59,7 @@ namespace BudgetApp.App
 
             mainTable.Write();
             Utilities.PressEnterToContinue();
+            ProcessBudgetSummaryOption();
         }
 
         public void ViewBalance()
@@ -70,6 +71,7 @@ namespace BudgetApp.App
             balanceTable.Write();
 
             Utilities.PressEnterToContinue();
+            ProcessBudgetSummaryOption();
         }
 
         public void UpdateBalance()
@@ -78,6 +80,7 @@ namespace BudgetApp.App
             selectedAccount.Balance = _balance;
             Console.WriteLine(Utilities.FormatAmount(_balance));
             Utilities.PressEnterToContinue();
+            ProcessBudgetSummaryOption();
         }
 
         public decimal CalculateTotalForRestOfYear(BudgetItemType type)

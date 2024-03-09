@@ -1,1 +1,1 @@
-id:1;fullName:Eric Einerson;passcode:0991;isLocked:False;totalLogin:0;balance:0;directory:/Users/ericeinerson/Projects/BudgetApp/UserInfo/;income id:0;expense id:0;wishlist id:0;budget item id:0;transaction id:0;last login date:3/4/2024 12:00:00AM;
+id:1;fullName:Eric Einerson;passcode:0991;isLocked:False;totalLogin:0;balance:0;directory:/Users/ericeinerson/Projects/BudgetApp/UserInfo/;income id:2;expense id:0;wishlist id:0;budget item id:0;transaction id:10;last login date:3/9/2024 12:00:00AM;

@@ -87,7 +87,7 @@ namespace BudgetApp.App
                         Amount = 111,
                         Name = "income1",
                         Rate = Rate.Yearly,
-                        Id = 1,
+                        Id = 5,
                         StartDate = new DateTime(2021, 11, 11),
                         CategoryId = 2,
                     },
@@ -95,7 +95,7 @@ namespace BudgetApp.App
                         Amount = 112,
                         Name = "income22",
                         Rate = Rate.NoRate,
-                        Id = 0,
+                        Id = 6,
                         StartDate = new DateTime(2000, 2, 29),
                         CategoryId = 1,
                     },
@@ -103,7 +103,7 @@ namespace BudgetApp.App
                         Amount = 112,
                         Name = "income3",
                         Rate = Rate.Monthly,
-                        Id = 3,
+                        Id = -2,
                         StartDate = new DateTime(199, 1, 30),
                         CategoryId = 0,
                     }
@@ -769,7 +769,15 @@ namespace BudgetApp.App
             {
                 AppScreen.DisplayRateOptions();
 
-                int rateInt = (Validator.Convert<int>("a rate"));
+                int rateInt = Validator.Convert<int>("a rate");
+                var checkRate = Utilities.RateIsInRange(rateInt);
+
+                while (!checkRate)
+                {
+                    Utilities.PrintMessage("Rate out of range. Please try again", false, true);
+                    rateInt = Validator.Convert<int>("a rate");
+                    checkRate = Utilities.RateIsInRange(rateInt);
+                }
 
                 var rate = (Rate)rateInt;
 
