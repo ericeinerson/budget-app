@@ -246,6 +246,7 @@ namespace BudgetApp.App
             if(postedToday == "y")
             {
                 transaction.ScheduledDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                transaction.PostedDate = transaction.ScheduledDate;
                 transaction.Status = Status.Posted;
             }
             else
@@ -255,13 +256,55 @@ namespace BudgetApp.App
                 var scheduledYear = Validator.Convert<int>("year of transaction to be scheduled");
                 transaction.ScheduledDate = new DateTime(scheduledYear, scheduledMonth, scheduledDay);
 
-                if (transaction.ScheduledDate <= DateTime.Now.AddMonths(1))
+                if(transaction.ScheduledDate < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day))
                 {
+                    Utilities.PrintMessage($"transaction posted on previous date: {transaction.ScheduledDate}!", true, false);
+                    status = Status.Posted;
+                    transaction.PostedDate = transaction.ScheduledDate;
+                }
+                else if (transaction.ScheduledDate <= DateTime.Now.AddMonths(1))
+                {
+                    Utilities.PrintMessage($"transaction pending for {transaction.ScheduledDate}!", true, false);
                     status = Status.Pending;
                 }
                 else
                 {
+                    Utilities.PrintMessage($"transaction scheduled for {transaction.ScheduledDate}!", true, false);
                     status = Status.Scheduled;
+                }
+            }
+
+            if (item.StartDate != transaction.ScheduledDate)
+            {
+                Utilities.PrintMessage("Item start date is not synced with transaction scheduled date", false, false);
+                var syncStartDateAndScheduledDate = Utilities.PromptYesOrNo("Sync up dates?");
+                if(syncStartDateAndScheduledDate == "y")
+                {
+                    var dateToUse = Utilities.GetUserInput("t to use transaction scheduled/posted date or i for item start date");
+
+                    while(dateToUse != "t" && dateToUse != "i")
+                    {
+                        Utilities.PrintMessage("Invalid input, please try again", false, false);
+                        dateToUse = Utilities.GetUserInput("t for transaction scheduled/posted date or i for item start date");
+                    }
+                    if(dateToUse == "t")
+                    {
+                        item.StartDate = (DateTime)transaction.ScheduledDate;
+                        Utilities.PrintMessage($"both dates are now {item.StartDate}", true, false);
+                    }
+                    else
+                    {
+                        transaction.ScheduledDate = item.StartDate;
+                        if(transaction.ScheduledDate <= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day))
+                        {
+                            transaction.PostedDate = transaction.ScheduledDate;
+                        }
+                        Utilities.PrintMessage($"both dates are now {transaction.ScheduledDate}", true, false);
+                    }
+                }
+                else
+                {
+                    Utilities.PrintMessage("item start date and transaction scheduled date will remain unsynced", true, false);
                 }
             }
 
@@ -389,7 +432,7 @@ namespace BudgetApp.App
 
                         transactionsExpected.Add(transaction);
 
-                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, postedDateString, budgetItemTypeString, statusString );
+                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate, postedDateString, budgetItemTypeString, statusString );
 
                         if (rate == Rate.Biweekly || rate == Rate.Weekly)
                         {

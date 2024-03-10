@@ -28,7 +28,7 @@ namespace BudgetApp.App
                     break;
                 default:
                     Utilities.PrintMessage("Invalid Option. Try again", false);
-                    ProcessWishlistOption();
+                    ProcessBudgetSummaryOption();
                     break;
             }
         }

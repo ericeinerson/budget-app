@@ -1,10 +1,3 @@
-id:1;category id:0;budget item id:1;transaction name:i2;amount:120;created date:3/9/2024 11:53:58AM;posted date:3/9/2024 11:54:07AM;posted date:3/9/2024 12:00:00AM;budget item type:2;status:2;
-id:2;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:07AM;posted date:null;posted date:4/9/2024 12:00:00AM;budget item type:2;status:3;
-id:3;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:11AM;posted date:null;posted date:5/9/2024 12:00:00AM;budget item type:2;status:3;
-id:4;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:11AM;posted date:null;posted date:6/9/2024 12:00:00AM;budget item type:2;status:3;
-id:5;category id:0;budget item id:1;transaction name:i2;amount:5;created date:3/9/2024 11:54:12AM;posted date:null;posted date:7/9/2024 12:00:00AM;budget item type:2;status:3;
-id:6;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:14AM;posted date:null;posted date:8/9/2024 12:00:00AM;budget item type:2;status:3;
-id:7;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:17AM;posted date:null;posted date:9/9/2024 12:00:00AM;budget item type:2;status:3;
-id:8;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:17AM;posted date:null;posted date:10/9/2024 12:00:00AM;budget item type:2;status:3;
-id:9;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:18AM;posted date:null;posted date:11/9/2024 12:00:00AM;budget item type:2;status:3;
-id:10;category id:0;budget item id:1;transaction name:i2;amount:12000;created date:3/9/2024 11:54:18AM;posted date:null;posted date:12/9/2024 12:00:00AM;budget item type:2;status:3;
+id:1;category id:1;budget item id:7;transaction name:e1;amount:111;created date:3/10/2024 11:53:46AM;posted date:1/1/0001 12:00:00AM;posted date:1/1/2025 12:00:00AM;budget item type:1;status:3;
+id:2;category id:0;budget item id:8;transaction name:e6;amount:2345;created date:3/10/2024 11:54:36AM;posted date:3/10/2024 12:00:00AM;posted date:3/10/2024 12:00:00AM;budget item type:1;status:5;
+id:3;category id:1;budget item id:9;transaction name:e7;amount:999;created date:3/10/2024 11:55:19AM;posted date:1/1/0001 12:00:00AM;posted date:12/12/2024 12:00:00AM;budget item type:1;status:3;

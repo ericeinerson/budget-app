@@ -37,7 +37,6 @@ namespace BudgetApp.Domain.Entities
                     $"Amount: {transaction.Amount}; " +
                     $"Id: {transaction.Id}; " +
                     $"Category Id: {transaction.CategoryId}; " +
-                    $"Scheduled Date: {transaction.ScheduledDate}; " +
                     $"Created Date: {transaction.CreatedDate}; " +
                     $"Type: {transaction.BudgetItemType}; " +
                     $"Scheduled Date: {transaction.ScheduledDate}; " +

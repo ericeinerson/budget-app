@@ -286,17 +286,21 @@ namespace BudgetApp.App
             Category category = AssignTransactionCategory();
 
             Rate rate = ProcessRateOption();
-            DateTime startDate = DateTime.Now;
-            DateTime endDate = DateTime.Now;
-            startDate = AssignDate();
+            Console.WriteLine("Please specify start date details");
+            DateTime startDate = AssignDateForPastPresentOrFuture();
+            DateTime? endDate = null;
 
-            Console.WriteLine("Please specify end date details");
-            endDate = Utilities.ConstructDate();
-
-            while (startDate > endDate)
+            if (rate != Rate.NoRate)
             {
-                Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
+                Console.WriteLine("Please specify end date details");
+
                 endDate = Utilities.ConstructDate();
+
+                while (startDate > endDate)
+                {
+                    Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
+                    endDate = Utilities.ConstructDate();
+                }
             }
 
             item.Id = id;
@@ -311,7 +315,7 @@ namespace BudgetApp.App
             return item;
         }
 
-        private static DateTime AssignDate()
+        private static DateTime AssignDateForPastPresentOrFuture()
         {
             DateTime date = new();
             string pastPresentOrFuture = Utilities.GetUserInput("t for today, p for a past day, or f for a different day").ToLower();
@@ -336,7 +340,7 @@ namespace BudgetApp.App
                         string goBack = Utilities.PromptYesOrNo("Go back?");
                         if (goBack == "y")
                         {
-                            AssignDate();
+                            AssignDateForPastPresentOrFuture();
                         }
                         else
                         {
@@ -356,7 +360,7 @@ namespace BudgetApp.App
                         string goBack = Utilities.PromptYesOrNo("Go back?");
                         if (goBack == "y")
                         {
-                            AssignDate();
+                            AssignDateForPastPresentOrFuture();
                         }
                         else
                         {
