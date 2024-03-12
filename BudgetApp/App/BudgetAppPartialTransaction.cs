@@ -13,9 +13,9 @@ namespace BudgetApp.App
         public void VerifyTransactionStatus()
         {
             var transactionsFlagged = selectedAccount.TransactionList.Where(t => (t.Status == Status.Pending || t.Status == Status.Scheduled) && t.ScheduledDate <= DateTime.Now.AddMonths(1)).ToList();
-            Console.WriteLine("Some transactions exist that should be posted or pending.");
             if (transactionsFlagged.Any())
             {
+                Console.WriteLine("Some transactions exist that should be posted or pending.");
                 string verificationPrompt = Utilities.PromptYesOrNo("Would you like to verify necessary transactions?");
                 if (verificationPrompt == "y")
                 {
@@ -41,6 +41,10 @@ namespace BudgetApp.App
                     Utilities.PrintMessage("Transactions left unchanged", true, false);
                 }
             }
+            else
+            {
+                Utilities.PrintMessage("No flagged transactions!", true, false);
+            }
         }
 
         public void AddSingleTransaction(BudgetItem item, BudgetItemType type)
@@ -48,18 +52,23 @@ namespace BudgetApp.App
 
             Transaction transaction = ConstructSingleTransaction(item, type);
             var postedDateString = transaction.Status == Status.Posted ? transaction.PostedDate.ToString() : "N/A";
-
+            if (postedDateString != "N/A" && transaction.PostedDate != null)
+            {
+                postedDateString = ((DateTime)transaction.PostedDate).ToString("MMMM dd, yyyy");
+            }
+            var formattedAmount = Utilities.FormatAmount(transaction.Amount);
+            var scheduledDate = transaction.ScheduledDate.ToString("MMMM dd yyyy");
             selectedAccount.TransactionList.Add(transaction);
 
             Utilities.PrintMessage($"Successfully created transaction with " +
                 $"name: {transaction.Name}, " +
-                $"amount: {transaction.Amount}, " +
+                $"amount: {formattedAmount}, " +
                 $"budget item id: {transaction.BudgetItemId}, " +
                 $"id: {transaction.Id}, " +
                 $"Category Id: {transaction.CategoryId}, " +
                 $"Created Date: {transaction.CreatedDate}, " +
                 $"Type: {transaction.BudgetItemType}, " +
-                $"Scheduled Date: {transaction.ScheduledDate}, " +
+                $"Scheduled Date: {scheduledDate}, " +
                 $"Posted Date: {postedDateString}!", true, false);
         }
 
@@ -104,7 +113,7 @@ namespace BudgetApp.App
 
                 if (item.AmountVariable)
                 {
-                    Console.WriteLine($"Name: {item.Name}, Date: {curDate}, BudgetItemId: {item.Id}, Current Amount: {item.Amount}, Budget Item Type: {type}");
+                    Console.WriteLine($"Name: {item.Name}, Date: {curDate:MMMM dd yyyy}, BudgetItemId: {item.Id}, Current Amount: {item.Amount}, Budget Item Type: {type}");
                     string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {item.Amount}?");
                     if(isDifferentPrompt == "y")
                     {
@@ -120,7 +129,7 @@ namespace BudgetApp.App
                 {
                     transaction.PostedDate = DateTime.Now;
                     transaction.Status = Status.Posted;
-                    postedDateString = transaction.PostedDate.ToString();
+                    postedDateString = ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
                 }
                 else
                 {
@@ -140,7 +149,7 @@ namespace BudgetApp.App
                     $"Budget Item Id: {transaction.BudgetItemId}," +
                     $"Budget Item Type: {transaction.BudgetItemType}," +
                     $"Created Date: {transaction.CreatedDate}," +
-                    $"Scheduled Date: {transaction.ScheduledDate}," +
+                    $"Scheduled Date: {transaction.ScheduledDate:MMMM dd yyyy}," +
                     $"PostedDate: {postedDateString}," +
                     $"Status: {transaction.Status}", true, true);
                 Console.WriteLine();
@@ -247,7 +256,7 @@ namespace BudgetApp.App
             {
                 transaction.ScheduledDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
                 transaction.PostedDate = transaction.ScheduledDate;
-                transaction.Status = Status.Posted;
+                status = Status.Posted;
             }
             else
             {
@@ -289,8 +298,8 @@ namespace BudgetApp.App
                     }
                     if(dateToUse == "t")
                     {
-                        item.StartDate = (DateTime)transaction.ScheduledDate;
-                        Utilities.PrintMessage($"both dates are now {item.StartDate}", true, false);
+                        item.StartDate = transaction.ScheduledDate;
+                        Utilities.PrintMessage($"both dates are now {item.StartDate:MMMM dd yyyy}", true, false);
                     }
                     else
                     {
@@ -299,7 +308,7 @@ namespace BudgetApp.App
                         {
                             transaction.PostedDate = transaction.ScheduledDate;
                         }
-                        Utilities.PrintMessage($"both dates are now {transaction.ScheduledDate}", true, false);
+                        Utilities.PrintMessage($"both dates are now {transaction.ScheduledDate:MMMM dd yyyy}", true, false);
                     }
                 }
                 else
@@ -325,8 +334,6 @@ namespace BudgetApp.App
             transaction.CreatedDate = createdDate;
             transaction.BudgetItemType = budgetItemType;
             transaction.Status = status;
-
-            var postedDateString = transaction.Status == Status.Posted ? transaction.PostedDate.ToString() : "N/A";
 
             return transaction;
         }
@@ -428,11 +435,11 @@ namespace BudgetApp.App
                         };
                         var statusString = status == Status.Posted ? "Posted" : status == Status.Pending ? "Pending" : "Scheduled";
 
-                        var postedDateString = transaction.PostedDate == null ? "No Posted Date" : transaction.PostedDate.ToString();
+                        var postedDateString = transaction.PostedDate == null ? "No Posted Date" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
 
                         transactionsExpected.Add(transaction);
 
-                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate, postedDateString, budgetItemTypeString, statusString );
+                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate.ToString("MMMM dd yyyy"), postedDateString, budgetItemTypeString, statusString );
 
                         if (rate == Rate.Biweekly || rate == Rate.Weekly)
                         {
@@ -472,7 +479,7 @@ namespace BudgetApp.App
 
             foreach(var transaction in selectedAccount.TransactionList)
             {
-                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : transaction.PostedDate.ToString();
+                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
 
                 Console.WriteLine($"" +
                     $"Name: {transaction.Name}; " +
@@ -487,133 +494,6 @@ namespace BudgetApp.App
                     $"Posted Date: {postedDateForTransaction}; ");
             }
         }
-        //public void PostSomeTransactions(List<Transaction> transactionsPending)
-        //{
-        //    string goThroughEachTransaction = Utilities.PromptYesOrNo("Go through each transaction?");
-
-        //    if (goThroughEachTransaction == "y")
-        //    {
-        //        foreach (Transaction transaction in transactionsPending)
-        //        {
-        //            Console.WriteLine($"{transaction.Name}, {transaction.Amount}, {transaction.Date}, {transaction.Id}");
-        //            string prompt = Utilities.PromptYesOrNo("Post this transaction?");
-        //            if (prompt == "y")
-        //            {
-        //                transaction.Status = Status.Posted;
-        //            }
-        //            else
-        //            {
-        //                continue;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        string selection = string.Empty;
-        //        Console.WriteLine("Enter transaction id, name, amount, and/or date to post. Press d to exit");
-
-        //        while (transactionsPending.Any() && selection.ToLower() != "d")
-        //        {
-
-        //            selection = Utilities.GetUserInput("a detail");
-
-        //            var transactionFound = transactionsPending.Find(t => t.Name == selection);
-        //            if(transactionFound == null)
-        //            {
-        //                transactionFound = transactionsPending.Find(t => t.Id.ToString() == selection);
-        //            }
-        //            if (transactionFound == null)
-        //            {
-        //                transactionFound = transactionsPending.Find(t => t.Amount.ToString() == selection);
-        //            }
-        //            if (transactionFound == null)
-        //            {
-        //                transactionFound = transactionsPending.Find(t => t.StartDate.ToString() == selection);
-        //            }
-        //            if (transactionFound != null)
-        //            {
-        //                Console.WriteLine($"{transactionFound.Name}, {transactionFound.Amount}, {transactionFound.Date}, {transactionFound.Id}");
-        //                string postTransaction = Utilities.PromptYesOrNo("Post this transaction?");
-        //                if(postTransaction == "y")
-        //                {
-        //                    transactionFound.Status = Status.Posted;
-        //                    transactionsPending.Remove(transactionFound);
-        //                    Console.WriteLine($"{transactionFound.Name} flipped from pending to posted!");
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine($"{transactionFound.Name} remains pending");
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void SetFutureTransactionsForNextYear(BudgetItem item)
-        //{
-        //    var transactionListExpenses = selectedAccount.ExpenseList.Select(t =>
-        //    t.Date >= DateTime.Now.AddYears(-1) || t.Date <= DateTime.Now.AddYears(1));
-
-        //    var transactionListIncomes = selectedAccount.IncomeList.Select(t =>
-        //    t.Date >= DateTime.Now.AddYears(-1) || t.Date <= DateTime.Now.AddYears(1));
-
-
-        //}
-
-        //void CalculateExpensesForEachRate()
-        //{
-        //    decimal _weeklyExpenses = 0;
-        //    decimal _biweeklyExpenses = 0;
-        //    decimal _monthlyExpenses = 0;
-        //    decimal _yearlyExpenses = 0;
-
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        switch (expense.Rate)
-        //        {
-        //            case Rate.Weekly:
-        //                _weeklyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Biweekly:
-        //                _biweeklyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Monthly:
-        //                _monthlyExpenses += expense.Amount;
-        //                break;
-        //            case Rate.Yearly:
-        //                _yearlyExpenses += expense.Amount;
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //decimal CalculateExpensesForTimePeriod(TimeRange timeRange, DateTime endTime)
-        //{
-
-        //    SumOfAllExpenses = 0;
-
-        //    foreach (Expense expense in selectedAccount.ExpenseList)
-        //    {
-        //        SumOfAllExpenses += CalculateExpenseByRateAndTime(timeRange, expense, endTime);
-        //    }
-
-        //    CalculateExpensesForEachRate();
-
-        //    return SumOfAllExpenses;
-        //}
-
-        //private void PayPartialExpense(string expenseName, decimal payment)
-        //{
-        //    Expense? expense = selectedAccount.ExpenseList.Find(e => e.ExpenseName == expenseName);
-        //    if(expense == null)
-        //    {
-        //        throw new NullReferenceException();
-        //    }
-        //    decimal newAmount = expense.Amount - payment;
-
-        //    expense.Amount -= payment;
-        //    Utilities.PrintMessage($"You have successfully paid {payment} towards {expenseName}. Your remaining expense amount is {Utilities.FormatAmount(newAmount)}", true);
-        //}
 
         public void GetDatesForTransactions(BudgetItem item)
         {

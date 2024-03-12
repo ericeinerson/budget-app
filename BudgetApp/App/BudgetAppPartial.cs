@@ -18,18 +18,17 @@ namespace BudgetApp.App
             bool isSavedData = Utilities.CheckForExistingUserFile(selectedAccount);
             if (isSavedData)
             {
-                Utilities.SaveUserInfoOnlyWithNewLoginTime(selectedAccount);
                 var loadData = PromptUserToLoadData();
                 if (loadData)
                 {
                     UpdateTransactionsForTimePeriod();
                 }
+                Utilities.SaveUserInfoOnlyWithNewLoginTime(selectedAccount);
             }
             else
             {
-                Utilities.PrintMessage("No save data found", true, true);
+                Utilities.PrintMessage("No save data found", true, false);
             }
-            Utilities.PressEnterToContinue();
             VerifyTransactionStatus();
             AppScreen.DisplayAppMenu();
             ProcessAppMenuOption();
@@ -42,8 +41,8 @@ namespace BudgetApp.App
             {
                 Id = 1,
                 Directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo/",
-                FullName = "Eric Einerson",
-                Passcode = "0991",
+                FullName = "e",
+                Passcode = "0000",
                 Balance = 0,
                 IsLocked = false,
                 TotalLogin = 0,
@@ -220,7 +219,6 @@ namespace BudgetApp.App
                     ProcessWishlistOption();
                     break;
                 case (int)AppMenu.Logout:
-                    PromptUserToSave();
                     LogoutProgress();
                     break;
                 case (int)AppMenu.SaveInfo:
@@ -315,6 +313,7 @@ namespace BudgetApp.App
         {
             Console.WriteLine("Thank you for using My Budget App.");
             Utilities.PrintDotAnimation();
+            PromptUserToSave();
             Console.Clear();
             string logoutOption = Utilities.PromptYesOrNo("Would you like to exit the app?").ToLower();
 

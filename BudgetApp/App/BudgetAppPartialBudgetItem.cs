@@ -43,11 +43,12 @@ namespace BudgetApp.App
             foreach (BudgetItem item in GetBudgetItemList(type))
             {
                 string amountFormatted = Utilities.FormatAmount(item.Amount);
-                string? endDate = string.IsNullOrEmpty(item.EndDate.ToString()) ? "No End Date" : item.EndDate?.ToString("MMMM dd, yyyy");
+                string? startDateString = string.IsNullOrEmpty(item.StartDate.ToString()) ? "No Start Date" : item.StartDate?.ToString("MMMM dd, yyyy");
+                string? endDateString = string.IsNullOrEmpty(item.EndDate.ToString()) ? "No End Date" : item.EndDate?.ToString("MMMM dd, yyyy");
                 Category? category = selectedAccount.CategoryList.Find(t => t.Id == item.CategoryId);
                 var categoryName = category != null ? category.Name : "No Category";
 
-                allItemsTable.AddRow(item.Name, amountFormatted, item.StartDate.ToString("MMMM dd, yyyy"), endDate, item.Id, categoryName, type, item.Rate, item.AmountVariable);
+                allItemsTable.AddRow(item.Name, amountFormatted, startDateString, endDateString, item.Id, categoryName, type, item.Rate, item.AmountVariable);
             }
             allItemsTable.Write();
             Utilities.PressEnterToContinue();
@@ -76,7 +77,7 @@ namespace BudgetApp.App
 
         public void AddBudgetItem(BudgetItemType type)
         {
-            BudgetItem item = ConstructBudgetItem(type);
+            BudgetItem item = ConstructBudgetItem();
 
             if(item.Rate == Rate.NoRate)
             {
@@ -88,10 +89,15 @@ namespace BudgetApp.App
             }
 
             var amountFormatted = Utilities.FormatAmount(item.Amount);
-            string endDateString = string.Empty;
+            var startDateString = string.Empty;
+            var endDateString = string.Empty;
             var budgetItemList = GetBudgetItemList(type);
 
-            if (!string.IsNullOrEmpty(item.EndDate.ToString()))
+            if (!string.IsNullOrEmpty(item.StartDate.ToString()))
+            {
+                startDateString = string.Format($"This item will start on {item.StartDate:MMMM dd, yyyy}");
+            }
+                if (!string.IsNullOrEmpty(item.EndDate.ToString()))
             {
                 endDateString = string.Format($" and will end on {item.EndDate:MMMM dd, yyyy}");
             }
@@ -132,7 +138,7 @@ namespace BudgetApp.App
             Utilities.PrintMessage($"You have succcessfully added " +
                 $"{item.Name} with a value of " +
                 $"{amountFormatted}. " +
-                $"This transaction will start on {item.StartDate:MMMM dd, yyyy}{endDateString}" +
+                $"This transaction will start on {startDateString}{endDateString}" +
                 $"!", true, false);
             ProcessBudgetItemOption(type);
         }
@@ -186,14 +192,17 @@ namespace BudgetApp.App
                 {
                     foreach(var listItem in itemList)
                     {
-                        string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
+                        var startDateString = string.IsNullOrEmpty(listItem.StartDate.ToString()) ? "No start date" : listItem.StartDate?.ToString("MMMM dd yyyy");
+                        var endDateString = string.IsNullOrEmpty(listItem.EndDate.ToString()) ? "No end date" : listItem.EndDate?.ToString("MMMM dd yyyy");
+
+                        var isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                             $"Name: {listItem.Name}, " +
                             $"Amount: {listItem.Amount}, " +
                             $"Id: {listItem.Id}, " +
                             $"Variable?: {listItem.AmountVariable}, " +
                             $"Category Id: {listItem.CategoryId}, " +
-                            $"Start Date: {listItem.StartDate}, " +
-                            $"End Date: {listItem.EndDate}, " +
+                            $"Start Date: {startDateString}, " +
+                            $"End Date: {endDateString}, " +
                             $"Rate: {listItem.Rate}");
 
                         if(isCorrectItem == "y")
@@ -211,14 +220,16 @@ namespace BudgetApp.App
                     {
                         foreach (var listItem in itemList)
                         {
+                            var startDateString = string.IsNullOrEmpty(listItem.StartDate.ToString()) ? "No start date" : listItem.StartDate?.ToString("MMMM dd yyyy");
+                            var endDateString = string.IsNullOrEmpty(listItem.EndDate.ToString()) ? "No end date" : listItem.EndDate?.ToString("MMMM dd yyyy");
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                                 $"Name: {listItem.Name}, " +
                                 $"Amount: {listItem.Amount}, " +
                                 $"Id: {listItem.Id}, " +
                                 $"Variable?: {listItem.AmountVariable}, " +
                                 $"Category Id: {listItem.CategoryId}, " +
-                                $"Start Date: {listItem.StartDate}, " +
-                                $"End Date: {listItem.EndDate}, " +
+                                $"Start Date: {startDateString}, " +
+                                $"End Date: {endDateString}, " +
                                 $"Rate: {listItem.Rate}");
 
                             if (isCorrectItem == "y")
@@ -237,14 +248,16 @@ namespace BudgetApp.App
                     {
                         foreach (var listItem in itemList)
                         {
+                            var startDateString = string.IsNullOrEmpty(listItem.StartDate.ToString()) ? "No start date" : listItem.StartDate?.ToString("MMMM dd yyyy");
+                            var endDateString = string.IsNullOrEmpty(listItem.EndDate.ToString()) ? "No end date" : listItem.EndDate?.ToString("MMMM dd yyyy");
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                                 $"Name: {listItem.Name}, " +
                                 $"Amount: {listItem.Amount}, " +
                                 $"Id: {listItem.Id}, " +
                                 $"Variable?: {listItem.AmountVariable}, " +
                                 $"Category Id: {listItem.CategoryId}, " +
-                                $"Start Date: {listItem.StartDate}, " +
-                                $"End Date: {listItem.EndDate}, " +
+                                $"Start Date: {startDateString}, " +
+                                $"End Date: {endDateString}, " +
                                 $"Rate: {listItem.Rate}");
 
                             if (isCorrectItem == "y")
@@ -269,9 +282,11 @@ namespace BudgetApp.App
             return item;
         }
 
-        public BudgetItem ConstructBudgetItem(BudgetItemType type)
+        public BudgetItem ConstructBudgetItem()
         {
             var item = new BudgetItem();
+            DateTime? startDate = null;
+            DateTime? endDate = null;
             var amountVariable = false;
             int id = AssignBudgetItemId();
 
@@ -286,16 +301,12 @@ namespace BudgetApp.App
             Category category = AssignTransactionCategory();
 
             Rate rate = ProcessRateOption();
-            Console.WriteLine("Please specify start date details");
-            DateTime startDate = AssignDateForPastPresentOrFuture();
-            DateTime? endDate = null;
-
             if (rate != Rate.NoRate)
             {
+                Console.WriteLine("Please specify start date details");
+                startDate = AssignDateForPastPresentOrFuture();
                 Console.WriteLine("Please specify end date details");
-
-                endDate = Utilities.ConstructDate();
-
+                endDate = AssignDateForPastPresentOrFuture();
                 while (startDate > endDate)
                 {
                     Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
@@ -304,7 +315,7 @@ namespace BudgetApp.App
             }
 
             item.Id = id;
-            item.CategoryId = category == null ? 0 : category.Id;
+            item.CategoryId = category.Id;
             item.Name = name;
             item.Amount = amount;
             item.StartDate = startDate;
