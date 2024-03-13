@@ -1,7 +1,9 @@
-﻿using BudgetApp.Domain.Entities;
+﻿using System;
+using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
 {
@@ -97,7 +99,7 @@ namespace BudgetApp.App
             {
                 startDateString = string.Format($"This item will start on {item.StartDate:MMMM dd, yyyy}");
             }
-                if (!string.IsNullOrEmpty(item.EndDate.ToString()))
+            if (!string.IsNullOrEmpty(item.EndDate.ToString()))
             {
                 endDateString = string.Format($" and will end on {item.EndDate:MMMM dd, yyyy}");
             }
@@ -365,7 +367,7 @@ namespace BudgetApp.App
                 }
                 while (pastPresentOrFuture == "f")
                 {
-                    if (date <= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1))
+                    if (date < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(1))
                     {
                         Utilities.PrintMessage("Specified date is not in the future", false, false);
                         string goBack = Utilities.PromptYesOrNo("Go back?");
@@ -442,8 +444,49 @@ namespace BudgetApp.App
 
         private void UpdateBudgetItemDate(BudgetItem item)
         {
-            var date = Utilities.ConstructDate();
-            item.StartDate = date;
+            if (item.StartDate != null || item.EndDate != null)
+            {
+                var updateStartDate = Utilities.PromptYesOrNo("Update start date?");
+                var updateEndDate = Utilities.PromptYesOrNo("Update end date?");
+                if (updateStartDate == "y")
+                {
+                    Console.WriteLine("Enter start date details");
+                    item.StartDate = Utilities.ConstructDate();
+                }
+                if (updateEndDate == "y")
+                {
+                    Console.WriteLine("Enter end date details");
+                    item.EndDate = Utilities.ConstructDate();
+                }
+                while (item.StartDate > item.EndDate)
+                {
+                    Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
+                    Console.WriteLine("Enter start date details");
+                    item.StartDate = Utilities.ConstructDate();
+                    Console.WriteLine("Enter end date details");
+                    item.EndDate = Utilities.ConstructDate();
+                }
+            }
+            else
+            {
+                Utilities.PrintMessage("No start or end date exists.", false, false);
+                var createDateRange = Utilities.PromptYesOrNo("Create a start/end date range?");
+                if (createDateRange == "y")
+                {
+                    Console.WriteLine("Enter start date details");
+                    item.StartDate = Utilities.ConstructDate();
+                    Console.WriteLine("Enter end date details");
+                    item.EndDate = Utilities.ConstructDate();
+                    while (item.StartDate > item.EndDate)
+                    {
+                        Utilities.PrintMessage("Start date cannot be after end date. Please try again", false, true);
+                        Console.WriteLine("Enter start date details");
+                        item.StartDate = Utilities.ConstructDate();
+                        Console.WriteLine("Enter end date details");
+                        item.EndDate = Utilities.ConstructDate();
+                    }
+                }
+            }
         }
 
         private void UpdateBudgetItemCategory(BudgetItem item)
