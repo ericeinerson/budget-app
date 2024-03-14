@@ -4,6 +4,7 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.UI;
 using ConsoleTables;
+using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetApp.App
@@ -114,8 +115,8 @@ namespace BudgetApp.App
 
                     if (item.AmountVariable)
                     {
-                        Console.WriteLine($"Name: {item.Name}, Date: {curDate:MMMM dd yyyy}, BudgetItemId: {item.Id}, Current Amount: {item.Amount}, Budget Item Type: {type}");
-                        string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {item.Amount}?");
+                        Console.WriteLine($"Name: {item.Name}, Date: {curDate:MMMM dd yyyy}, BudgetItemId: {item.Id}, Current Amount: {Utilities.FormatAmount(item.Amount)}, Budget Item Type: {type}");
+                        string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {Utilities.FormatAmount(item.Amount)}?");
                         if (isDifferentPrompt == "y")
                         {
                             transaction.Amount = Validator.Convert<decimal>("amount for this transaction");
@@ -145,7 +146,7 @@ namespace BudgetApp.App
                         $"{transaction.Id}, " +
                         $"Name: {transaction.Name}, " +
                         $"Category Id: {transaction.CategoryId}, " +
-                        $"Amount: {transaction.Amount}, " +
+                        $"Amount: {Utilities.FormatAmount(transaction.Amount)}, " +
                         $"Budget Item Id: {transaction.BudgetItemId}," +
                         $"Budget Item Type: {transaction.BudgetItemType}," +
                         $"Created Date: {transaction.CreatedDate}," +
@@ -174,7 +175,7 @@ namespace BudgetApp.App
                         $"Category Id: {t.CategoryId} " +
                         $"Budget Item Id: {t.BudgetItemId} " +
                         $"Name: {t.Name} " +
-                        $"Amount: {t.Amount} " +
+                        $"Amount: {Utilities.FormatAmount(t.Amount)} " +
                         $"Created Date: {t.CreatedDate} " +
                         $"Scheduled Date: {t.ScheduledDate} " +
                         $"Budget Item Type: {t.BudgetItemType}" +
@@ -198,7 +199,7 @@ namespace BudgetApp.App
                         $"Category Id: {t.CategoryId} " +
                         $"Budget Item Id: {t.BudgetItemId} " +
                         $"Name: {t.Name} " +
-                        $"Amount: {t.Amount} " +
+                        $"Amount: {Utilities.FormatAmount(t.Amount)} " +
                         $"Created Date: {t.CreatedDate} " +
                         $"Scheduled Date: {t.ScheduledDate} " +
                         $"Budget Item Type: {t.BudgetItemType}" +
@@ -222,7 +223,7 @@ namespace BudgetApp.App
                     $"{transaction.Name}, " +
                     $"{transaction.Id}," +
                     $"Category Id: {transaction.CategoryId}, " +
-                    $"Amount: {transaction.Amount}, " +
+                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}, " +
                     $"Budget Item Id: {transaction.BudgetItemId}," +
                     $"Budget Item Type: {transaction.BudgetItemType}," +
                     $"Created Date: {transaction.CreatedDate}," +
@@ -501,7 +502,7 @@ namespace BudgetApp.App
 
                 Console.WriteLine($"" +
                     $"Name: {transaction.Name}; " +
-                    $"Amount: {transaction.Amount}; " +
+                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
                     $"Id: {transaction.Id}; " +
                     $"Category Id: {transaction.CategoryId}; " +
                     $"Scheduled Date: {transaction.ScheduledDate}; " +
@@ -543,12 +544,20 @@ namespace BudgetApp.App
 
         public void VerifyTransactionsOutOfDateRange(BudgetItem item)
         {
-            var transactionList = selectedAccount.TransactionList.Where(x => item.Id == x.BudgetItemId);
-            foreach(var transaction in transactionList)
+            var transactionList = selectedAccount.TransactionList.Where(x => item.Id == x.BudgetItemId).ToList();
+            var transactionsToRemoveList = new List<Transaction>();
+
+            foreach(Transaction transaction in transactionList)
             {
                 if(transaction.ScheduledDate < item.StartDate || transaction.ScheduledDate > item.EndDate)
                 {
-                    var deleteTransactionPrompt = Utilities.PromptYesOrNo("Transaction is out of this budget item's range. Delete this transaction?");
+                    var deleteTransactionPrompt = Utilities.PromptYesOrNo($"The following transaction is out of this budget item's range:" +
+                        $"Id: {transaction.Id}; " +
+                        $"Budget Item Id: {transaction.BudgetItemId};" +
+                        $"Name: {transaction.Name};" +
+                        $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
+                        $"Scheduled Date: {transaction.ScheduledDate} " +
+                        $"Delete this transaction?");
                     if (deleteTransactionPrompt == "y")
                     {
                         Utilities.PrintMessage($"Transaction removed: " +
@@ -558,16 +567,32 @@ namespace BudgetApp.App
                             $"Name: {transaction.Name}; " +
                             $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
                             $"Created Date {transaction.CreatedDate}; " +
+                            $"Scheduled Date {transaction.ScheduledDate}; " +
                             $"Deleted Date: {DateTime.Now}; " +
                             $"Posted Date: {transaction.PostedDate:MMMM dd yyyy}; " +
                             $"Budget Item Type: {transaction.BudgetItemType} " +
                             $"Status: {Status.Cancelled}", true, false);
-                        selectedAccount.TransactionList.Remove(transaction);
+                        transactionsToRemoveList.Add(transaction);
                     }
                     else
                     {
-
+                        Utilities.PrintMessage($"Transaction left outside {item.Name}'s range: " +
+                            $"Id: {transaction.Id}; " +
+                            $"Category Id: {transaction.Id}; " +
+                            $"Budget Item Id: {transaction.BudgetItemId}; " +
+                            $"Name: {transaction.Name}; " +
+                            $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
+                            $"Created Date {transaction.CreatedDate}; " +
+                            $"Deleted Date: {DateTime.Now}; " +
+                            $"Posted Date: {transaction.PostedDate:MMMM dd yyyy}; " +
+                            $"Budget Item Type: {transaction.BudgetItemType} " +
+                            $"Status: {Status.Cancelled}", false, false);
                     }
+                    continue;
+                }
+                foreach (Transaction transactionRemoved in transactionsToRemoveList)
+                {
+                    selectedAccount.TransactionList.Remove(transactionRemoved);
                 }
             }
         }

@@ -115,6 +115,7 @@ namespace BudgetApp.App
                     StartDate = item.StartDate,
                     EndDate = item.EndDate,
                     Rate = item.Rate,
+                    AmountVariable = item.AmountVariable
                 };
                 selectedAccount.ExpenseIdCounter++;
 
@@ -131,6 +132,7 @@ namespace BudgetApp.App
                     StartDate = item.StartDate,
                     EndDate = item.EndDate,
                     Rate = item.Rate,
+                    AmountVariable = item.AmountVariable
                 };
                 selectedAccount.IncomeIdCounter++;
                 budgetItemList.Add(incomeItem);
@@ -151,12 +153,31 @@ namespace BudgetApp.App
 
             var amountFormatted = Utilities.FormatAmount(item.Amount);
             var itemList = GetBudgetItemList(type);
-
+            var transactionsConnected = selectedAccount.TransactionList.Where(x => x.BudgetItemId == item.Id);
             if (item != null)
             {
                 itemList.Remove(item);
                 Utilities.PrintMessage($"You have succcessfully removed {item.Name} with a value of {amountFormatted}!", true, false);
             }
+
+            foreach(var transaction in transactionsConnected.ToList())
+            {
+                Utilities.PrintMessage($"The following transaction was remmoved:" +
+                    $"Id: {transaction.Id}; " +
+                    $"Category Id: {transaction.Id}; " +
+                    $"Budget Item Id: {transaction.BudgetItemId}; " +
+                    $"Name: {transaction.Name}; " +
+                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
+                    $"Created Date {transaction.CreatedDate}; " +
+                    $"Deleted Date: {DateTime.Now}; " +
+                    $"Posted Date: {transaction.PostedDate:MMMM dd yyyy}; " +
+                    $"Budget Item Type: {transaction.BudgetItemType} " +
+                    $"Status: {Status.Cancelled}", true, false);
+                selectedAccount.TransactionList.Remove(transaction);
+            }
+
+            
+
             ProcessBudgetItemOption(type);
         }
 
@@ -199,7 +220,7 @@ namespace BudgetApp.App
 
                         var isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                             $"Name: {listItem.Name}, " +
-                            $"Amount: {listItem.Amount}, " +
+                            $"Amount: {Utilities.FormatAmount(listItem.Amount)}, " +
                             $"Id: {listItem.Id}, " +
                             $"Variable?: {listItem.AmountVariable}, " +
                             $"Category Id: {listItem.CategoryId}, " +
@@ -226,7 +247,7 @@ namespace BudgetApp.App
                             var endDateString = string.IsNullOrEmpty(listItem.EndDate.ToString()) ? "No end date" : listItem.EndDate?.ToString("MMMM dd yyyy");
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                                 $"Name: {listItem.Name}, " +
-                                $"Amount: {listItem.Amount}, " +
+                                $"Amount: {Utilities.FormatAmount(listItem.Amount)}, " +
                                 $"Id: {listItem.Id}, " +
                                 $"Variable?: {listItem.AmountVariable}, " +
                                 $"Category Id: {listItem.CategoryId}, " +
@@ -254,7 +275,7 @@ namespace BudgetApp.App
                             var endDateString = string.IsNullOrEmpty(listItem.EndDate.ToString()) ? "No end date" : listItem.EndDate?.ToString("MMMM dd yyyy");
                             string isCorrectItem = Utilities.PromptYesOrNo($"Is this the correct item: " +
                                 $"Name: {listItem.Name}, " +
-                                $"Amount: {listItem.Amount}, " +
+                                $"Amount: {Utilities.FormatAmount(listItem.Amount)}, " +
                                 $"Id: {listItem.Id}, " +
                                 $"Variable?: {listItem.AmountVariable}, " +
                                 $"Category Id: {listItem.CategoryId}, " +
@@ -487,6 +508,7 @@ namespace BudgetApp.App
                     }
                 }
             }
+            VerifyTransactionsOutOfDateRange(item);
         }
 
         private void UpdateBudgetItemCategory(BudgetItem item)

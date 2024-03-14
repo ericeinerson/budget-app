@@ -1,5 +1,6 @@
 ﻿using System;
 using BudgetApp.Domain.Enums;
+using BudgetApp.UI;
 
 namespace BudgetApp.Domain.Entities
 {
@@ -34,7 +35,7 @@ namespace BudgetApp.Domain.Entities
 
                 Console.WriteLine($"" +
                     $"Name: {transaction.Name}; " +
-                    $"Amount: {transaction.Amount}; " +
+                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
                     $"Id: {transaction.Id}; " +
                     $"Category Id: {transaction.CategoryId}; " +
                     $"Created Date: {transaction.CreatedDate}; " +
