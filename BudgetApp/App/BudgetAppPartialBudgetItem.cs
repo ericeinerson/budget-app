@@ -150,7 +150,10 @@ namespace BudgetApp.App
         public void RemoveBudgetItem(BudgetItemType type)
         {
             BudgetItem item = FindBudgetItem(type);
-
+            if(item.Id == -1)
+            {
+                return;
+            }
             var amountFormatted = Utilities.FormatAmount(item.Amount);
             var itemList = GetBudgetItemList(type);
             var transactionsConnected = selectedAccount.TransactionList.Where(x => x.BudgetItemId == item.Id);
@@ -297,12 +300,7 @@ namespace BudgetApp.App
                 }
             }
 
-            if(item == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            return item;
+            return new BudgetItem() { Id = -1 };
         }
 
         public BudgetItem ConstructBudgetItem()
@@ -414,7 +412,10 @@ namespace BudgetApp.App
         private void UpdateBudgetItemDetails(BudgetItemType type)
         {
             var item = FindBudgetItem(type);
-
+            if(item.Id == -1)
+            {
+                return;
+            }
             AppScreen.DisplayBudgetItemUpdateDetails();
 
             switch (Validator.Convert<int>("an option"))

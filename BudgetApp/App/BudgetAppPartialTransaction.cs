@@ -76,6 +76,19 @@ namespace BudgetApp.App
         public void CreateMultipleTransactions(BudgetItem item, BudgetItemType type)
         {
             var curDate = item.StartDate;
+            var dayOfMonthStartDate = 0;
+            var changeDayOfMonthForTransactions = string.Empty;
+
+            if (item.StartDate != null)
+            {
+                dayOfMonthStartDate = ((DateTime)item.StartDate).Day;
+            }
+            if(dayOfMonthStartDate > 28 && item.Rate == Rate.Monthly)
+            {
+                changeDayOfMonthForTransactions = Utilities.PromptYesOrNo("" +
+                    "This day may change if transactions are done on a month with " +
+                    "fewer days. Keep the same day on all months if possible?");
+            }
             var daysBetweenTransactions = 0;
 
             switch (item.Rate)
@@ -87,9 +100,7 @@ namespace BudgetApp.App
                     daysBetweenTransactions = 14;
                     break;
                 case Rate.Monthly:
-                    break;
                 case Rate.Yearly:
-                    daysBetweenTransactions = 365;
                     break;
                 case Rate.NoRate:
                 case Rate.Other:
@@ -113,19 +124,6 @@ namespace BudgetApp.App
                     transaction.CreatedDate = DateTime.Now;
                     transaction.ScheduledDate = (DateTime)curDate;
 
-                    if (item.AmountVariable)
-                    {
-                        Console.WriteLine($"Name: {item.Name}, Date: {curDate:MMMM dd yyyy}, BudgetItemId: {item.Id}, Current Amount: {Utilities.FormatAmount(item.Amount)}, Budget Item Type: {type}");
-                        string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {Utilities.FormatAmount(item.Amount)}?");
-                        if (isDifferentPrompt == "y")
-                        {
-                            transaction.Amount = Validator.Convert<decimal>("amount for this transaction");
-                        }
-                    }
-                    if (item.Rate == Rate.Monthly)
-                    {
-                        daysBetweenTransactions = DateTime.DaysInMonth(((DateTime)curDate).Year, ((DateTime)curDate).Month);
-                    }
                     if (curDate <= DateTime.Now)
                     {
                         transaction.PostedDate = DateTime.Now;
@@ -138,9 +136,34 @@ namespace BudgetApp.App
                         transaction.Status = Status.Scheduled;
                         postedDateString = "Not Posted Yet";
                     }
-                    selectedAccount.TransactionList.Add(transaction);
 
-                    curDate = ((DateTime)curDate).AddDays(daysBetweenTransactions);
+                    if (item.AmountVariable)
+                    {
+                        Console.WriteLine($"Name: {item.Name}, Date: {curDate:MMMM dd yyyy}, BudgetItemId: {item.Id}, Current Amount: {Utilities.FormatAmount(item.Amount)}, Budget Item Type: {type}");
+                        string isDifferentPrompt = Utilities.PromptYesOrNo($"Is this transaction different than {Utilities.FormatAmount(item.Amount)}?");
+                        if (isDifferentPrompt == "y")
+                        {
+                            transaction.Amount = Validator.Convert<decimal>("amount for this transaction");
+                        }
+                    }
+                    if(item.Rate == Rate.Weekly || item.Rate == Rate.Biweekly || item.Rate == Rate.Other)
+                    {
+                        curDate = ((DateTime)curDate).AddDays(daysBetweenTransactions);
+                    }
+                    else if (item.Rate == Rate.Monthly)
+                    {
+                        curDate = ((DateTime)curDate).AddMonths(1);
+                    }
+                    else if(item.Rate == Rate.Yearly)
+                    {
+                        curDate = ((DateTime)curDate).AddYears(1);
+                    }
+
+                    selectedAccount.TransactionList.Add(transaction);
+                    if(transaction.ScheduledDate.Day != dayOfMonthStartDate && changeDayOfMonthForTransactions == "y")
+                    {
+                        curDate = new DateTime(((DateTime)curDate).Year, ((DateTime)curDate).Month, dayOfMonthStartDate);
+                    }
 
                     Utilities.PrintMessage($"Successfully created transaction! Id: " +
                         $"{transaction.Id}, " +

@@ -232,7 +232,6 @@ namespace BudgetApp.App
                 case (int)AppMenu.Other:
                     AppScreen.DisplayInitialTransactionOptions();
                     ProcessGeneralMenuOption();
-                    Utilities.PressEnterToContinue();
                     break;
                 default:
                     Utilities.PrintMessage("Invalid option.", false);
@@ -279,7 +278,10 @@ namespace BudgetApp.App
             {
                 case 1:
                     var budgetItem = FindBudgetItem();
-                    budgetItem.DisplayAllTransactionsForItem(selectedAccount);
+                    if (budgetItem.Id != -1)
+                    {
+                        budgetItem.DisplayAllTransactionsForItem(selectedAccount);
+                    }
                     break;
                 case 2:
                     DisplayAllTransactions();
