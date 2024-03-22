@@ -43,6 +43,8 @@ namespace BudgetApp.App
             selectedAccount.CategoryList.Add(category);
 
             Utilities.PrintMessage($"You have succcessfully added {category.Name} with an id of {category.Id}!", true, false);
+
+            ProcessCategoryOption();
         }
 
         public void RemoveTransactionCategory()
@@ -73,6 +75,8 @@ namespace BudgetApp.App
             {
                 Utilities.PrintMessage("You cannot remove this category. It serves as a replacement for holding no categories", false, false);
             }
+
+            ProcessCategoryOption();
         }
 
         public Category FindTransactionCategory()
@@ -135,6 +139,7 @@ namespace BudgetApp.App
             }
             allCategoriesTable.Write();
             Utilities.PressEnterToContinue();
+            ProcessCategoryOption();
         }
 
         public Category AssignTransactionCategory()
@@ -167,7 +172,7 @@ namespace BudgetApp.App
 
             if(category == null)
             {
-                throw new NullReferenceException();
+                category = categoryList[0];
             }
 
             return category;
@@ -221,6 +226,7 @@ namespace BudgetApp.App
                     UpdateCategoryDetails();
                     break;
             }
+            ProcessCategoryOption();
         }
 
         private void UpdateCategoryName(Category category)

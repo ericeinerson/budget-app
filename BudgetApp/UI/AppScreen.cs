@@ -202,6 +202,23 @@ namespace BudgetApp.UI
             Console.WriteLine("3. None                             ");
         }
 
+        internal static void DisplayGeneralOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("Select an option.               \n\n");
+
+            Console.WriteLine("1. View Transactions For Budget Item");
+            Console.WriteLine("2. View All Transactions            ");
+            Console.WriteLine("3. View All Categories              ");
+            Console.WriteLine("4. View All Incomes                 ");
+            Console.WriteLine("5. View All Expenses                ");
+            Console.WriteLine("6. View All Budget Items            ");
+            Console.WriteLine("7. View All User Info               ");
+            Console.WriteLine("8. View All All Id Counters         ");
+            Console.WriteLine("9. View All Wishlist Items          ");
+            Console.WriteLine("9. View Activity                    ");
+        }
+
         internal static void ViewActivity()
         {
             //Add console table in to display past expenses, incomes, and updates

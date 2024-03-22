@@ -1,5 +1,6 @@
 ﻿using System;
 using BudgetApp.Domain.Enums;
+using BudgetApp.UI;
 
 namespace BudgetApp.Domain.Entities
 {
@@ -18,10 +19,32 @@ namespace BudgetApp.Domain.Entities
         public int CategoryId { get; set; }
         public string Name { get; set; }
         public decimal Amount { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Rate Rate { get; set; }
-        public DateTime? MarkerDate { get; set; }
-	}
+        public bool AmountVariable { get; set; }
+
+        public void DisplayAllTransactionsForItem(UserAccount selectedAccount)
+        {
+            var transactionsList = selectedAccount.TransactionList.Where(t => t.BudgetItemId == Id);
+            var postedDateForTransaction = string.Empty;
+
+            foreach(var transaction in transactionsList)
+            {
+                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : transaction.PostedDate.ToString();
+
+                Console.WriteLine($"" +
+                    $"Name: {transaction.Name}; " +
+                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
+                    $"Id: {transaction.Id}; " +
+                    $"Category Id: {transaction.CategoryId}; " +
+                    $"Created Date: {transaction.CreatedDate}; " +
+                    $"Type: {transaction.BudgetItemType}; " +
+                    $"Scheduled Date: {transaction.ScheduledDate}; " +
+                    $"Status: {transaction.Status}; " +
+                    $"Posted Date: {postedDateForTransaction}; ");
+            }
+        }
+    }
 }
 

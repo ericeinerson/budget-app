@@ -1,0 +1,5 @@
+id:5;incomeId:-1;category id:2;incomeName:income1;amount:111;start date:11/11/2021 12:00:00AM;end date:null;rate:4;amount variable:False;
+id:6;incomeId:-1;category id:1;incomeName:income22;amount:112;start date:2/29/2000 12:00:00AM;end date:null;rate:5;amount variable:False;
+id:-2;incomeId:-1;category id:0;incomeName:income3;amount:112;start date:1/30/0199 12:00:00AM;end date:2/28/0200 12:00:00AM;rate:3;amount variable:False;
+id:9;incomeId:-1;category id:0;incomeName:income9;amount:999;start date:12/15/2023 12:00:00AM;end date:12/14/2025 12:00:00AM;rate:3;amount variable:False;
+id:10;incomeId:-1;category id:1;incomeName:income10;amount:10.10;start date:12/15/2000 12:00:00AM;end date:1/1/2026 12:00:00AM;rate:4;amount variable:False;

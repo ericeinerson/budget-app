@@ -9,7 +9,13 @@ namespace BudgetApp.Domain.Entities
 		{
 			Id = 1;
 			Directory = "";
-			Passcode = "0000";
+			UserInfoFileName = "";
+            ExpensesFileName = "";
+            IncomesFileName = "";
+            CategoriesFileName = "";
+            TransactionsFileName = "";
+            WishlistFileName = "";
+            Passcode = "0000";
 			FullName = "test name";
 			Balance = 0;
 			TotalLogin = 0;
@@ -33,7 +39,14 @@ namespace BudgetApp.Domain.Entities
         public int TotalLogin { get; set; }
         public decimal Balance { get; set; }
         public string Directory { get; set; }
-		public int IncomeIdCounter { get; set; }
+        public string UserInfoFileName { get; set; }
+        public string ExpensesFileName { get; set; }
+        public string IncomesFileName { get; set; }
+        public string CategoriesFileName { get; set; }
+        public string TransactionsFileName { get; set; }
+        public string WishlistFileName { get; set; }
+
+        public int IncomeIdCounter { get; set; }
 		public int ExpenseIdCounter { get; set; }
         public int WishlistIdCounter { get; set; }
         public int BudgetItemIdCounter { get; set; }
