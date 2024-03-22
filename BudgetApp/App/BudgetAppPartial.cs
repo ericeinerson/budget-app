@@ -21,7 +21,7 @@ namespace BudgetApp.App
                 var loadData = PromptUserToLoadData();
                 if (loadData)
                 {
-                    UpdateTransactionsForTimePeriod();
+                    ValidateTransactionsForTimePeriod();
                 }
                 Utilities.SaveUserInfoOnlyWithNewLoginTime(selectedAccount);
             }
@@ -40,7 +40,7 @@ namespace BudgetApp.App
             UserAccount self = new()
             {
                 Id = 1,
-                Directory = @"/Users/ericeinerson/Projects/BudgetApp/UserInfo/",
+                Directory = "",
                 FullName = "e",
                 Passcode = "0000",
                 Balance = 0,
@@ -65,11 +65,12 @@ namespace BudgetApp.App
                         CategoryId = 1,
                     },
                     new Expense() {
-                        Amount = 112,
+                        Amount = 10,
                         Name = "expense3",
                         Rate = Rate.Monthly,
                         Id = 3,
                         StartDate = new DateTime(1999, 4, 30),
+                        EndDate = new DateTime(2001, 1, 31),
                         CategoryId = 0,
                     },
                     new Expense()
@@ -80,7 +81,25 @@ namespace BudgetApp.App
                         Id = 4,
                         StartDate = new DateTime(1952, 4, 30),
                         CategoryId = 1,
-                    }
+                    },
+                    new Expense() {
+                        Amount = 777,
+                        Name = "expense7",
+                        Rate = Rate.Monthly,
+                        Id = 7,
+                        StartDate = new DateTime(2023, 12, 15),
+                        EndDate = new DateTime(2025, 12, 14),
+                        CategoryId = 0,
+                    },
+                    new Expense() {
+                        Amount = 88,
+                        Name = "expense8",
+                        Rate = Rate.Biweekly,
+                        Id = 8,
+                        StartDate = new DateTime(2022, 12, 15),
+                        EndDate = new DateTime(2024, 1, 1),
+                        CategoryId = 2,
+                    },
                 },
                 IncomeList = new List<BudgetItem>() {
                     new Income() {
@@ -106,6 +125,100 @@ namespace BudgetApp.App
                         Id = -2,
                         StartDate = new DateTime(199, 1, 30),
                         CategoryId = 0,
+                        EndDate = new DateTime(200, 2, 28)
+                    },
+                    new Income() {
+                        Amount = 999,
+                        Name = "income9",
+                        Rate = Rate.Monthly,
+                        Id = 9,
+                        StartDate = new DateTime(2023, 12, 15),
+                        EndDate = new DateTime(2025, 12, 14),
+                        CategoryId = 0,
+                    },
+                    new Income() {
+                        Amount = 10.10M,
+                        Name = "income10",
+                        Rate = Rate.Yearly,
+                        Id = 10,
+                        StartDate = new DateTime(2000, 12, 15),
+                        EndDate = new DateTime(2026, 1, 1),
+                        CategoryId = 1,
+                    },
+                },
+                TransactionList = new List<Transaction>()
+                {
+                    new Transaction()
+                    {
+                        Name = "income3",
+                        Amount = 112,
+                        BudgetItemId = -2,
+                        CategoryId = 1,
+                        ScheduledDate = new DateTime(199, 3, 30)
+                    },
+                    new Transaction()
+                    {
+                        Name = "income3",
+                        Amount = 112,
+                        BudgetItemId = -2,
+                        CategoryId = 1,
+                        ScheduledDate = new DateTime(200, 1, 30)
+                    },
+                    new Transaction()
+                    {
+                        Name = "expense3",
+                        Amount = 10,
+                        BudgetItemId = 3,
+                        CategoryId = 1,
+                        ScheduledDate = new DateTime(1999, 3, 30)
+                    },
+                    new Transaction()
+                    {
+                        Name = "expense3",
+                        Amount = 10,
+                        BudgetItemId = 3,
+                        CategoryId = 1,
+                        ScheduledDate = new DateTime(2000, 1, 30)
+                    },
+                    new Transaction()
+                    {
+                        Name = "expense8",
+                        Amount = 88,
+                        BudgetItemId = 8,
+                        CategoryId = 2,
+                        ScheduledDate = new DateTime(2023, 10, 5)
+                    },
+                    new Transaction()
+                    {
+                        Name = "expense7",
+                        Amount = 777,
+                        BudgetItemId = 7,
+                        CategoryId = 0,
+                        ScheduledDate = new DateTime(2024, 5, 15)
+                    },
+                    new Transaction()
+                    {
+                        Name = "expense7",
+                        Amount = 777,
+                        BudgetItemId = 7,
+                        CategoryId = 0,
+                        ScheduledDate = new DateTime(2024, 7, 15)
+                    },
+                    new Transaction()
+                    {
+                        Name = "income9",
+                        Amount = 999,
+                        BudgetItemId = 9,
+                        CategoryId = 0,
+                        ScheduledDate = new DateTime(2024, 11, 15)
+                    },
+                    new Transaction()
+                    {
+                        Name = "income10",
+                        Amount = 10.10M,
+                        BudgetItemId = 10,
+                        CategoryId = 1,
+                        ScheduledDate = new DateTime(2024, 12, 15)
                     }
                 },
                 ExpenseIdCounter = 0,
@@ -241,6 +354,7 @@ namespace BudgetApp.App
         }
         #endregion
 
+        
         public void GoBackToAppScreen()
         {
             AppScreen.DisplayAppMenu();

@@ -361,180 +361,20 @@ namespace BudgetApp.App
             return transaction;
         }
 
-        public void UpdateTransactionsForTimePeriod(int daysInPast = 183, int daysInFuture = 365)
-        {
-            List<Transaction> transactionsExpected = new();
-            Rate rate = new();
-            var currentTransactionDay = new DateTime();
-            var daysBetweenTransactions = 0;
-            var transactionsTable = new ConsoleTable("Id", "Category Id", "Budget Item Id", "Name", "Amount", "Created Date", "Scheduled Date", "Posted Date", "Budget Item Type", "Status");
-            var lists = new List<IEnumerable<BudgetItem>>
-            {
-                selectedAccount.ExpenseList,
-                selectedAccount.IncomeList
-            };
-            for(var i = 0; i < lists.Count; i++) {
-                var list = lists[i];
-                var budgetItemTypeString = "No Type";
-                var budgetItemType = BudgetItemType.None;
-
-                if (list == selectedAccount.ExpenseList) {
-                    budgetItemTypeString = "Expense";
-                    budgetItemType = BudgetItemType.Expense;
-                }
-                else if (list == selectedAccount.IncomeList)
-                {
-                    budgetItemTypeString = "Income";
-                    budgetItemType = BudgetItemType.Income;
-                }
-                foreach (var item in list)
-                {
-                    transactionsExpected = new List<Transaction>();
-                    rate = item.Rate;
-                    if (item.StartDate != null)
-                    {
-                        currentTransactionDay = (DateTime)item.StartDate;
-                        if(item.EndDate == null)
-                        {
-                            Console.WriteLine("Select an end date for this list of transactions");
-                            var transactionListEndDate = Utilities.ConstructDate();
-                            item.EndDate = transactionListEndDate;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Select a date for this list of transactions to start");
-                        var transactionListStartDate = Utilities.ConstructDate();
-                        Console.WriteLine("Select an end date for this list of transactions");
-                        var transactionListEndDate = Utilities.ConstructDate();
-                        item.StartDate = transactionListStartDate;
-                        item.EndDate = transactionListEndDate;
-                        currentTransactionDay = (DateTime)item.StartDate;
-                    }
-                    daysBetweenTransactions = 0;
-
-                    switch (rate)
-                    {
-                        case Rate.Weekly:
-                            daysBetweenTransactions = 7;
-                            break;
-                        case Rate.Biweekly:
-                            daysBetweenTransactions = 14;
-                            break;
-                        case Rate.Other:
-                            daysBetweenTransactions = Validator.Convert<int>("Amount of days between transactions");
-                            break;
-                        case Rate.Monthly:
-                        case Rate.Yearly:
-                            continue;
-                        case Rate.NoRate:
-                            Console.WriteLine($"Cannot predict rate for {item.Name} ");
-                            continue;
-                        default:
-                            throw new Exception();
-                    }
-
-                    while (currentTransactionDay < DateTime.Now.AddDays(-1 * daysInPast))
-                    {
-                        if (rate == Rate.Weekly || rate == Rate.Biweekly || rate == Rate.Other)
-                        {
-                            currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
-                        }
-                        else if (rate == Rate.Yearly)
-                        {
-                            currentTransactionDay = currentTransactionDay.AddYears(1);
-                        }
-                        else if (rate == Rate.Monthly)
-                        {
-                            currentTransactionDay = currentTransactionDay.AddMonths(1);
-                        }
-                        else if (rate == Rate.NoRate)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Utilities.PrintMessage("invalid rate", false, false);
-                            break;
-                        }
-                    }
-                    var status = currentTransactionDay <= DateTime.Now ? Status.Posted : currentTransactionDay <= DateTime.Now.AddMonths(1) ? Status.Pending : Status.Scheduled; 
-
-                    while (currentTransactionDay < DateTime.Now.AddDays(daysInFuture))
-                    {
-                        var transaction = new Transaction()
-                        {
-                            Id = AssignTransactionId(),
-                            CategoryId = item.CategoryId,
-                            BudgetItemId = item.Id,
-                            Name = item.Name,
-                            Amount = item.Amount,
-                            CreatedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
-                            ScheduledDate = currentTransactionDay,
-                            PostedDate = currentTransactionDay >= DateTime.Now ? currentTransactionDay : null,
-                            BudgetItemType = budgetItemType,
-                            Status = status
-                        };
-                        var statusString = status == Status.Posted ? "Posted" : status == Status.Pending ? "Pending" : "Scheduled";
-
-                        var postedDateString = transaction.PostedDate == null ? "No Posted Date" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
-
-                        transactionsExpected.Add(transaction);
-
-                        transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate.ToString("MMMM dd yyyy"), postedDateString, budgetItemTypeString, statusString );
-
-                        if (rate == Rate.Biweekly || rate == Rate.Weekly)
-                        {
-                            currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
-                        }
-                        else if (rate == Rate.Yearly)
-                        {
-                            if (DateTime.IsLeapYear(currentTransactionDay.Year))
-                            {
-                                daysBetweenTransactions = 366;
-                            }
-                            currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
-                        }
-                        else if (rate == Rate.Monthly)
-                        {
-                            currentTransactionDay = currentTransactionDay.AddDays(DateTime.DaysInMonth(currentTransactionDay.Year, currentTransactionDay.Month));
-                        }
-                        else if (rate == Rate.Other || rate == Rate.NoRate)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            throw new Exception();
-                        }
-                    }
-                    transactionsTable.AddRow("break", "", "", "", "", "", "", "", "", "");
-                }
-            }
-            transactionsTable.Write();
-            Console.WriteLine("'\n'\n'\n....\n'  '\n'  '\n'  '\n'  '");
-        }
-
         public void DisplayAllTransactions()
         {
+            var transactionsTable = new ConsoleTable("Id", "Budget Item Id", "Category Id", "Name", "Amount", "Scheduled Date", "Created Date", "Posted Date","Budget Item Type", "Status");
             var postedDateForTransaction = string.Empty;
 
             foreach(var transaction in selectedAccount.TransactionList)
             {
-                postedDateForTransaction = transaction.PostedDate == null ? "N/A" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
+                postedDateForTransaction = (transaction.PostedDate == null || transaction.PostedDate == DateTime.MinValue) ? "N/A" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
 
-                Console.WriteLine($"" +
-                    $"Name: {transaction.Name}; " +
-                    $"Amount: {Utilities.FormatAmount(transaction.Amount)}; " +
-                    $"Id: {transaction.Id}; " +
-                    $"Category Id: {transaction.CategoryId}; " +
-                    $"Scheduled Date: {transaction.ScheduledDate}; " +
-                    $"Created Date: {transaction.CreatedDate}; " +
-                    $"Type: {transaction.BudgetItemType}; " +
-                    $"Scheduled Date: {transaction.ScheduledDate}; " +
-                    $"Status: {transaction.Status}; " +
-                    $"Posted Date: {postedDateForTransaction}; ");
+                transactionsTable.AddRow(transaction.Id, transaction.BudgetItemId, transaction.CategoryId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.ScheduledDate, transaction.CreatedDate, postedDateForTransaction, transaction.BudgetItemType, transaction.Status);
+
             }
+            transactionsTable.Write();
+            Utilities.PressEnterToContinue();
         }
 
         public void GetDatesForTransactions(BudgetItem item)
@@ -619,6 +459,7 @@ namespace BudgetApp.App
                 }
             }
         }
+
         private void ProcessBudgetItem(decimal amount)
         {
             Console.WriteLine("\nProcessing expense");
@@ -636,6 +477,341 @@ namespace BudgetApp.App
                 Utilities.PrintMessage("You have cancelled your action", false);
                 return;
             }
+        }
+
+        public void ValidateTransactionsForTimePeriod(int daysInPast = 180, int daysInFuture = 365)
+        {
+            Rate rate;
+            DateTime startDay;
+            DateTime endDay;
+            var transactionsTable = new ConsoleTable("Row Number","Name", "Id", "Category Id", "Budget Item Id", "Amount", "Created Date", "Scheduled Date", "Posted Date", "Budget Item Type", "Status");
+            var lists = new List<IEnumerable<BudgetItem>>
+            {
+                selectedAccount.ExpenseList,
+                selectedAccount.IncomeList
+            };
+            for (var i = 0; i < lists.Count; i++)
+            {
+                var list = lists[i];
+                var budgetItemTypeString = "No Type";
+                var budgetItemType = BudgetItemType.None;
+
+                if (list == selectedAccount.ExpenseList)
+                {
+                    budgetItemTypeString = "Expense";
+                    budgetItemType = BudgetItemType.Expense;
+                }
+                else if (list == selectedAccount.IncomeList)
+                {
+                    budgetItemTypeString = "Income";
+                    budgetItemType = BudgetItemType.Income;
+                }
+                transactionsTable.AddRow($"{budgetItemTypeString} Transactions", "", "", "", "", "", "", "", "", "", "");
+
+                foreach (var item in list)
+                {
+                    startDay = DateTime.Now.AddDays(-1 * daysInPast);
+                    endDay = DateTime.Now.AddDays(daysInFuture);
+
+                    var transactionsExpected = new List<Transaction>();
+
+                    rate = item.Rate;
+                    if (item.Rate == Rate.NoRate)
+                    {
+                        Utilities.PrintMessage($"Following item does not have a rate, so no transactions to valdate:" +
+                            $"Id: {item.Id} " +
+                            $"Name: {item.Name} " +
+                            $"Amount: {item.Amount}", true, false);
+                    }
+                    else
+                    {
+                        if (item.StartDate == null || item.EndDate == null)
+                        {
+                            Utilities.PrintMessage($"Cannot validate transactions for this item " +
+                                $"Name: {item.Name} " +
+                                $"Id: {item.Id} " +
+                                $"Amount: {item.Amount} " +
+                                $"because rate exists but either start date " +
+                                $"or end date is null", false, false);
+                        }
+                        else
+                        {
+                            var rowCounter = 0;
+                            var dateTimesForItem = GetExpectedTransactionDateTimeList(startDay, endDay, item);
+                            if (dateTimesForItem.Any()) {
+                                foreach (var date in dateTimesForItem)
+                                {
+                                    Transaction? matchedTransaction = MatchingTransaction(item, date);
+
+                                    if (matchedTransaction != null)
+                                    {
+                                        continue;
+                                    }
+
+                                    var status = date <= DateTime.Now ? Status.Posted : date <= DateTime.Now.AddMonths(1) ? Status.Pending : Status.Scheduled;
+
+                                    var transaction = new Transaction()
+                                    {
+                                        Id = AssignTransactionId(),
+                                        CategoryId = item.CategoryId,
+                                        BudgetItemId = item.Id,
+                                        Name = item.Name,
+                                        Amount = item.Amount,
+                                        CreatedDate = DateTime.Now,
+                                        ScheduledDate = date,
+                                        PostedDate = date <= DateTime.Now ? date : null,
+                                        BudgetItemType = budgetItemType,
+                                        Status = status
+                                    };
+                                    var statusString = status == Status.Posted ? "Posted" : status == Status.Pending ? "Pending" : "Scheduled";
+
+                                    var postedDateString = transaction.PostedDate == null ? "No Posted Date" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
+
+                                    transactionsExpected.Add(transaction);
+
+                                    rowCounter++;
+
+                                    transactionsTable.AddRow(rowCounter, transaction.Name, transaction.Id, transaction.CategoryId, transaction.BudgetItemId, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate.ToString("MMMM dd yyyy"), postedDateString, budgetItemTypeString, statusString);
+                                }
+                                transactionsTable.AddRow("break", "", "", "", "", "", "", "", "", "", "");
+                            }
+                        }
+                    }
+                    foreach (Transaction transaction in transactionsExpected)
+                    {
+                        selectedAccount.TransactionList.Add(transaction);
+                    }
+                }
+            }
+            Console.WriteLine("Transactions added \n\n -----------------------");
+            transactionsTable.Write();
+        }
+         
+        public int CalculateDayOffsetBasedOnDaysBetweenTransactions(int totalDays, int daysBetweenTransactions)
+        {
+            var daysOffset = 0;
+            daysOffset = totalDays % daysBetweenTransactions;
+                    
+            return daysOffset;
+        }
+
+        public int CalculateDayOffsetBasedOnMonthlyOrYearlyRate(int totalDays, Rate rate, DateTime? curDay = null, string pastOrFuture = "past")
+        {
+            DateTime endDay;
+            var daysOffset = 0;
+
+            while (pastOrFuture != "past" && pastOrFuture != "future")
+            {
+                Utilities.PrintMessage("Invalid past or future option", false, true);
+                var pastOrFutureOption = Utilities.GetUserInput("past, p, future, or f");
+                if(pastOrFutureOption == "p" || pastOrFutureOption.ToLower() == "past")
+                {
+                    pastOrFuture = "past";
+                }
+                if (pastOrFutureOption == "f" || pastOrFutureOption.ToLower() == "future")
+                {
+                    pastOrFuture = "future";
+                }
+            }
+            if(curDay == null)
+            {
+                curDay = DateTime.Now;
+            }
+            
+            var adjustedDayOfTransaction = ((DateTime)curDay).Day;
+
+            if (pastOrFuture == "past")
+            {
+                endDay = ((DateTime)curDay).AddDays(-1 * totalDays);
+
+                if (rate == Rate.Monthly)
+                {
+                    while (endDay < ((DateTime)curDay).AddMonths(-1))
+                    {
+                        if(((DateTime)curDay).Day != adjustedDayOfTransaction)
+                        {
+                            var correctedDayOfMonth = AdjustDateTimeBasedOnDayOfMonth(adjustedDayOfTransaction, (DateTime)curDay);
+                            curDay = new DateTime(((DateTime)curDay).Year, ((DateTime)curDay).Month, correctedDayOfMonth);
+                        }
+                        curDay = ((DateTime)curDay).AddMonths(-1);
+                    }
+                }
+                else if (rate == Rate.Yearly)
+                {
+                    while (endDay < ((DateTime)curDay).AddYears(-1))
+                    {
+                        curDay = ((DateTime)curDay).AddYears(-1);
+                    }
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+                daysOffset = ((DateTime)curDay - endDay).Days;
+            }
+            else if(pastOrFuture == "future")
+            {
+                endDay = ((DateTime)curDay).AddDays(totalDays);
+
+                if(rate == Rate.Monthly)
+                {
+                    while (endDay > ((DateTime)curDay).AddMonths(1))
+                    {
+                        if (((DateTime)curDay).Day != adjustedDayOfTransaction)
+                        {
+                            AdjustDateTimeBasedOnDayOfMonth(adjustedDayOfTransaction, (DateTime)curDay);
+                        }
+                        curDay = ((DateTime)curDay).AddMonths(1);
+                    }
+                }
+                else if (rate == Rate.Yearly)
+                {
+                    while (endDay > ((DateTime)curDay).AddYears(1))
+                    {
+                        curDay = ((DateTime)curDay).AddYears(1);
+                    }
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+                daysOffset = (endDay - (DateTime)curDay).Days;
+            }
+
+            return daysOffset;
+        }
+
+        public int CalculateDayOffsetBasedOnYearlyRate()
+        {
+            return 0;
+        }
+
+        public Transaction? MatchingTransaction(BudgetItem item, DateTime transactionDate)
+        {
+            var itemTransaction = selectedAccount.TransactionList.FirstOrDefault(x => x.ScheduledDate == transactionDate && item.Id == x.BudgetItemId);
+
+            return itemTransaction;
+        }
+
+        public int AdjustDateTimeBasedOnDayOfMonth(int adjustedDayOfMonth, DateTime curDate)
+        {
+            var dayAdjusted = adjustedDayOfMonth;
+
+            switch (curDate.Month)
+            {
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    if(adjustedDayOfMonth == 31)
+                    {
+                        dayAdjusted = 30;
+                    }
+                    break;
+                case 2:
+                    if (DateTime.IsLeapYear(curDate.Year))
+                    {
+                        dayAdjusted = 29;
+                    }
+                    else
+                    {
+                        dayAdjusted = 28;
+                    }
+                    break;
+            }
+
+            return dayAdjusted;
+        }
+
+        public List<DateTime> GetExpectedTransactionDateTimeList(DateTime dateTimeCur, DateTime dateRangeEnd, BudgetItem item)
+        {
+            var daysBetweenTransactions = 0;
+            var listOfDatesForItem = new List<DateTime>();
+            var adjustedDayOfMonth = 0;
+             
+            switch (item.Rate)
+            {
+                case Rate.Weekly:
+                    daysBetweenTransactions = 7;
+                    break;
+                case Rate.Biweekly:
+                    daysBetweenTransactions = 14;
+                    break;
+                case Rate.Other:
+                    daysBetweenTransactions = Validator.Convert<int>("Amount of days between transactions");
+                    break;
+                case Rate.Monthly:
+                    if (item.StartDate != null)
+                    {
+                        if (((DateTime)item.StartDate).Day > 28)
+                        {
+                            adjustedDayOfMonth = ((DateTime)item.StartDate).Day;
+                        }
+                    }
+                    break;
+                case Rate.Yearly:
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            if(dateTimeCur <= item.StartDate)
+            {
+                dateTimeCur = (DateTime)item.StartDate;
+            }
+            else if(item.StartDate != null)
+            {
+                var daysOffset = (dateTimeCur - (DateTime)item.StartDate).Days;
+                if(item.Rate == Rate.Weekly || item.Rate == Rate.Biweekly)
+                {
+                    var daysToShift = daysOffset % daysBetweenTransactions;
+                    dateTimeCur = dateTimeCur.AddDays(daysBetweenTransactions - daysToShift);
+                }
+                else if(item.Rate == Rate.Monthly)
+                {
+                    var dayOfMonth = ((DateTime)item.StartDate).Day;
+                    var dateRangeStartDayOfMonth = DateTime.DaysInMonth(dateTimeCur.Year, dateTimeCur.Month);
+                    dateRangeStartDayOfMonth = Math.Min(dateRangeStartDayOfMonth, dayOfMonth);
+                    dateTimeCur = new DateTime(dateTimeCur.Year, dateTimeCur.Month, dateRangeStartDayOfMonth);
+                }
+                else if(item.Rate == Rate.Yearly)
+                {
+                    var dateIncrementorYear = (DateTime)item.StartDate;
+                    while(dateTimeCur > dateIncrementorYear)
+                    {
+                        dateIncrementorYear = dateIncrementorYear.AddYears(1);
+                    }
+                    dateTimeCur = dateIncrementorYear;
+                }
+            }
+
+            while(dateTimeCur < dateRangeEnd && dateTimeCur < item.EndDate)
+            {
+                listOfDatesForItem.Add(new DateTime(dateTimeCur.Year, dateTimeCur.Month, dateTimeCur.Day));
+
+                if (item.Rate == Rate.Weekly || item.Rate == Rate.Biweekly)
+                {
+                    dateTimeCur = dateTimeCur.AddDays(daysBetweenTransactions);
+                }
+                else if (item.Rate == Rate.Monthly)
+                {
+                    dateTimeCur = dateTimeCur.AddMonths(1);
+
+                    if (adjustedDayOfMonth != 0)
+                    {
+                        var correctedDayOfMonth = AdjustDateTimeBasedOnDayOfMonth(adjustedDayOfMonth, dateTimeCur);
+                        dateTimeCur = new DateTime(dateTimeCur.Year, dateTimeCur.Month, correctedDayOfMonth);
+                    }
+                }
+                else if (item.Rate == Rate.Yearly)
+                {
+                    dateTimeCur = dateTimeCur.AddYears(1);
+                }
+            }
+
+            return listOfDatesForItem;
         }
     }
 }

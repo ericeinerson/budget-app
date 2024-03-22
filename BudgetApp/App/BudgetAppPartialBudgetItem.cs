@@ -532,6 +532,166 @@ namespace BudgetApp.App
             selectedAccount.BudgetItemIdCounter++;
             return selectedAccount.BudgetItemIdCounter;
         }
+
+        //public void ValidateExpensesAndIncomesForTimePeriod()
+        //{
+        //    List<Transaction> transactionsExpected = new();
+        //    Rate rate = new();
+        //    var currentTransactionDay = new DateTime();
+        //    var daysBetweenTransactions = 0;
+        //    var transactionsTable = new ConsoleTable("Id", "Category Id", "Budget Item Id", "Name", "Amount", "Created Date", "Scheduled Date", "Posted Date", "Budget Item Type", "Status");
+        //    var lists = new List<IEnumerable<BudgetItem>>
+        //    {
+        //        selectedAccount.ExpenseList,
+        //        selectedAccount.IncomeList
+        //    };
+        //    for (var i = 0; i < lists.Count; i++)
+        //    {
+        //        var list = lists[i];
+        //        var budgetItemTypeString = "No Type";
+        //        var budgetItemType = BudgetItemType.None;
+
+        //        if (list == selectedAccount.ExpenseList)
+        //        {
+        //            budgetItemTypeString = "Expense";
+        //            budgetItemType = BudgetItemType.Expense;
+        //        }
+        //        else if (list == selectedAccount.IncomeList)
+        //        {
+        //            budgetItemTypeString = "Income";
+        //            budgetItemType = BudgetItemType.Income;
+        //        }
+        //        foreach (var item in list)
+        //        {
+        //            transactionsExpected = new List<Transaction>();
+        //            rate = item.Rate;
+        //            if (item.Rate != Rate.NoRate)
+        //            {
+
+        //            }
+        //            if (item.StartDate != null)
+        //            {
+        //                currentTransactionDay = (DateTime)item.StartDate;
+        //                if (item.EndDate == null)
+        //                {
+        //                    Console.WriteLine("No end date found and rate is not set to NoRate. Select an end date for this list of transactions");
+        //                    var transactionListEndDate = Utilities.ConstructDate();
+        //                    item.EndDate = transactionListEndDate;
+        //                }
+        //            }
+        //            else if (rate != Rate.NoRate)
+        //            {
+        //                Console.WriteLine("Select a date for this list of transactions to start");
+        //                var transactionListStartDate = Utilities.ConstructDate();
+        //                Console.WriteLine("Select an end date for this list of transactions");
+        //                var transactionListEndDate = Utilities.ConstructDate();
+        //                item.StartDate = transactionListStartDate;
+        //                item.EndDate = transactionListEndDate;
+        //                currentTransactionDay = (DateTime)item.StartDate;
+        //            }
+        //            daysBetweenTransactions = 0;
+
+        //            switch (rate)
+        //            {
+        //                case Rate.Weekly:
+        //                    daysBetweenTransactions = 7;
+        //                    break;
+        //                case Rate.Biweekly:
+        //                    daysBetweenTransactions = 14;
+        //                    break;
+        //                case Rate.Other:
+        //                    daysBetweenTransactions = Validator.Convert<int>("Amount of days between transactions");
+        //                    break;
+        //                case Rate.Monthly:
+        //                case Rate.Yearly:
+        //                    continue;
+        //                case Rate.NoRate:
+        //                    Console.WriteLine($"Cannot predict rate for {item.Name} ");
+        //                    continue;
+        //                default:
+        //                    throw new Exception();
+        //            }
+
+        //            while (currentTransactionDay < DateTime.Now.AddDays(-1 * daysInPast))
+        //            {
+        //                if (rate == Rate.Weekly || rate == Rate.Biweekly || rate == Rate.Other)
+        //                {
+        //                    currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
+        //                }
+        //                else if (rate == Rate.Yearly)
+        //                {
+        //                    currentTransactionDay = currentTransactionDay.AddYears(1);
+        //                }
+        //                else if (rate == Rate.Monthly)
+        //                {
+        //                    currentTransactionDay = currentTransactionDay.AddMonths(1);
+        //                }
+        //                else if (rate == Rate.NoRate)
+        //                {
+        //                    break;
+        //                }
+        //                else
+        //                {
+        //                    Utilities.PrintMessage("invalid rate", false, false);
+        //                    break;
+        //                }
+        //            }
+        //            var status = currentTransactionDay <= DateTime.Now ? Status.Posted : currentTransactionDay <= DateTime.Now.AddMonths(1) ? Status.Pending : Status.Scheduled;
+
+        //            while (currentTransactionDay < DateTime.Now.AddDays(daysInFuture))
+        //            {
+        //                var transaction = new Transaction()
+        //                {
+        //                    Id = AssignTransactionId(),
+        //                    CategoryId = item.CategoryId,
+        //                    BudgetItemId = item.Id,
+        //                    Name = item.Name,
+        //                    Amount = item.Amount,
+        //                    CreatedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
+        //                    ScheduledDate = currentTransactionDay,
+        //                    PostedDate = currentTransactionDay >= DateTime.Now ? currentTransactionDay : null,
+        //                    BudgetItemType = budgetItemType,
+        //                    Status = status
+        //                };
+        //                var statusString = status == Status.Posted ? "Posted" : status == Status.Pending ? "Pending" : "Scheduled";
+
+        //                var postedDateString = transaction.PostedDate == null ? "No Posted Date" : ((DateTime)transaction.PostedDate).ToString("MMMM dd yyyy");
+
+        //                transactionsExpected.Add(transaction);
+
+        //                transactionsTable.AddRow(transaction.Id, transaction.CategoryId, transaction.BudgetItemId, transaction.Name, Utilities.FormatAmount(transaction.Amount), transaction.CreatedDate, transaction.ScheduledDate.ToString("MMMM dd yyyy"), postedDateString, budgetItemTypeString, statusString);
+
+        //                if (rate == Rate.Biweekly || rate == Rate.Weekly)
+        //                {
+        //                    currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
+        //                }
+        //                else if (rate == Rate.Yearly)
+        //                {
+        //                    if (DateTime.IsLeapYear(currentTransactionDay.Year))
+        //                    {
+        //                        daysBetweenTransactions = 366;
+        //                    }
+        //                    currentTransactionDay = currentTransactionDay.AddDays(daysBetweenTransactions);
+        //                }
+        //                else if (rate == Rate.Monthly)
+        //                {
+        //                    currentTransactionDay = currentTransactionDay.AddDays(DateTime.DaysInMonth(currentTransactionDay.Year, currentTransactionDay.Month));
+        //                }
+        //                else if (rate == Rate.Other || rate == Rate.NoRate)
+        //                {
+        //                    break;
+        //                }
+        //                else
+        //                {
+        //                    throw new Exception();
+        //                }
+        //            }
+        //            transactionsTable.AddRow("break", "", "", "", "", "", "", "", "", "");
+        //        }
+        //    }
+        //    transactionsTable.Write();
+        //    Console.WriteLine("'\n'\n'\n....\n'  '\n'  '\n'  '\n'  '");
+        //}
     }
 }
 
