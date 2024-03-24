@@ -1,9 +1,0 @@
-id:-1;category id:1;budget item id:-2;transaction name:income3;amount:112;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:3/30/0199 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:1;budget item id:-2;transaction name:income3;amount:112;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:1/30/0200 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:1;budget item id:3;transaction name:expense3;amount:10;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:3/30/1999 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:1;budget item id:3;transaction name:expense3;amount:10;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:1/30/2000 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:2;budget item id:8;transaction name:expense8;amount:88;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:10/5/2023 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:0;budget item id:7;transaction name:expense7;amount:777;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:5/15/2024 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:0;budget item id:7;transaction name:expense7;amount:777;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:7/15/2024 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:0;budget item id:9;transaction name:income9;amount:999;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:11/15/2024 12:00:00AM;budget item type:3;status:1;
-id:-1;category id:1;budget item id:10;transaction name:income10;amount:10.10;created date:1/1/0001 12:00:00AM;posted date:1/1/0001 12:00:00AM;scheduled date:12/15/2024 12:00:00AM;budget item type:3;status:1;

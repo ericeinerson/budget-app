@@ -1,3 +1,0 @@
-id:0;category name:No Category;
-id:1;category name:cat1;
-id:2;category name:cat2;

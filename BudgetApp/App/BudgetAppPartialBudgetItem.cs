@@ -300,7 +300,7 @@ namespace BudgetApp.App
                 }
             }
 
-            return new BudgetItem() { Id = -1 };
+            return item ?? new BudgetItem { Id = -1 };
         }
 
         public BudgetItem ConstructBudgetItem()

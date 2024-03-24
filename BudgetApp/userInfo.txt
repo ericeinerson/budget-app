@@ -1,1 +1,0 @@
-id:1;fullName:e;passcode:0000;isLocked:False;totalLogin:0;balance:0;directory:/Users/ericeinerson/Projects/BudgetApp/Budget_App_User_Info/User_Info;income id:0;expense id:0;wishlist id:0;budget item id:6;transaction id:0;last login date:2/1/2019 12:00:00AM;

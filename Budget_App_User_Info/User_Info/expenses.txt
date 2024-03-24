@@ -1,6 +1,0 @@
-id:1;expenseId:-1;category id:2;expense name:expense1;amount:111;start date:12/15/2020 12:00:00AM;end date:null;rate:5;amount variable:False;
-id:2;expenseId:-1;category id:1;expense name:expense2;amount:112;start date:1/31/2018 12:00:00AM;end date:null;rate:2;amount variable:False;
-id:3;expenseId:-1;category id:0;expense name:expense3;amount:10;start date:4/30/1999 12:00:00AM;end date:1/31/2001 12:00:00AM;rate:3;amount variable:False;
-id:4;expenseId:-1;category id:1;expense name:expense4.3.1415;amount:345;start date:4/30/1952 12:00:00AM;end date:null;rate:1;amount variable:False;
-id:7;expenseId:-1;category id:0;expense name:expense7;amount:777;start date:12/15/2023 12:00:00AM;end date:12/14/2025 12:00:00AM;rate:3;amount variable:False;
-id:8;expenseId:-1;category id:2;expense name:expense8;amount:88;start date:12/15/2022 12:00:00AM;end date:1/1/2024 12:00:00AM;rate:2;amount variable:False;

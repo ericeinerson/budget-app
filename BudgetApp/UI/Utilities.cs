@@ -1,9 +1,7 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
-using System.IO;
 
 namespace BudgetApp.UI
 {
@@ -111,21 +109,30 @@ namespace BudgetApp.UI
 
         public static UserAccount LoadUserInformation(UserAccount userAccount)
         {
-            var directoriesPath = new DirectoryInfo(".").Parent?.Parent?.Parent?.FullName ?? string.Empty;
+            var directory = userAccount.Directory;
+            var userInfoFilePath = Path.Combine(userAccount.Directory, userAccount.UserInfoFileName);
+            var expensesFilePath = Path.Combine(userAccount.Directory, userAccount.ExpensesFileName);
+            var incomesFilePath = Path.Combine(userAccount.Directory, userAccount.IncomesFileName);
+            var transactionsFilePath = Path.Combine(userAccount.Directory, userAccount.TransactionsFileName);
+            var categoriesFilePath = Path.Combine(userAccount.Directory, userAccount.CategoriesFileName);
+            var wishlistFilePath = Path.Combine(userAccount.Directory, userAccount.WishlistFileName);
+
+            userAccount = new UserAccount()
+            {
+                Directory = directory,
+                UserInfoFileName = userInfoFilePath,
+                ExpensesFileName = expensesFilePath,
+                IncomesFileName = incomesFilePath,
+                TransactionsFileName = transactionsFilePath,
+                CategoriesFileName = categoriesFilePath,
+                WishlistFileName = wishlistFilePath
+            };
 
             var isLoaded = false;
-            var userAccountInfoPath = Path.Combine(userAccount.Directory, userAccount.UserInfoFileName);
-            var expensesPath = Path.Combine(userAccount.Directory, userAccount.ExpensesFileName);
-            var incomesPath = Path.Combine(userAccount.Directory, userAccount.IncomesFileName);
-            var transactionsPath = Path.Combine(userAccount.Directory, userAccount.TransactionsFileName);
-            var categoriesPath = Path.Combine(userAccount.Directory, userAccount.CategoriesFileName);
-            var wishlistPath = Path.Combine(userAccount.Directory, userAccount.WishlistFileName);
 
-            userAccount = new UserAccount();
-
-            if (File.Exists(userAccountInfoPath))
+            if (File.Exists(userInfoFilePath))
             {
-                string[] userAccountInfoAsString = File.ReadAllLines(userAccountInfoPath);
+                string[] userAccountInfoAsString = File.ReadAllLines(userInfoFilePath);
                 var userAccountInfoSplits = new List<string>();
 
                 for (int i = 0; i < userAccountInfoAsString.Length; i++)
@@ -151,7 +158,6 @@ namespace BudgetApp.UI
                 userAccount.IsLocked = isLocked;
                 userAccount.TotalLogin = totalLogin;
                 userAccount.Balance = balance;
-                userAccount.Directory = directoriesPath;
                 userAccount.IncomeIdCounter = incomeId;
                 userAccount.ExpenseIdCounter = expenseId;
                 userAccount.WishlistIdCounter = wishlistId;
@@ -169,9 +175,10 @@ namespace BudgetApp.UI
                     PrintMessage("No user account info found", false, true);
                 }
             }
-            if (File.Exists(expensesPath))
+
+            if (File.Exists(expensesFilePath))
             {
-                string[] expensesAsString = File.ReadAllLines(expensesPath);
+                string[] expensesAsString = File.ReadAllLines(expensesFilePath);
 
                 //LOOK INTO LINQ FOR DOING THIS
                 for (int i = 0; i < expensesAsString.Length; i++)
@@ -211,9 +218,10 @@ namespace BudgetApp.UI
                     PrintMessage("No expenses found", false, true);
                 }
             }
-            if (File.Exists(incomesPath))
+            if (File.Exists(incomesFilePath))
             {
-                string[] incomesAsString = File.ReadAllLines(incomesPath);
+
+                string[] incomesAsString = File.ReadAllLines(incomesFilePath);
 
                 for (int i = 0; i < incomesAsString.Length; i++)
                 {
@@ -252,9 +260,9 @@ namespace BudgetApp.UI
                     PrintMessage("No incomes found", false, true);
                 }
             }
-            if (File.Exists(transactionsPath))
+            if (File.Exists(transactionsFilePath))
             {
-                string[] transactionsAsString = File.ReadAllLines(transactionsPath);
+                string[] transactionsAsString = File.ReadAllLines(transactionsFilePath);
 
                 for (int i = 0; i < transactionsAsString.Length; i++)
                 {
@@ -295,9 +303,9 @@ namespace BudgetApp.UI
                     PrintMessage("No transactions found", false, true);
                 }
             }
-            if (File.Exists(categoriesPath))
+            if (File.Exists(categoriesFilePath))
             {
-                string[] categoriesAsString = File.ReadAllLines(categoriesPath);
+                string[] categoriesAsString = File.ReadAllLines(categoriesFilePath);
 
                 for (int i = 0; i < categoriesAsString.Length; i++)
                 {
@@ -322,9 +330,9 @@ namespace BudgetApp.UI
                     PrintMessage("No categories found", false, true);
                 }
             }
-            if (File.Exists(wishlistPath))
+            if (File.Exists(wishlistFilePath))
             {
-                string[] wishlistAsString = File.ReadAllLines(wishlistPath);
+                string[] wishlistAsString = File.ReadAllLines(wishlistFilePath);
 
                 for (int i = 0; i < wishlistAsString.Length; i++)
                 {
@@ -362,6 +370,7 @@ namespace BudgetApp.UI
             {
                 PrintMessage("User data not found", false, true);
             }
+
 
             return userAccount;
         }
@@ -407,12 +416,6 @@ namespace BudgetApp.UI
             var totalLogin = string.IsNullOrEmpty(userAccount.TotalLogin.ToString()) ? "null" : userAccount.TotalLogin.ToString();
             var balance = string.IsNullOrEmpty(userAccount.Balance.ToString()) ? "null" : userAccount.Balance.ToString();
             var directory = string.IsNullOrEmpty(userAccount.Directory.ToString()) ? "null" : userAccount.Directory.ToString();
-            //var userInfoFileName = string.IsNullOrEmpty(userAccount.UserInfoFileName.ToString()) ? "null" : userAccount.UserInfoFileName.ToString();
-            //var expensesFileName = string.IsNullOrEmpty(userAccount.ExpensesFileName.ToString()) ? "null" : userAccount.ExpensesFileName.ToString();
-            //var incomesFileName = string.IsNullOrEmpty(userAccount.IncomesFileName.ToString()) ? "null" : userAccount.IncomesFileName.ToString();
-            //var transactionsFileName = string.IsNullOrEmpty(userAccount.TransactionsFileName.ToString()) ? "null" : userAccount.TransactionsFileName.ToString();
-            //var categoriesFileName = string.IsNullOrEmpty(userAccount.CategoriesFileName.ToString()) ? "null" : userAccount.CategoriesFileName.ToString();
-            //var wishlistFileName = string.IsNullOrEmpty(userAccount.WishlistFileName.ToString()) ? "null" : userAccount.WishlistFileName.ToString();
             var incomeIdCounter = string.IsNullOrEmpty(userAccount.IncomeIdCounter.ToString()) ? "null" : userAccount.IncomeIdCounter.ToString();
             var expenseIdCounter = string.IsNullOrEmpty(userAccount.ExpenseIdCounter.ToString()) ? "null" : userAccount.ExpenseIdCounter.ToString();
             var wishlistIdCounter = string.IsNullOrEmpty(userAccount.WishlistIdCounter.ToString()) ? "null" : userAccount.WishlistIdCounter.ToString();
@@ -427,12 +430,6 @@ namespace BudgetApp.UI
             userInfoSB.Append($"totalLogin:{totalLogin};");//4
             userInfoSB.Append($"balance:{balance};");//5
             userInfoSB.Append($"directory:{directory};");//6
-            //userInfoSB.Append($"directory:{userInfoFileName};");//7
-            //userInfoSB.Append($"directory:{expensesFileName};");//8
-            //userInfoSB.Append($"directory:{incomesFileName};");//9
-            //userInfoSB.Append($"directory:{transactionsFileName};");//10
-            //userInfoSB.Append($"directory:{categoriesFileName};");//11
-            //userInfoSB.Append($"directory:{wishlistFileName};");//12
             userInfoSB.Append($"income id:{incomeIdCounter};");//7
             userInfoSB.Append($"expense id:{expenseIdCounter};");//8
             userInfoSB.Append($"wishlist id:{wishlistIdCounter};");//9
@@ -599,6 +596,42 @@ namespace BudgetApp.UI
 
         public static bool CheckForExistingUserFile(UserAccount userAccount)
         {
+            var directoryPath = new DirectoryInfo(".").Parent?.Parent?.Parent?.Parent?.Parent?.FullName ?? "";
+            userAccount.UserInfoFileName = "userInfo.txt";
+            userAccount.ExpensesFileName = "expenses.txt";
+            userAccount.IncomesFileName = "incomes.txt";
+            userAccount.TransactionsFileName = "transactions.txt";
+            userAccount.CategoriesFileName = "categories.txt";
+            userAccount.WishlistFileName = "wishlist.txt";
+
+            var promptWhichDirectory = PromptYesOrNo("Would you like to save/load data from a different directory/file structure than the default?");
+
+            if (promptWhichDirectory == "y")
+            {
+                userAccount.Directory = GetUserInput("new directory to use for loading data");
+                userAccount.UserInfoFileName = GetUserInput("new user info file name to use for loading data");
+                userAccount.ExpensesFileName = GetUserInput("new expenses file name to use for loading data");
+                userAccount.IncomesFileName = GetUserInput("new incomes file name to use for loading data");
+                userAccount.TransactionsFileName = GetUserInput("new transactions file name to use for loading data");
+                userAccount.CategoriesFileName = GetUserInput("new categories file name to use for loading data");
+                userAccount.WishlistFileName = GetUserInput("new wishlist file name to use for loading data");
+            }
+            else
+            {
+                directoryPath = Path.Combine(directoryPath, "BudgetAppProject_UserInfo");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                userAccount.Directory = directoryPath;
+            }
+
+            var promptFolder = PromptYesOrNo("Would you like to choose a folder in your directory to load data from?");
+            if (promptFolder == "y")
+            {
+                var directoryFolderToUse = GetUserInput("folder name");
+                userAccount.Directory = Path.Combine(userAccount.Directory, directoryFolderToUse);
+            }
             bool isSavedData = false;
             string basicUserInfoPath = Path.Combine(userAccount.Directory, userAccount.UserInfoFileName); ;
             bool existingBasicUserInfoFileFound = File.Exists(basicUserInfoPath);
@@ -613,53 +646,50 @@ namespace BudgetApp.UI
             string categoryPath = Path.Combine(userAccount.Directory, userAccount.CategoriesFileName);
             bool existingCategoryFileFound = File.Exists(categoryPath);
 
+            if (existingBasicUserInfoFileFound || existingExpensesFileFound || existingIncomesFileFound || existingTransactionnsFileFount || existingCategoryFileFound || existingWishlistFileFound)
+            {
+                isSavedData = true;
+            }
+            {
+                Console.WriteLine("Existing file for basic user info found");
+            }
             if (existingBasicUserInfoFileFound)
             {
                 Console.WriteLine("Existing file for basic user info found");
-                isSavedData = true;
             }
             if (existingExpensesFileFound)
             {
                 Console.WriteLine("Existing file for expenses found");
-                isSavedData = true;
             }
             if (existingIncomesFileFound)
             {
                 Console.WriteLine("Existing file for incomes found");
-                isSavedData = true;
             }
             if (existingTransactionnsFileFount)
             {
                 Console.WriteLine("Existing file for transactions found");
-                isSavedData = true;
             }
             if (existingWishlistFileFound)
             {
                 Console.WriteLine("Existing file for wishlist found");
-                isSavedData = true;
             }
             if (existingCategoryFileFound)
             {
                 Console.WriteLine("Existing file for categories found");
-                isSavedData = true;
+            }
 
-            }
-            if (isSavedData)
-            {
-                LoadUserInformation(userAccount);
-            }
             if (!Directory.Exists(userAccount.Directory))
             {
                 string prompt = PromptYesOrNo("No directory found. Would you like to create a directory?");
                 if (prompt == "y")
                 {
-                    var projectPath = new DirectoryInfo(GetUserInput("the directory path you'd like to save files in")).FullName;
-                    string promptForFolder = PromptYesOrNo("Would you like to save your files in a separate folder?");
-                    if(promptForFolder == "y")
+                    var projectPath = new DirectoryInfo(".").Parent?.Parent?.Parent?.FullName ?? "";
+                    var useDefaultDirectory = GetUserInput("Use default directory location?");
+                    if (useDefaultDirectory == "n")
                     {
-                        var folderName = GetUserInput("folder name");
-                        projectPath = Directory.CreateDirectory(Path.Combine(projectPath, folderName)).FullName;
+                        projectPath = new DirectoryInfo(GetUserInput("the directory path you'd like to save files in")).FullName;
                     }
+                    
                     userAccount.Directory = projectPath;
                     TestDirectory(userAccount);
 
