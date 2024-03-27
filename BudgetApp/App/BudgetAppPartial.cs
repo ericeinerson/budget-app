@@ -259,6 +259,130 @@ namespace BudgetApp.App
 
         }
 
+        public void LoadDataFromDirectory()
+        {
+            var fileDataPath = "";
+            var userInfoRoot = "";
+            var rootFolder = "BudgetAppProject_UserInfo";
+            var loadFile = "fileLoadInfo.txt";
+            var dataFile = "";
+            var directoryList = new List<string>();
+            var addMoreDirectoriesToFileDataList = true;
+
+            var loadFromDefaultPathPrompt = Utilities.PromptYesOrNo("Load data from default path?");
+
+            if(loadFromDefaultPathPrompt == "y")
+            {
+                userInfoRoot = Path.Combine(new DirectoryInfo(".").Parent?.Parent?.Parent?.Parent?.Parent?.FullName ?? "");
+                if(!Directory.Exists(Path.Combine(userInfoRoot, "BudgetAppProject_UserInfo")))
+                {
+                    Console.WriteLine("Default directory folder not found at root.");
+                    var defaultNameAtRoot = Utilities.PromptYesOrNo("Use default name for root folder?");
+                    if(defaultNameAtRoot == "n")
+                    {
+                        rootFolder = Utilities.GetUserInput("folder name at root");
+                    }
+                    userInfoRoot = Directory.CreateDirectory(Path.Combine(userInfoRoot, rootFolder)).ToString();
+                }
+                else
+                {
+                    userInfoRoot = Path.Combine(userInfoRoot, "BudgetAppProject_UserInfo");
+                }
+            }
+            else
+            {
+                userInfoRoot = Utilities.GetUserInput("path to load data");
+                if (!Directory.Exists(userInfoRoot))
+                {
+                    Console.WriteLine("Directory does not exist. Creating new directory");
+                    Utilities.PrintDotAnimation();
+                    Directory.CreateDirectory(userInfoRoot);
+                    while (!Directory.Exists(userInfoRoot))
+                    {
+                        Utilities.PrintMessage("Invalid directory name. Please try again", false, false);
+                        userInfoRoot = Directory.CreateDirectory(Utilities.GetUserInput("path to load data")).ToString();
+                    }
+                }
+            }
+            var useDefaultLoadFilePrompt = Utilities.PromptYesOrNo("use default file to load data?");
+            if(useDefaultLoadFilePrompt == "y")
+            {
+                while(!File.Exists(Path.Combine(userInfoRoot, loadFile)))
+                {
+                    Utilities.PrintMessage("File does not exist or is invalid. Please create a file", false, false);
+                    loadFile = Utilities.GetUserInput("file name");
+                    File.Create(Path.Combine(userInfoRoot, loadFile));
+                }
+                fileDataPath = Path.Combine(userInfoRoot, loadFile);
+            }
+            else
+            {
+                loadFile = Utilities.GetUserInput("a file name");
+
+                var existingOrNewPrompt = Utilities.PromptYesOrNo("Is this an existing file?");
+                if (existingOrNewPrompt == "n")
+                {
+                    File.Create(Path.Combine(userInfoRoot, loadFile));
+                }
+                while (!File.Exists(Path.Combine(userInfoRoot, loadFile)))
+                {
+                    Utilities.PrintMessage("File does not exist or is invalid. Please create a file", false, false);
+                    loadFile = Utilities.GetUserInput("file name");
+                    File.Create(Path.Combine(userInfoRoot, loadFile));
+                }
+                
+                fileDataPath = Path.Combine(userInfoRoot, loadFile);
+            }
+            var fileDataContents = new List<string>();
+
+            if (File.ReadAllLines(fileDataPath).Any())
+            {
+                fileDataContents = File.ReadAllLines(fileDataPath)[0].Split(';').ToList();
+            }
+            if(!fileDataContents.Any())
+            {
+                Utilities.PrintMessage("Must have at least 1 directory with data files. Please create one", false, false);
+                while (addMoreDirectoriesToFileDataList)
+                {
+                    var directoryToLoadData = Utilities.GetUserInput("directory name");
+                    directoryList.Add(directoryToLoadData);
+                    Directory.CreateDirectory(Path.Combine(userInfoRoot, directoryToLoadData));
+                    var addAnotherFilePrompt = Utilities.PromptYesOrNo("Add another directory?");
+                    if(addAnotherFilePrompt == "n")
+                    {
+                        addMoreDirectoriesToFileDataList = false;
+                    }
+                }
+            }
+            var allDirectoriesAsLine = string.Join(";", directoryList);
+            File.WriteAllText(fileDataPath, allDirectoriesAsLine);
+            fileDataContents = File.ReadAllLines(fileDataPath)[0].Split(';').ToList();
+
+            Console.WriteLine("Files in file data path. Enter number of file you'd like to load");
+            for (var i = 1; i <= fileDataContents.Count(); i++)
+            {
+                Console.WriteLine($"{i}. {fileDataContents[i - 1]}");
+            }
+            var fileOption = Validator.Convert<int>("an option");
+            while((fileOption < 1) || (fileOption > fileDataContents.Count()))
+            {
+                Utilities.PrintMessage("Invalid input. Please try again", false, false);
+                fileOption = Validator.Convert<int>("an option");
+            }
+
+            dataFile = fileDataContents[fileOption - 1];
+
+            var selectedAccount = new UserAccount();
+            var userData = Path.Combine(userInfoRoot, dataFile);
+            var userInfo = File.ReadAllLines(Path.Combine(userData, "userInfo.txt"))[0].Split(';').ToList(); ;
+            var fullName = userInfo[1][(userInfo[1].IndexOf(':') + 1)..];
+            var passcode = userInfo[2][(userInfo[2].IndexOf(':') + 1)..];
+            selectedAccount.FullName = fullName;
+            selectedAccount.Passcode = passcode;
+            userAccountList = new List<UserAccount> { selectedAccount };
+            Run();
+        }
+
         #region Check Passcode
         public void CheckUserPasscode()
         {

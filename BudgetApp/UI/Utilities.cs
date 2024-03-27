@@ -625,7 +625,6 @@ namespace BudgetApp.UI
                 }
                 userAccount.Directory = directoryPath;
             }
-
             var promptFolder = PromptYesOrNo("Would you like to choose a folder in your directory to load data from?");
             if (promptFolder == "y")
             {

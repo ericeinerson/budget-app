@@ -19,7 +19,7 @@ namespace BudgetApp.Domain.Entities
 			FullName = "test name";
 			Balance = 0;
 			TotalLogin = 0;
-			IsLocked = true;
+			IsLocked = false;
 			IncomeIdCounter = 0;
 			ExpenseIdCounter = 0;
 			BudgetItemIdCounter = 0;
