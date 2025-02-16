@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LlN5joVxqRg=",
+  "dgSpecHash": "v5T6/6A26D4=",
   "success": true,
-  "projectFilePath": "/Users/ericeinerson/budget-app/budget-app.csproj",
+  "projectFilePath": "/Users/ericeinerson/Development/Projects/budget-app/budget-app.csproj",
   "expectedPackageFiles": [
     "/Users/ericeinerson/.nuget/packages/microsoft.netcore.app.ref/7.0.20/microsoft.netcore.app.ref.7.0.20.nupkg.sha512",
     "/Users/ericeinerson/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.20/microsoft.aspnetcore.app.ref.7.0.20.nupkg.sha512",

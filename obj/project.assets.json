@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ericeinerson/budget-app/budget-app.csproj",
+      "projectUniqueName": "/Users/ericeinerson/Development/Projects/budget-app/budget-app.csproj",
       "projectName": "budget-app",
-      "projectPath": "/Users/ericeinerson/budget-app/budget-app.csproj",
+      "projectPath": "/Users/ericeinerson/Development/Projects/budget-app/budget-app.csproj",
       "packagesPath": "/Users/ericeinerson/.nuget/packages/",
-      "outputPath": "/Users/ericeinerson/budget-app/obj/",
+      "outputPath": "/Users/ericeinerson/Development/Projects/budget-app/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/ericeinerson/.nuget/NuGet/NuGet.Config"
