@@ -11,5 +11,9 @@ namespace budget_app.Data
     {
         public BudgetAppDbContext(DbContextOptions<BudgetAppDbContext> options) : base(options) {}
         public DbSet<BudgetItem> BudgetItems => Set<BudgetItem>();
+        public DbSet<ItemType> ItemTypes => Set<ItemType>();
+        public DbSet<Budget> Budgets => Set<Budget>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<Adjustment> Adjustments => Set<Adjustment>();
     }
 }
