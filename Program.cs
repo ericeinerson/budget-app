@@ -1,14 +1,32 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using budget_app.Data;
+using Microsoft.EntityFrameworkCore;
+using budget_app.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.Configure<Authentication>(builder.Configuration.GetSection("Authentication"));
+var connectionString = builder.Configuration.GetConnectionString("Dev") ?? string.Empty;
 
+builder.Services.AddDbContextFactory<BudgetAppDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
 var app = builder.Build();
+
+//Do not do this in production, just development
+await EnsureDatabaseIsMigrated(app.Services);
+
+async Task EnsureDatabaseIsMigrated(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    using var ctx = scope.ServiceProvider.GetService<BudgetAppDbContext>();
+    if(ctx is not null)
+    {    
+        await ctx.Database.MigrateAsync();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
