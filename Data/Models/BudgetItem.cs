@@ -11,10 +11,14 @@ namespace budget_app.Data.Models
         [StringLength(100)]
         public string? SecondaryName { get; set; }
         public string? Notes { get; set; }
+        [Required]
         public int ItemTypeId { get; set; }
         [Required]
         public decimal Amount { get; set; }
+        [Required]
         public DateTime Date { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
     }
 }
 
