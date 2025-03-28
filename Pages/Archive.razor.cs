@@ -1,3 +1,5 @@
+using budget_app.Data.Models;
+using Microsoft.EntityFrameworkCore;
 namespace budget_app.Pages;
 
 public partial class Archive
