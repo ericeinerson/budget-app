@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using budget_app.Data;
 using Microsoft.EntityFrameworkCore;
 using budget_app.Options;
+using budget_app.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.Configure<Authentication>(builder.Configuration.GetSection("Aut
 var connectionString = builder.Configuration.GetConnectionString("Dev") ?? string.Empty;
 
 builder.Services.AddDbContextFactory<BudgetAppDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
+builder.Services.AddScoped<StateContainer>();
 var app = builder.Build();
 
 //Do not do this in production, just development

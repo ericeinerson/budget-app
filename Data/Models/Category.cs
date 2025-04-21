@@ -8,8 +8,10 @@ namespace budget_app.Data.Models
 {
     public class Category
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         public string? Name { get; set; }
+        public List<BudgetItem> BudgetItems { get; set; } = [];
+
     }
 }

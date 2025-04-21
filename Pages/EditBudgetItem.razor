@@ -1,0 +1,27 @@
+@page "/edit-budget-item/{budgetItemId:int}"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory
+@inject NavigationManager Navigation;
+@inject StateContainer StateContainer;
+
+<PageTitle>Edit Budget Item</PageTitle>
+
+<h1>Edit Budget Item</h1>
+
+@if(BudgetItem is null)
+{
+    <div class="alert alert-danger">Budget Item was not found</div>
+}
+else
+{
+    <BudgetItemForm BudgetItem="@BudgetItem"
+            IsBusy="@IsBusy"
+            Categories="@Categories"
+            IsEdit="true"
+            OnSubmit="@HandleSubmit"/>
+}
+
+@if(ErrorMessage is not null)
+{
+    <br/>
+    <div class="alert alert-danger">@ErrorMessage</div>
+}

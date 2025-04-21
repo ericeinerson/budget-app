@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using budget_app.Data;
 
@@ -11,9 +12,11 @@ using budget_app.Data;
 namespace budget_app.Migrations
 {
     [DbContext(typeof(BudgetAppDbContext))]
-    partial class BudgetAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250404025829_initial-migration")]
+    partial class initialmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,13 +281,13 @@ namespace budget_app.Migrations
             modelBuilder.Entity("budget_app.Data.Models.BudgetItem", b =>
                 {
                     b.HasOne("budget_app.Data.Models.Category", "Category")
-                        .WithMany("BudgetItems")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("budget_app.Data.Models.ItemType", "ItemType")
-                        .WithMany("BudgetItems")
+                        .WithMany()
                         .HasForeignKey("ItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -292,16 +295,6 @@ namespace budget_app.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("ItemType");
-                });
-
-            modelBuilder.Entity("budget_app.Data.Models.Category", b =>
-                {
-                    b.Navigation("BudgetItems");
-                });
-
-            modelBuilder.Entity("budget_app.Data.Models.ItemType", b =>
-                {
-                    b.Navigation("BudgetItems");
                 });
 #pragma warning restore 612, 618
         }

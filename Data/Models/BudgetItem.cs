@@ -14,11 +14,16 @@ namespace budget_app.Data.Models
         [Required]
         public int ItemTypeId { get; set; }
         [Required]
+        public ItemType? ItemType { get; set; }
+        [Required]
         public decimal Amount { get; set; }
         [Required]
         public DateTime Date { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
+
+        [Required]
+        public Category? Category { get; set; }
     }
 }
 

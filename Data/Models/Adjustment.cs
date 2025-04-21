@@ -8,5 +8,8 @@ namespace budget_app.Data.Models
         [Required]
         public string? Name { get; set; }
         public string? Notes { get; set; }
+        [Required]
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
     }
 }

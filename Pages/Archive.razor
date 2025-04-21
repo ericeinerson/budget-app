@@ -1,4 +1,61 @@
-@page "/archive"
+@page "/archive/{currentPage:int?}"
 @inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@inject NavigationManager Navigation;
+@inject StateContainer StateContainer
+
+<PageTitle>Archive</PageTitle>
 
 <h2>Archive</h2>
+
+@if(BudgetItems is null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <ul class="pagination mt-3">
+        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="/archive/@(CurrentPage - 1)">Previous</a>
+        </li>
+        @for(int i = 1; i<=TotalPages; i++)
+        {
+            <li class="page-item @(CurrentPage == i ? "active" : "")">
+                <a class="page-link" href="/archive/@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+            <a class="page-link" href="/archive/@(CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+
+    <table class="table table-striped">
+        <thead>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Notes</th>
+            <th>#</th>
+        </thead>
+        <tbody>
+            @foreach(var item in BudgetItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@string.Format("{0:0.00}", item.Amount)</td>
+                    <td>@item.Category?.Name</td>
+                    <td>@item.ItemType?.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Notes</td>
+                    <td>
+                        <a href="/edit-budget-item/@item.Id"
+                        class="btn btn-outline-primary">
+                        Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

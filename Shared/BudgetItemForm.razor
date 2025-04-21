@@ -1,0 +1,54 @@
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+
+<h2>Add Budget Item</h2>
+
+@if(BudgetItem is not null)
+{
+    <EditForm Model="@BudgetItem" OnValidSubmit=@HandleValidSubmit
+    OnInValidSubmit=@HandleInvalidSubmit>
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="mb-3">
+            <label for="budget-item-name" class="form-label"></label>
+            <InputText id="budget-item-name"
+            class="form-control"
+                        @bind-Value="BudgetItem.Name"/>
+            <ValidationMessage For="() => BudgetItem.Name"/>
+        </div>
+
+        @* <div class="mb-3">
+            <label for="budget-item-amount" class="form-label"></label>
+            <InputText id="budget-item-amount"
+            class="form-control"
+                        @bind-Value="BudgetItem.Amount"/>
+            <ValidationMessage For="() => BudgetItem.Name"/>
+        </div> *@
+
+        @* <div class="mb-3"></div>
+            <label for="is-developer" class="form-label">IsDeveloper</label>
+            <InputCheckbox id="is-developer"
+            class="form-check-input"
+                        @bind-Value="BudgetItem.Name"/>
+            <ValidationMessage For="() => BudgetItem.Name"/>
+        </div> *@
+
+        @* <div class="mb-3"></div>
+            <label for="is-developer" class="form-label">IsDeveloper</label>
+            <InputSelect id="is-developer"
+            class="form-select"
+                        @bind-Value="BudgetItem.Name"/>
+            <ValidationMessage For="() => BudgetItem.Name"/>
+        </div> *@
+
+        @if(IsEdit)
+        {
+            <button type="submit" class="btn btn-primary" disabled=@IsBusy>Update</button>
+            <button type="button" class="btn btn-secondary" disabled=@IsBusy>Cancel</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary" disabled=@IsBusy>Add</button>
+        }
+    </EditForm>
+}
