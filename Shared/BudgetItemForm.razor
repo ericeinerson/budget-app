@@ -43,8 +43,9 @@
 
         @if(IsEdit)
         {
-            <button type="submit" class="btn btn-primary" disabled=@IsBusy>Update</button>
-            <button type="button" class="btn btn-secondary" disabled=@IsBusy>Cancel</button>
+            <button type="submit" class="btn btn-primary" disabled="@IsBusy">Update</button>
+            <button type="button" class="btn btn-secondary" disabled="@IsBusy"
+            @onclick="@HandleCancel">Cancel</button>
         }
         else
         {

@@ -15,6 +15,9 @@ public partial class BudgetItemForm
 
     [Parameter]
     public bool IsEdit { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
     
     public EventCallback<bool> OnSubmit { get; set; }
 
@@ -31,6 +34,14 @@ public partial class BudgetItemForm
        if(OnSubmit.HasDelegate)
         {
             await OnSubmit.InvokeAsync(false);
+        }
+    }
+
+    private async Task HandleCancel()
+    {
+        if(OnCancel.HasDelegate)
+        {
+            await OnCancel.InvokeAsync();
         }
     }
 }

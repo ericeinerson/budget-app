@@ -2,6 +2,7 @@
 @inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
 @inject NavigationManager Navigation;
 @inject StateContainer StateContainer
+@inject IJSRuntime JS
 
 <PageTitle>Archive</PageTitle>
 
@@ -48,11 +49,15 @@ else
                     <td>@item.ItemType?.Name</td>
                     <td>@item.Date.ToShortDateString()</td>
                     <td>@item.Notes</td>
-                    <td>
+                    <td class="btn-group-sm">
                         <a href="/edit-budget-item/@item.Id"
                         class="btn btn-outline-primary">
                         Edit
                         </a>
+                        <button class="btn btn-outline-danger"
+                        @onclick="() => HandleDelete(item)">
+                            Delete
+                        </button>
                     </td>
                 </tr>
             }

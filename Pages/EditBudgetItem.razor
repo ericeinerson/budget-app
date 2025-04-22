@@ -17,7 +17,8 @@ else
             IsBusy="@IsBusy"
             Categories="@Categories"
             IsEdit="true"
-            OnSubmit="@HandleSubmit"/>
+            OnSubmit="@HandleSubmit"
+            OnCancel="@NavigateToSummary"/>
 }
 
 @if(ErrorMessage is not null)

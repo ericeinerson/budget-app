@@ -13,6 +13,11 @@ public partial class Archive
     public const int NumberOfItemsToShow = 6;
     protected override async Task OnParametersSetAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         if(CurrentPage is null or < 1)
         {
             Navigation.NavigateTo("/archive/1");
@@ -43,5 +48,19 @@ public partial class Archive
         .Skip(itemsToSkip)
         .Take(NumberOfItemsToShow)
         .ToArrayAsync();
+    }
+
+    private async Task HandleDelete(BudgetItem budgetItem)
+    {
+        var isOk = await JS.InvokeAsync<bool>("confirm", [$"Delete budget item {budgetItem.Name}?"]);
+
+        if(isOk)
+        {
+            using var context = ContextFactory.CreateDbContext();
+            context.BudgetItems.Remove(budgetItem);
+            await context.SaveChangesAsync();
+
+            await LoadData();
+        }
     }
 }
