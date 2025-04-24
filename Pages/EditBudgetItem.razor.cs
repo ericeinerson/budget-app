@@ -56,6 +56,10 @@ public partial class EditBudgetItem
 
                 NavigateToSummary();
             }
+            catch(DbUpdateConcurrencyException)
+            {
+                ErrorMessage = "The budget item was modified by another user. Please reload this page";
+            }
             catch(Exception ex)
             {
                 ErrorMessage = $"Error while saving budget item: {ex.Message}";

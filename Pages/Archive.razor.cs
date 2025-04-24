@@ -42,12 +42,12 @@ public partial class Archive
         var itemsToSkip = (CurrentPage.Value - 1) * NumberOfItemsToShow;
 
         BudgetItems = await context.BudgetItems
-        .Include(b => b.Category)
-        .Include(b => b.ItemType)
-        .OrderByDescending(b => b.Date)
-        .Skip(itemsToSkip)
-        .Take(NumberOfItemsToShow)
-        .ToArrayAsync();
+            .Include(b => b.Category)
+            .Include(b => b.ItemType)
+            .OrderByDescending(b => b.Date)
+            .Skip(itemsToSkip)
+            .Take(NumberOfItemsToShow)
+            .ToArrayAsync();
     }
 
     private async Task HandleDelete(BudgetItem budgetItem)
@@ -56,9 +56,16 @@ public partial class Archive
 
         if(isOk)
         {
-            using var context = ContextFactory.CreateDbContext();
-            context.BudgetItems.Remove(budgetItem);
-            await context.SaveChangesAsync();
+            try
+            {
+                using var context = ContextFactory.CreateDbContext();
+                context.BudgetItems.Remove(budgetItem);
+                await context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+
+            }
 
             await LoadData();
         }

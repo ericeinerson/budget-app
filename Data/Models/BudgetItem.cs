@@ -24,6 +24,9 @@ namespace budget_app.Data.Models
 
         [Required]
         public Category? Category { get; set; }
+
+        [Timestamp]
+        public byte[]? Timestamp { get; set; }
     }
 }
 

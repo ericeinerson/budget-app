@@ -5,7 +5,7 @@
 @if(BudgetItem is not null)
 {
     <EditForm Model="@BudgetItem" OnValidSubmit=@HandleValidSubmit
-    OnInValidSubmit=@HandleInvalidSubmit>
+    OnInvalidSubmit=@HandleInvalidSubmit>
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 

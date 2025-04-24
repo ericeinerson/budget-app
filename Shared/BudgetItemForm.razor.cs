@@ -19,6 +19,7 @@ public partial class BudgetItemForm
     [Parameter]
     public EventCallback OnCancel { get; set; }
     
+    [Parameter]
     public EventCallback<bool> OnSubmit { get; set; }
 
     private async Task HandleValidSubmit()

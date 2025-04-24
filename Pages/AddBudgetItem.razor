@@ -1,5 +1,6 @@
 @page "/add-budget-item"
 @inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+ 
 
 <h2>Add Budget Item</h2>
 
@@ -19,4 +20,3 @@ OnSubmit="@HandleSubmit"/>
         <br />
         <div class="alert alert-danger">@ErrorMessage</div>
     }
-}
