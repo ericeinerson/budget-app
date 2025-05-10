@@ -5,7 +5,7 @@ namespace budget_app.Pages;
 public partial class AddBudgetItem
 {
     public BudgetItem? BudgetItem { get; set; }
-
+    public ItemType[]? ItemTypes { get; set; }
     public Category[]? Categories { get; set; }
 
     private bool IsBusy { get; set; }
@@ -21,11 +21,17 @@ public partial class AddBudgetItem
         Categories = await context.Categories
         .OrderBy(c => c.Name)
         .ToArrayAsync();
-
+        
+        ItemTypes = await context.ItemTypes
+        .OrderBy(i => i.Name)
+        .ToArrayAsync();
 
         BudgetItem = new()
         {
-            CategoryId = Categories.FirstOrDefault()?.Id
+            CategoryId = Categories.FirstOrDefault()?.Id,
+            ItemTypeId = ItemTypes.FirstOrDefault()?.Id,
+            Date = DateTime.Now,
+            Amount = 0.00M
         };
     }
 
@@ -65,7 +71,10 @@ public partial class AddBudgetItem
 
                 BudgetItem = new()
                 {
-                    CategoryId = BudgetItem.CategoryId
+                    CategoryId = BudgetItem.CategoryId,
+                    ItemTypeId = BudgetItem.ItemTypeId,
+                    Date = DateTime.Now,
+                    Amount = 0.00M
                 };
             }
         }

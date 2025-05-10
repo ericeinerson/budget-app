@@ -12,8 +12,7 @@ namespace budget_app.Data.Models
         public string? SecondaryName { get; set; }
         public string? Notes { get; set; }
         [Required]
-        public int ItemTypeId { get; set; }
-        [Required]
+        public int? ItemTypeId { get; set; }
         public ItemType? ItemType { get; set; }
         [Required]
         public decimal Amount { get; set; }
@@ -22,7 +21,6 @@ namespace budget_app.Data.Models
         [Required]
         public int? CategoryId { get; set; }
 
-        [Required]
         public Category? Category { get; set; }
 
         [Timestamp]

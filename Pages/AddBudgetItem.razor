@@ -1,11 +1,12 @@
 @page "/add-budget-item"
 @inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
- 
+@using budget_app.Shared
 
 <h2>Add Budget Item</h2>
 
 <BudgetItemForm BudgetItem="@BudgetItem"
 Categories="@Categories"
+ItemTypes="@ItemTypes"
 IsBusy="@IsBusy"
 OnSubmit="@HandleSubmit"/>
 

@@ -8,11 +8,9 @@ public partial class BudgetItemForm
     [Parameter]
     public BudgetItem? BudgetItem { get; set; }
     [Parameter]
-
     public Category[]? Categories { get; set; }
 
     [Parameter]
-
     public ItemType[]? ItemTypes { get; set; }
     [Parameter]
     public bool IsBusy { get; set; }

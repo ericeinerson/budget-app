@@ -12,6 +12,7 @@ public partial class EditBudgetItem
     private BudgetItem? BudgetItem { get; set; }
 
     private Category[]? Categories { get; set; }
+    private ItemType[]? ItemTypes { get; set; }
 
     private bool IsBusy { get; set; }
 
@@ -23,14 +24,19 @@ public partial class EditBudgetItem
 
         try
         {
-        using var context = ContextFactory.CreateDbContext();
-        Categories = await context.Categories
-                        .AsNoTracking()
-                        .OrderBy(c => c.Name)
-                        .ToArrayAsync();
-        BudgetItem = await context.BudgetItems
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(b => b.Id == BudgetItemId);
+            using var context = ContextFactory.CreateDbContext();
+
+            Categories = await context.Categories
+                            .AsNoTracking()
+                            .OrderBy(c => c.Name)
+                            .ToArrayAsync();
+            ItemTypes = await context.ItemTypes
+                            .AsNoTracking()
+                            .OrderBy(i => i.Name)
+                            .ToArrayAsync();
+            BudgetItem = await context.BudgetItems
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(b => b.Id == BudgetItemId);
         }
         finally
         {
