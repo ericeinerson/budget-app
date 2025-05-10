@@ -15,6 +15,8 @@ namespace budget_app.Data
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Adjustment> Adjustments => Set<Adjustment>();
 
+        public DbSet<User> Users => Set<User>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

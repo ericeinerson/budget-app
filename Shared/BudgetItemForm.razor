@@ -1,7 +1,5 @@
 @inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
 
-<h2>Add Budget Item</h2>
-
 @if(BudgetItem is not null)
 {
     <EditForm Model="@BudgetItem" OnValidSubmit=@HandleValidSubmit
@@ -10,36 +8,73 @@
         <ValidationSummary/>
 
         <div class="mb-3">
-            <label for="budget-item-name" class="form-label"></label>
+            <label for="budget-item-name" class="form-label">Item Name</label>
             <InputText id="budget-item-name"
             class="form-control"
                         @bind-Value="BudgetItem.Name"/>
             <ValidationMessage For="() => BudgetItem.Name"/>
         </div>
 
-        @* <div class="mb-3">
-            <label for="budget-item-amount" class="form-label"></label>
-            <InputText id="budget-item-amount"
+        <div class="mb-3">
+            <label for="budget-item-secondary-name" class="form-label">Secondary Name</label>
+            <InputText id="budget-item-secondary-name"
+            class="form-control"
+                        @bind-Value="BudgetItem.SecondaryName"/>
+            <ValidationMessage For="() => BudgetItem.SecondaryName"/>
+        </div>
+
+        <div class="mb-3">
+            <label for="budget-item-amount" class="form-label">Amount</label>
+            <InputNumber id="budget-item-amount"
             class="form-control"
                         @bind-Value="BudgetItem.Amount"/>
             <ValidationMessage For="() => BudgetItem.Name"/>
-        </div> *@
+        </div>
 
-        @* <div class="mb-3"></div>
-            <label for="is-developer" class="form-label">IsDeveloper</label>
-            <InputCheckbox id="is-developer"
-            class="form-check-input"
-                        @bind-Value="BudgetItem.Name"/>
-            <ValidationMessage For="() => BudgetItem.Name"/>
-        </div> *@
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <InputDate id="date"
+            class="form-control"
+                        @bind-Value="BudgetItem.Date"/>
+            <ValidationMessage For="() => BudgetItem.Date"/>
+        </div>
 
-        @* <div class="mb-3"></div>
-            <label for="is-developer" class="form-label">IsDeveloper</label>
-            <InputSelect id="is-developer"
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <InputSelect id="category"
             class="form-select"
-                        @bind-Value="BudgetItem.Name"/>
-            <ValidationMessage For="() => BudgetItem.Name"/>
-        </div> *@
+                        @bind-Value="BudgetItem.CategoryId">
+            @if (Categories is not null)
+                {
+                    @foreach (var category in Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-3">
+            <label for="item-type" class="form-label">Item Type</label>
+            <InputSelect id="item-type"
+            class="form-select"
+                        @bind-Value="BudgetItem.ItemTypeId">
+            @if (ItemTypes is not null)
+                {
+                    @foreach (var itemType in ItemTypes)
+                    {
+                        <option value="@itemType.Id">@itemType.Name</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label for="budget-item-notes" class="form-label">Notes</label>
+            <InputTextArea id="budget-item-notes"
+            class="form-control"
+                        @bind-Value="BudgetItem.Notes"/>
+            <ValidationMessage For="() => BudgetItem.Notes"/>
+        </div>
 
         @if(IsEdit)
         {
