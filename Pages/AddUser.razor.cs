@@ -6,7 +6,6 @@ namespace budget_app.Pages;
 public partial class AddUser
 {
     [Parameter]
-    public int UserId { get; set; }
     public User? User { get; set; }
     private BudgetItem[]? BudgetItems { get; set; }
     private bool IsBusy { get; set; }
@@ -23,7 +22,6 @@ public partial class AddUser
 
         User = new()
         {
-            BudgetItems = [.. BudgetItems],
             Name = string.Empty,
             Balance = 0.00M
         };
@@ -66,8 +64,7 @@ public partial class AddUser
                 User = new()
                 {
                     Name = User.Name,
-                    Balance = User.Balance,
-                    BudgetItems = []
+                    Balance = User.Balance
                 };
             }
         }
