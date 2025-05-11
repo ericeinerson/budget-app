@@ -7,13 +7,10 @@ public partial class AddBudgetItem
     public BudgetItem? BudgetItem { get; set; }
     public ItemType[]? ItemTypes { get; set; }
     public Category[]? Categories { get; set; }
-
+    public User? User { get; set; }
     private bool IsBusy { get; set; }
-
     private string? SuccessMessage { get; set; }
-
     private string? ErrorMessage { get; set; }
-    
     protected override async Task OnInitializedAsync()
     {
         using var context = ContextFactory.CreateDbContext();
@@ -31,7 +28,9 @@ public partial class AddBudgetItem
             CategoryId = Categories.FirstOrDefault()?.Id,
             ItemTypeId = ItemTypes.FirstOrDefault()?.Id,
             Date = DateTime.Now,
-            Amount = 0.00M
+            Amount = 0.00M,
+            //Maybe change this later after Authentication setup
+            UserId = StateContainer.CurrentUserId
         };
     }
 
