@@ -8,16 +8,11 @@ public partial class EditBudgetItem
 {
     [Parameter]
     public int BudgetItemId { get; set; }
-
     private BudgetItem? BudgetItem { get; set; }
-
     private Category[]? Categories { get; set; }
     private ItemType[]? ItemTypes { get; set; }
-
     private bool IsBusy { get; set; }
-
     private string? ErrorMessage { get; set; }
-
     protected override async Task OnParametersSetAsync()
     {
         IsBusy = true;

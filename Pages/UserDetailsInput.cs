@@ -1,10 +1,14 @@
 using budget_app.Data.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 namespace budget_app.Pages;
 
 public partial class UserDetailsInput
 {
+    [Parameter]
+    public int UserId { get; set; }
     public User? User { get; set; }
+    private BudgetItem[]? BudgetItems { get; set; }
     private bool IsBusy { get; set; }
     private string? SuccessMessage { get; set; }
     private string? ErrorMessage { get; set; }
@@ -13,20 +17,15 @@ public partial class UserDetailsInput
     {
         using var context = ContextFactory.CreateDbContext();
 
-        Categories = await context.Categories
+        BudgetItems = await context.BudgetItems
         .OrderBy(c => c.Name)
         .ToArrayAsync();
-        
-        ItemTypes = await context.ItemTypes
-        .OrderBy(i => i.Name)
-        .ToArrayAsync();
 
-        BudgetItem = new()
+        User = new()
         {
-            CategoryId = Categories.FirstOrDefault()?.Id,
-            ItemTypeId = ItemTypes.FirstOrDefault()?.Id,
-            Date = DateTime.Now,
-            Amount = 0.00M
+            BudgetItems = [.. BudgetItems],
+            Name = string.Empty,
+            Balance = 0.00M
         };
     }
 

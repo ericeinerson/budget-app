@@ -12,6 +12,5 @@ namespace budget_app.Data.Models
         [Required]
         public string? Name { get; set; }
         public List<BudgetItem> BudgetItems { get; set; } = [];
-
     }
 }

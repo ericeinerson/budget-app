@@ -22,7 +22,9 @@ namespace budget_app.Data.Models
         public int? CategoryId { get; set; }
 
         public Category? Category { get; set; }
-
+        [Required]
+        public int? UserId { get; set; }
+        public User? User { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
     }

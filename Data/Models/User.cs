@@ -11,6 +11,8 @@ namespace budget_app.Data.Models
          public int Id { get; set; }
         [Required]
         public string? Name { get; set; }
-        public int Balance { get; set; }
+        public decimal Balance { get; set; }
+        public List<BudgetItem> BudgetItems { get; set; } = [];
+
     }
 }
