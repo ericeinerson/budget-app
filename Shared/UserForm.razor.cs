@@ -9,42 +9,44 @@ namespace budget_app.Shared
 {
     public partial class UserForm
     {
-    [Parameter]
-    public User? User { get; set; }
-    [Parameter]
-    public bool IsBusy { get; set; }
+        [Parameter]
+        public User? User { get; set; }
+        [Parameter]
+        public BudgetItem[]? BudgetItems { get; set; }
+        [Parameter]
+        public bool IsBusy { get; set; }
 
-    [Parameter]
-    public bool IsEdit { get; set; }
+        [Parameter]
+        public bool IsEdit { get; set; }
 
-    [Parameter]
-    public EventCallback OnCancel { get; set; }
-    
-    [Parameter]
-    public EventCallback<bool> OnSubmit { get; set; }
+        [Parameter]
+        public EventCallback OnCancel { get; set; }
+        
+        [Parameter]
+        public EventCallback<bool> OnSubmit { get; set; }
 
-    private async Task HandleValidSubmit()
-    {
-        if(OnSubmit.HasDelegate)
+        private async Task HandleValidSubmit()
         {
-            await OnSubmit.InvokeAsync(true);
+            if(OnSubmit.HasDelegate)
+            {
+                await OnSubmit.InvokeAsync(true);
+            }
         }
-    }
 
-    private async Task HandleInvalidSubmit()
-    {
-       if(OnSubmit.HasDelegate)
+        private async Task HandleInvalidSubmit()
         {
-            await OnSubmit.InvokeAsync(false);
+            if(OnSubmit.HasDelegate)
+            {
+                await OnSubmit.InvokeAsync(false);
+            }
         }
-    }
 
-    private async Task HandleCancel()
-    {
-        if(OnCancel.HasDelegate)
+        private async Task HandleCancel()
         {
-            await OnCancel.InvokeAsync();
+            if(OnCancel.HasDelegate)
+            {
+                await OnCancel.InvokeAsync();
+            }
         }
-    }
     }
 }

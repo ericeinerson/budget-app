@@ -30,7 +30,8 @@ namespace budget_app.Data
                     Notes = "This was a test rent payment",
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 3, 21),
-                    CategoryId = 2
+                    CategoryId = 2,
+                    UserId = 45
                 },
                 new BudgetItem 
                 {
@@ -40,7 +41,8 @@ namespace budget_app.Data
                     Notes = "Got chipotle",
                     ItemTypeId = 2,
                     Date = new DateTime(2024, 2, 21),
-                    CategoryId = 1
+                    CategoryId = 1,
+                    UserId = 45
                 },
                 new BudgetItem 
                 {
@@ -49,7 +51,8 @@ namespace budget_app.Data
                     SecondaryName = "Taco Prescription Diet",
                     ItemTypeId = 2,
                     Date = new DateTime(2025, 4, 1),
-                    CategoryId = 2
+                    CategoryId = 2,
+                    UserId = 45
                 },
                 new BudgetItem 
                 {
@@ -59,7 +62,8 @@ namespace budget_app.Data
                     Notes = "This was another test rent payment",
                     ItemTypeId = 1,
                     Date = new DateTime(2000, 1, 1),
-                    CategoryId = 3
+                    CategoryId = 3,
+                    UserId = 49
                 },
                 new BudgetItem 
                 {
@@ -69,7 +73,8 @@ namespace budget_app.Data
                     Notes = "Got Subway",
                     ItemTypeId = 3,
                     Date = new DateTime(1999, 12, 31),
-                    CategoryId = 1
+                    CategoryId = 1,
+                    UserId = 49
                 },
                 new BudgetItem 
                 {
@@ -78,7 +83,8 @@ namespace budget_app.Data
                     SecondaryName = "6terst",
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 10, 1),
-                    CategoryId = 1
+                    CategoryId = 1,
+                    UserId = 49
                 },
                 new BudgetItem 
                 {
@@ -88,7 +94,8 @@ namespace budget_app.Data
                     Notes = "Subscription payment",
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 3, 31),
-                    CategoryId = 3
+                    CategoryId = 3,
+                    UserId = 49
                 },
                 new BudgetItem 
                 {
@@ -98,7 +105,8 @@ namespace budget_app.Data
                     Notes = "Got chipotle",
                     ItemTypeId = 2,
                     Date = new DateTime(1954, 12, 21),
-                    CategoryId = 3
+                    CategoryId = 3,
+                    UserId = 49
                 },
                 new BudgetItem 
                 {
@@ -107,7 +115,8 @@ namespace budget_app.Data
                     SecondaryName = "Zelda",
                     ItemTypeId = 3,
                     Date = new DateTime(2025, 4, 1),
-                    CategoryId = 4
+                    CategoryId = 4,
+                    UserId = 50002
                 }
             );
             modelBuilder.Entity<ItemType>().HasData(

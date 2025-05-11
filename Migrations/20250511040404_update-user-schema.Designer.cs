@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using budget_app.Data;
 
@@ -11,9 +12,11 @@ using budget_app.Data;
 namespace budget_app.Migrations
 {
     [DbContext(typeof(BudgetAppDbContext))]
-    partial class BudgetAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511040404_update-user-schema")]
+    partial class updateuserschema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

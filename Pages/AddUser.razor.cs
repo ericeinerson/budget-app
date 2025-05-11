@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 namespace budget_app.Pages;
 
-public partial class UserDetailsInput
+public partial class AddUser
 {
     [Parameter]
     public int UserId { get; set; }
@@ -52,30 +52,29 @@ public partial class UserDetailsInput
 
         try
         {
-            if(BudgetItem is not null)
+            if(User is not null)
             {
                 using var context = ContextFactory.CreateDbContext();
 
-                context.BudgetItems.Add(BudgetItem);
+                context.Users.Add(User);
 
                 await context.SaveChangesAsync();
 
-                SuccessMessage = $"Item {BudgetItem.Name} was added successfully";
+                SuccessMessage = $"User {User.Name} was added successfully";
                 ErrorMessage = null;
 
-                BudgetItem = new()
+                User = new()
                 {
-                    CategoryId = BudgetItem.CategoryId,
-                    ItemTypeId = BudgetItem.ItemTypeId,
-                    Date = DateTime.Now,
-                    Amount = 0.00M
+                    Name = User.Name,
+                    Balance = User.Balance,
+                    BudgetItems = []
                 };
             }
         }
         catch (Exception ex)
         {
             SuccessMessage = null;
-            ErrorMessage = $"Error while adding Item: {ex.Message}.";
+            ErrorMessage = $"Error while adding User: {ex.Message}.";
         }
         finally
         {

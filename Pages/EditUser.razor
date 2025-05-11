@@ -1,0 +1,28 @@
+@page "/edit-user/{userId:int}"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory
+@inject NavigationManager Navigation;
+@inject StateContainer StateContainer;
+
+<PageTitle>Edit User</PageTitle>
+
+<h1>Edit User</h1>
+
+@if(User is null)
+{
+    <div class="alert alert-danger">User was not found</div>
+}
+else
+{
+    <UserForm User="@User"
+        IsBusy="@IsBusy"
+        BudgetItems="@BudgetItems"
+        IsEdit="true"
+        OnSubmit="@HandleSubmit"
+        OnCancel="@NavigateToSummary"/>
+}
+
+@if(ErrorMessage is not null)
+{
+    <br/>
+    <div class="alert alert-danger">@ErrorMessage</div>
+}

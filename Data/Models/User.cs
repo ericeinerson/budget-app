@@ -8,11 +8,10 @@ namespace budget_app.Data.Models
 {
     public class User
     {
-         public int Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string? Name { get; set; }
         public decimal Balance { get; set; }
         public List<BudgetItem> BudgetItems { get; set; } = [];
-
     }
 }

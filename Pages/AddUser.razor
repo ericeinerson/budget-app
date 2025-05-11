@@ -1,0 +1,21 @@
+@page "/add-user"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@using budget_app.Shared
+
+<h2>Add User</h2>
+
+<UserForm User="@User"
+IsBusy="@IsBusy"
+OnSubmit="@HandleSubmit"/>
+
+@if(SuccessMessage is not null)
+{
+    <br />
+    <div class="alert alert-success">@SuccessMessage</div>
+}
+
+@if(ErrorMessage is not null)
+{
+    <br/>
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
