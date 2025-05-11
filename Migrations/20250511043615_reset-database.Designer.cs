@@ -12,8 +12,8 @@ using budget_app.Data;
 namespace budget_app.Migrations
 {
     [DbContext(typeof(BudgetAppDbContext))]
-    [Migration("20250511040548_revamp-database")]
-    partial class revampdatabase
+    [Migration("20250511043615_reset-database")]
+    partial class resetdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -318,6 +318,26 @@ namespace budget_app.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 50002,
+                            Balance = 10.01m,
+                            Name = "Sir Floofsigus"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Balance = 110.01m,
+                            Name = "Sir Jaxolantern"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Balance = 50000.09m,
+                            Name = "Tacoramadan"
+                        });
                 });
 
             modelBuilder.Entity("budget_app.Data.Models.BudgetItem", b =>

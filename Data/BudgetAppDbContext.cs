@@ -11,11 +11,11 @@ namespace budget_app.Data
     {
         public BudgetAppDbContext(DbContextOptions<BudgetAppDbContext> options) : base(options) {}
         public DbSet<BudgetItem> BudgetItems => Set<BudgetItem>();
+        public DbSet<User> Users => Set<User>();
         public DbSet<ItemType> ItemTypes => Set<ItemType>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Adjustment> Adjustments => Set<Adjustment>();
 
-        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -119,6 +119,28 @@ namespace budget_app.Data
                     UserId = 50002
                 }
             );
+
+            modelBuilder.Entity<User>().HasData(
+                new User 
+                {
+                    Id = 50002,
+                    Name = "Sir Floofsigus",
+                    Balance = 10.01M
+                },
+                new User 
+                {
+                    Id = 45,
+                    Name = "Sir Jaxolantern",
+                    Balance = 110.01M
+                },
+                new User 
+                {
+                    Id = 49,
+                    Name = "Tacoramadan",
+                    Balance = 50000.09M
+                }
+            );
+
             modelBuilder.Entity<ItemType>().HasData(
                 new ItemType 
                 {
