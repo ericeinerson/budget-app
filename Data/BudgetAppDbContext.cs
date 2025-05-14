@@ -14,8 +14,6 @@ namespace budget_app.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<ItemType> ItemTypes => Set<ItemType>();
         public DbSet<Category> Categories => Set<Category>();
-        public DbSet<Adjustment> Adjustments => Set<Adjustment>();
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -156,6 +154,11 @@ namespace budget_app.Data
                 {
                     Id = 3,
                     Name = "Wishlist"
+                },
+                new ItemType 
+                {
+                    Id = 4,
+                    Name = "Adjustment"
                 }
             );
 
@@ -184,17 +187,6 @@ namespace budget_app.Data
                 {
                     Id = 5,
                     Name = "Gym"
-                }
-            );
-
-            modelBuilder.Entity<Adjustment>().HasData(
-                new Adjustment 
-                {
-                    Id = 1,
-                    Name = "Rent contribution",
-                    Notes = "Contributing rent to even out",
-                    Amount = 12.45M,
-                    Date = new DateTime(2020, 10, 01)
                 }
             );
         }

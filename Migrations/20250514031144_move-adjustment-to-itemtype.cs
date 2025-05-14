@@ -9,31 +9,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace budget_app.Migrations
 {
     /// <inheritdoc />
-    public partial class resetdatabase : Migration
+    public partial class moveadjustmenttoitemtype : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Adjustments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Notes = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Adjustments", x => x.Id);
-                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -126,11 +107,6 @@ namespace budget_app.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
-                table: "Adjustments",
-                columns: new[] { "Id", "Amount", "Date", "Name", "Notes" },
-                values: new object[] { 1, 12.45m, new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Rent contribution", "Contributing rent to even out" });
-
-            migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -149,7 +125,8 @@ namespace budget_app.Migrations
                 {
                     { 1, "Expense" },
                     { 2, "Income" },
-                    { 3, "Wishlist" }
+                    { 3, "Wishlist" },
+                    { 4, "Adjustment" }
                 });
 
             migrationBuilder.InsertData(
@@ -197,9 +174,6 @@ namespace budget_app.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Adjustments");
-
             migrationBuilder.DropTable(
                 name: "BudgetItems");
 

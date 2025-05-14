@@ -1,0 +1,22 @@
+@page "/add-category"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@inject StateContainer StateContainer;
+@using budget_app.Shared
+
+<h2>Add Category</h2>
+
+<CategoryForm Category="@Category"
+IsBusy="@IsBusy"
+OnSubmit="@HandleSubmit"/>
+
+    @if(SuccessMessage is not null)
+    {
+        <br />
+        <div class="alert alert-success">@SuccessMessage</div>
+    }
+
+     @if(ErrorMessage is not null)
+    {
+        <br />
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }

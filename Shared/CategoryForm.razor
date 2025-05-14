@@ -1,0 +1,29 @@
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+
+@if(Category is not null)
+{
+    <EditForm Model="@Category" OnValidSubmit=@HandleValidSubmit
+    OnInvalidSubmit=@HandleInvalidSubmit>
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="mb-3">
+            <label for="category-name" class="form-label">Name</label>
+            <InputText id="category-name"
+            class="form-control"
+                        @bind-Value="Category.Name"/>
+            <ValidationMessage For="() => Category.Name"/>
+        </div>
+
+        @if(IsEdit)
+        {
+            <button type="submit" class="btn btn-primary" disabled="@IsBusy">Update</button>
+            <button type="button" class="btn btn-secondary" disabled="@IsBusy"
+            @onclick="@HandleCancel">Cancel</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary" disabled=@IsBusy>Add</button>
+        }
+    </EditForm>
+}

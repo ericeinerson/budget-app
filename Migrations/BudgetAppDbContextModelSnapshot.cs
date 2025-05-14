@@ -22,42 +22,6 @@ namespace budget_app.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("budget_app.Data.Models.Adjustment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Adjustments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 12.45m,
-                            Date = new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Rent contribution",
-                            Notes = "Contributing rent to even out"
-                        });
-                });
-
             modelBuilder.Entity("budget_app.Data.Models.BudgetItem", b =>
                 {
                     b.Property<int>("Id")
@@ -294,6 +258,11 @@ namespace budget_app.Migrations
                         {
                             Id = 3,
                             Name = "Wishlist"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Adjustment"
                         });
                 });
 
