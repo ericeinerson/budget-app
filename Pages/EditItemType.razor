@@ -1,0 +1,27 @@
+@page "/edit-item-type/{itemTypeId:int}"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory
+@inject NavigationManager Navigation;
+@inject StateContainer StateContainer;
+
+<PageTitle>Edit User</PageTitle>
+
+<h1>Edit Item Type</h1>
+
+@if(ItemType is null)
+{
+    <div class="alert alert-danger">Item Type was not found</div>
+}
+else
+{
+    <UserForm ItemType="@ItemType"
+        IsBusy="@IsBusy"
+        IsEdit="true"
+        OnSubmit="@HandleSubmit"
+        OnCancel="@NavigateToSummary"/>
+}
+
+@if(ErrorMessage is not null)
+{
+    <br/>
+    <div class="alert alert-danger">@ErrorMessage</div>
+}

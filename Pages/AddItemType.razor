@@ -1,0 +1,22 @@
+@page "/add-item-type"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@inject StateContainer StateContainer;
+@using budget_app.Shared
+
+<h2>Add Item Type</h2>
+
+<ItemTypeForm ItemType="@ItemType"
+IsBusy="@IsBusy"
+OnSubmit="@HandleSubmit"/>
+
+    @if(SuccessMessage is not null)
+    {
+        <br />
+        <div class="alert alert-success">@SuccessMessage</div>
+    }
+
+     @if(ErrorMessage is not null)
+    {
+        <br />
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
