@@ -4,6 +4,8 @@ using budget_app.Data;
 using Microsoft.EntityFrameworkCore;
 using budget_app.Options;
 using budget_app.Shared;
+using budget_app.Data.DataTransferObjects;
+using budget_app.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.Configure<Authentication>(builder.Configuration.GetSection("Aut
 var connectionString = builder.Configuration.GetConnectionString("Dev") ?? string.Empty;
 
 builder.Services.AddDbContextFactory<BudgetAppDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
+builder.Services.AddSingleton<BudgetSummaryService>();
+builder.Services.AddScoped<BudgetItemService>();
 builder.Services.AddScoped<StateContainer>();
 var app = builder.Build();
 

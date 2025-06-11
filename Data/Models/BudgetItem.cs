@@ -25,6 +25,7 @@ namespace budget_app.Data.Models
         [Required]
         public int? UserId { get; set; }
         public User? User { get; set; }
+        public bool IsCompleted { get; set; }
         [Timestamp]
         public byte[]? Timestamp { get; set; }
     }

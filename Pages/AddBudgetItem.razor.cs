@@ -73,7 +73,8 @@ public partial class AddBudgetItem
                     CategoryId = BudgetItem.CategoryId,
                     ItemTypeId = BudgetItem.ItemTypeId,
                     Date = DateTime.Now,
-                    Amount = 0.00M
+                    Amount = 0.00M,
+                    UserId = StateContainer.CurrentUserId
                 };
             }
         }

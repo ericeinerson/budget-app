@@ -11,5 +11,14 @@ namespace budget_app.Shared
         public int BudgetItemOverviewPage { get; set; }
 
         public int? CurrentUserId { get; set; } = -2;
+
+        public int GetCurrentUserId()
+        {
+            if (CurrentUserId == null)
+            {
+                CurrentUserId = -2;
+            }
+            return (int)CurrentUserId;
+        }
     }
 }

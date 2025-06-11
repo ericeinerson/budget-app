@@ -34,7 +34,7 @@ public partial class BudgetItemForm
 
     private async Task HandleInvalidSubmit()
     {
-       if(OnSubmit.HasDelegate)
+        if(OnSubmit.HasDelegate)
         {
             await OnSubmit.InvokeAsync(false);
         }

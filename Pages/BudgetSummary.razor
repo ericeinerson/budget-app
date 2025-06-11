@@ -1,26 +1,156 @@
 @page "/budget-summary"
+@inject BudgetSummaryService BudgetSummaryService
+@inject StateContainer StateContainer
+@inject BudgetItemService BudgetItemService
 
 <h2>Budget Summary</h2>
 
-@if(false){
+@if(StateContainer.CurrentUserId is null){
     <p><em>Loading...</em></p>
 }
 else{
     <table class="table table-light">
         <thead class="table-primary">
             <tr>
-                <th></th>
-                <th>Column 1</th>
-                <th>Column 2</th>
-                <th>Column 3</th>
+                <th>Compiled Details</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Info 1</td>
-                <td>Info 2</td>
-                <td>Info 3</td>
-                <td>Info 4</td>
+                <td>Current Balance</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Remaining Expenses</td>
+            </tr>
+            <tr>
+                <td>@BudgetSummaryCompiledDetails?.RemainingExpenses</td>
+            </tr>
+            <tr>
+                <td>Remaining Incomes</td>
+            </tr>
+            <tr>
+                <td>@BudgetSummaryCompiledDetails?.RemainingIncomes</td>
+            </tr>
+            <tr>
+                <td>Adjustments Positive</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Adjustments Negative</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Totals Balanced</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-light w-auto">
+        <thead class="table-primary">
+            <tr>
+                <th>Month</th>
+                <th>Projected Difference By Month</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>January</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>February</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>March</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>April</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>May</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>June</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>July</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>August</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>September</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>October</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>November</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>December</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-light w-auto">
+        <thead class="table-primary">
+            <tr>
+                <th></th>
+                <th>Changes to Projected Balance</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Copied Projected Balance (day)</td>
+                <td>Copied Projected Balance (week)</td>
+                <td>Copied Projected Balance (month)</td>
+                <td>Copied Projected Balance (year)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Difference (day)</td>
+                <td>Difference (week)</td>
+                <td>Difference (month)</td>
+                <td>Difference (year)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         </tbody>
     </table>

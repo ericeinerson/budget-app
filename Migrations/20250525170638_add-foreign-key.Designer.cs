@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using budget_app.Data;
 
@@ -11,9 +12,11 @@ using budget_app.Data;
 namespace budget_app.Migrations
 {
     [DbContext(typeof(BudgetAppDbContext))]
-    partial class BudgetAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250525170638_add-foreign-key")]
+    partial class addforeignkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace budget_app.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<int?>("ItemTypeId")
                         .IsRequired()
                         .HasColumnType("int");
@@ -68,6 +68,9 @@ namespace budget_app.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -75,6 +78,8 @@ namespace budget_app.Migrations
                     b.HasIndex("ItemTypeId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("BudgetItems");
 
@@ -85,7 +90,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 2,
                             Date = new DateTime(2025, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 1,
                             Name = "Expense1",
                             Notes = "This was a test rent payment",
@@ -98,7 +102,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 1,
                             Date = new DateTime(2024, 2, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 2,
                             Name = "Expense2",
                             Notes = "Got chipotle",
@@ -111,7 +114,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 2,
                             Date = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 2,
                             Name = "ThirdExpense",
                             SecondaryName = "Taco Prescription Diet",
@@ -123,7 +125,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 3,
                             Date = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 1,
                             Name = "Expense7Rent",
                             Notes = "This was another test rent payment",
@@ -136,7 +137,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 1,
                             Date = new DateTime(1999, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 3,
                             Name = "5.0",
                             Notes = "Got Subway",
@@ -149,7 +149,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 1,
                             Date = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 1,
                             Name = "Expense",
                             SecondaryName = "6terst",
@@ -161,7 +160,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 3,
                             Date = new DateTime(2025, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 1,
                             Name = "Music",
                             Notes = "Subscription payment",
@@ -174,7 +172,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 3,
                             Date = new DateTime(1954, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 2,
                             Name = "Caffeine",
                             Notes = "Got chipotle",
@@ -187,7 +184,6 @@ namespace budget_app.Migrations
                             Amount = 0m,
                             CategoryId = 4,
                             Date = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsCompleted = false,
                             ItemTypeId = 3,
                             Name = "Nine",
                             SecondaryName = "Zelda",
@@ -333,10 +329,14 @@ namespace budget_app.Migrations
                         .IsRequired();
 
                     b.HasOne("budget_app.Data.Models.User", "User")
-                        .WithMany("BudgetItems")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("budget_app.Data.Models.User", null)
+                        .WithMany("BudgetItems")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Category");
 
