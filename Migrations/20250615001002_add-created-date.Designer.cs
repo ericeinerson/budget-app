@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using budget_app.Data;
 
@@ -11,9 +12,11 @@ using budget_app.Data;
 namespace budget_app.Migrations
 {
     [DbContext(typeof(BudgetAppDbContext))]
-    partial class BudgetAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250615001002_add-created-date")]
+    partial class addcreateddate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +39,6 @@ namespace budget_app.Migrations
                     b.Property<int?>("CategoryId")
                         .IsRequired()
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
@@ -87,7 +87,6 @@ namespace budget_app.Migrations
                             Id = 1,
                             Amount = 0m,
                             CategoryId = 2,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7500),
                             Date = new DateTime(2025, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 1,
@@ -101,7 +100,6 @@ namespace budget_app.Migrations
                             Id = 2,
                             Amount = 0m,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7550),
                             Date = new DateTime(2024, 2, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 2,
@@ -115,7 +113,6 @@ namespace budget_app.Migrations
                             Id = 3,
                             Amount = 0m,
                             CategoryId = 2,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7553),
                             Date = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 2,
@@ -128,7 +125,6 @@ namespace budget_app.Migrations
                             Id = 4,
                             Amount = 0m,
                             CategoryId = 3,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7555),
                             Date = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 1,
@@ -142,7 +138,6 @@ namespace budget_app.Migrations
                             Id = 5,
                             Amount = 0m,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7558),
                             Date = new DateTime(1999, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 3,
@@ -156,7 +151,6 @@ namespace budget_app.Migrations
                             Id = 6,
                             Amount = 0m,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7560),
                             Date = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 1,
@@ -169,7 +163,6 @@ namespace budget_app.Migrations
                             Id = 7,
                             Amount = 0m,
                             CategoryId = 3,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7562),
                             Date = new DateTime(2025, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 1,
@@ -183,7 +176,6 @@ namespace budget_app.Migrations
                             Id = 8,
                             Amount = 0m,
                             CategoryId = 3,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7564),
                             Date = new DateTime(1954, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 2,
@@ -197,7 +189,6 @@ namespace budget_app.Migrations
                             Id = 9,
                             Amount = 0m,
                             CategoryId = 4,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7566),
                             Date = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsCompleted = false,
                             ItemTypeId = 3,
@@ -215,9 +206,6 @@ namespace budget_app.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -230,31 +218,26 @@ namespace budget_app.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7701),
                             Name = "Rent"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7703),
                             Name = "Food"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7704),
                             Name = "Medical"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7705),
                             Name = "Miscellaneous"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7707),
                             Name = "Gym"
                         });
                 });
@@ -266,9 +249,6 @@ namespace budget_app.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -282,25 +262,21 @@ namespace budget_app.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7683),
                             Name = "Expense"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7685),
                             Name = "Income"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7686),
                             Name = "Wishlist"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7687),
                             Name = "Adjustment"
                         });
                 });
@@ -316,9 +292,6 @@ namespace budget_app.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -332,21 +305,18 @@ namespace budget_app.Migrations
                         {
                             Id = 50002,
                             Balance = 10.01m,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7661),
                             Name = "Sir Floofsigus"
                         },
                         new
                         {
                             Id = 45,
                             Balance = 110.01m,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7664),
                             Name = "Sir Jaxolantern"
                         },
                         new
                         {
                             Id = 49,
                             Balance = 50000.09m,
-                            CreatedDate = new DateTime(2025, 6, 14, 18, 20, 37, 976, DateTimeKind.Local).AddTicks(7666),
                             Name = "Tacoramadan"
                         });
                 });

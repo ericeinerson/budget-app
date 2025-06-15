@@ -25,8 +25,8 @@ public partial class Archive
         }
 
         using var context = ContextFactory.CreateDbContext();
-        
-        var itemCount = await context.BudgetItems.CountAsync();
+        var currentUserId = StateContainer.GetCurrentUserId();
+        var itemCount = await context.BudgetItems.Where(b => b.UserId == currentUserId).CountAsync();
         TotalPages = itemCount == 0 
             ? 1 
             : (int)Math.Ceiling((double)itemCount / NumberOfItemsToShow);
@@ -42,6 +42,7 @@ public partial class Archive
         var itemsToSkip = (CurrentPage.Value - 1) * NumberOfItemsToShow;
 
         BudgetItems = await context.BudgetItems
+            .Where(b => b.UserId == currentUserId)
             .Include(b => b.Category)
             .Include(b => b.ItemType)
             .OrderByDescending(b => b.Date)

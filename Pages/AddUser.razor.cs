@@ -53,6 +53,8 @@ public partial class AddUser
             if(User is not null)
             {
                 using var context = ContextFactory.CreateDbContext();
+                
+                User.CreatedDate = DateTime.Now;
 
                 context.Users.Add(User);
 

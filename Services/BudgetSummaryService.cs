@@ -10,7 +10,7 @@ namespace budget_app.Services;
 public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextFactory) : IBudgetSummaryService
 {
     private readonly IDbContextFactory<BudgetAppDbContext> _contextFactory = contextFactory;
-    private readonly DateTime _currentYearEnd = new(12, 31, DateTime.Now.Year, 23, 59, 59);
+    private readonly DateTime _currentYearEnd = new(DateTime.Now.Year, 12, 31, 23, 59, 59);
     public async Task<BudgetSummaryCompiledDetails> GetCompiledDetails(int currentUserId)
     {
         await Task.Delay(1000);
@@ -22,12 +22,18 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
 
         var remainingIncomes = CalculateRemainingIncomes(currentUserId);
         var remainingExpenses = CalculateRemainingExpenses(currentUserId);
+        var futureAdjustmentsNegative = CalculateFutureAdjustmentsNegative(currentUserId) * -1;
+        var futureAdjustmentsPositive = CalculateFutureAdjustmentsPositive(currentUserId);
+        var totalsBalanced = currentBalance + remainingIncomes - remainingExpenses + futureAdjustmentsPositive - futureAdjustmentsNegative;
 
         var budgetSummaryCompiledDetails = new BudgetSummaryCompiledDetails()
         {
             CurrentBalance = currentBalance,
             RemainingIncomes = remainingIncomes,
-            RemainingExpenses = remainingExpenses
+            RemainingExpenses = remainingExpenses,
+            AdjustmentsNegative = futureAdjustmentsNegative,
+            AdjustmentsPositive = futureAdjustmentsPositive,
+            TotalsBalanced = totalsBalanced
         };
 
         return budgetSummaryCompiledDetails;
@@ -67,5 +73,62 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         expensesTotaled = allExpenses.Sum(i => i.Amount);
 
         return expensesTotaled;
+    }
+
+    public decimal CalculateFutureAdjustmentsNegative(int userId)
+    {
+        decimal futureAdjustmentsNegative;
+        var context = _contextFactory.CreateDbContext();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+
+        var adjustments = context.BudgetItems.Where(i => i.ItemTypeId == (int)Enums.ItemType.Adjustment
+        && i.UserId == userId
+        && i.Date.Year == DateTime.Now.Year
+        && i.Date >= DateTime.Now
+        && i.Amount < 0
+        ).ToList();
+
+        futureAdjustmentsNegative = adjustments.Sum(i => i.Amount);
+
+        return futureAdjustmentsNegative;
+    }
+
+    public decimal CalculateFutureAdjustmentsPositive(int userId)
+    {
+        decimal futureAdjustmentsNegative;
+        var context = _contextFactory.CreateDbContext();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+
+        var adjustments = context.BudgetItems.Where(i => i.ItemTypeId == (int)Enums.ItemType.Adjustment
+        && i.UserId == userId
+        && i.Date.Year == DateTime.Now.Year
+        && i.Date >= DateTime.Now
+        && i.Amount >= 0
+        ).ToList();
+
+        futureAdjustmentsNegative = adjustments.Sum(i => i.Amount);
+
+        return futureAdjustmentsNegative;
+    }
+    
+    public decimal CalculateTotalsBalanced(int userId)
+    {
+        decimal futureAdjustmentsNegative;
+        var context = _contextFactory.CreateDbContext();
+
+        var user = context.Users.FirstOrDefault(u => u.Id == userId);
+
+        var adjustments = context.BudgetItems.Where(i => i.ItemTypeId == (int)Enums.ItemType.Adjustment
+        && i.UserId == userId
+        && i.Date.Year == DateTime.Now.Year
+        && i.Date >= DateTime.Now
+        && i.Amount >= 0
+        ).ToList();
+
+        futureAdjustmentsNegative = adjustments.Sum(i => i.Amount);
+
+        return futureAdjustmentsNegative;
     }
 }

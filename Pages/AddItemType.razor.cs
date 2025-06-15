@@ -49,6 +49,8 @@ public partial class AddItemType
                 if(ItemType is not null)
                 {
                     using var context = ContextFactory.CreateDbContext();
+                    
+                    ItemType.CreatedDate = DateTime.Now;
 
                     context.ItemTypes.Add(ItemType);
 

@@ -50,6 +50,8 @@ public partial class AddCategory
                 {
                     using var context = ContextFactory.CreateDbContext();
 
+                    Category.CreatedDate = DateTime.Now;
+                    
                     context.Categories.Add(Category);
 
                     await context.SaveChangesAsync();

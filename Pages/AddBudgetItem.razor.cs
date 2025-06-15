@@ -60,6 +60,8 @@ public partial class AddBudgetItem
             if(BudgetItem is not null)
             {
                 using var context = ContextFactory.CreateDbContext();
+                
+                BudgetItem.CreatedDate = DateTime.Now;
 
                 context.BudgetItems.Add(BudgetItem);
 

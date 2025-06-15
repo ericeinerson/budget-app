@@ -20,7 +20,7 @@ namespace budget_app.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<BudgetItem>().HasData(
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 1,
                     Name = "Expense1",
@@ -29,7 +29,8 @@ namespace budget_app.Data
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 3, 21),
                     CategoryId = 2,
-                    UserId = 45
+                    UserId = 45,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -40,7 +41,8 @@ namespace budget_app.Data
                     ItemTypeId = 2,
                     Date = new DateTime(2024, 2, 21),
                     CategoryId = 1,
-                    UserId = 45
+                    UserId = 45,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -50,7 +52,8 @@ namespace budget_app.Data
                     ItemTypeId = 2,
                     Date = new DateTime(2025, 4, 1),
                     CategoryId = 2,
-                    UserId = 45
+                    UserId = 45,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -61,7 +64,8 @@ namespace budget_app.Data
                     ItemTypeId = 1,
                     Date = new DateTime(2000, 1, 1),
                     CategoryId = 3,
-                    UserId = 49
+                    UserId = 49,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -72,7 +76,8 @@ namespace budget_app.Data
                     ItemTypeId = 3,
                     Date = new DateTime(1999, 12, 31),
                     CategoryId = 1,
-                    UserId = 49
+                    UserId = 49,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -82,7 +87,8 @@ namespace budget_app.Data
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 10, 1),
                     CategoryId = 1,
-                    UserId = 49
+                    UserId = 49,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -93,7 +99,8 @@ namespace budget_app.Data
                     ItemTypeId = 1,
                     Date = new DateTime(2025, 3, 31),
                     CategoryId = 3,
-                    UserId = 49
+                    UserId = 49,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -104,7 +111,8 @@ namespace budget_app.Data
                     ItemTypeId = 2,
                     Date = new DateTime(1954, 12, 21),
                     CategoryId = 3,
-                    UserId = 49
+                    UserId = 49,
+                    CreatedDate = DateTime.Now
                 },
                 new BudgetItem 
                 {
@@ -114,7 +122,8 @@ namespace budget_app.Data
                     ItemTypeId = 3,
                     Date = new DateTime(2025, 4, 1),
                     CategoryId = 4,
-                    UserId = 50002
+                    UserId = 50002,
+                    CreatedDate = DateTime.Now
                 }
             );
 
@@ -123,19 +132,22 @@ namespace budget_app.Data
                 {
                     Id = 50002,
                     Name = "Sir Floofsigus",
-                    Balance = 10.01M
+                    Balance = 10.01M,
+                    CreatedDate = DateTime.Now
                 },
                 new User 
                 {
                     Id = 45,
                     Name = "Sir Jaxolantern",
-                    Balance = 110.01M
+                    Balance = 110.01M,
+                    CreatedDate = DateTime.Now
                 },
                 new User 
                 {
                     Id = 49,
                     Name = "Tacoramadan",
-                    Balance = 50000.09M
+                    Balance = 50000.09M,
+                    CreatedDate = DateTime.Now
                 }
             );
 
@@ -143,22 +155,26 @@ namespace budget_app.Data
                 new ItemType 
                 {
                     Id = 1,
-                    Name = "Expense"
+                    Name = "Expense",
+                    CreatedDate = DateTime.Now
                 },
                 new ItemType 
                 {
                     Id = 2,
-                    Name = "Income"
+                    Name = "Income",
+                    CreatedDate = DateTime.Now
                 },
                 new ItemType 
                 {
                     Id = 3,
-                    Name = "Wishlist"
+                    Name = "Wishlist",
+                    CreatedDate = DateTime.Now
                 },
                 new ItemType 
                 {
                     Id = 4,
-                    Name = "Adjustment"
+                    Name = "Adjustment",
+                    CreatedDate = DateTime.Now
                 }
             );
 
@@ -166,27 +182,32 @@ namespace budget_app.Data
                 new Category 
                 {
                     Id = 1,
-                    Name = "Rent"
+                    Name = "Rent",
+                    CreatedDate = DateTime.Now
                 },
                 new Category 
                 {
                     Id = 2,
-                    Name = "Food"
+                    Name = "Food",
+                    CreatedDate = DateTime.Now
                 },
                 new Category 
                 {
                     Id = 3,
-                    Name = "Medical"
+                    Name = "Medical",
+                    CreatedDate = DateTime.Now
                 },
                 new Category 
                 {
                     Id = 4,
-                    Name = "Miscellaneous"
+                    Name = "Miscellaneous",
+                    CreatedDate = DateTime.Now
                 },
                 new Category 
                 {
                     Id = 5,
-                    Name = "Gym"
+                    Name = "Gym",
+                    CreatedDate = DateTime.Now
                 }
             );
         }
