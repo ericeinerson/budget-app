@@ -12,17 +12,17 @@ namespace budget_app.Pages;
 
         public BudgetSummaryCompiledDetails? BudgetSummaryCompiledDetails { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            await ConstructBudgetSummaryCompiledDetails();
+            ConstructBudgetSummaryCompiledDetails();
             var currentUserId = StateContainer.GetCurrentUserId();
 
             BudgetItemService.PromptIsCompletedWhenDateArrives(currentUserId);
         }
-        public async Task<BudgetSummaryCompiledDetails> ConstructBudgetSummaryCompiledDetails()
+        public BudgetSummaryCompiledDetails ConstructBudgetSummaryCompiledDetails()
         {
             var currentUserId = StateContainer.GetCurrentUserId();
-            BudgetSummaryCompiledDetails = await BudgetSummaryService.GetCompiledDetails(currentUserId);
+            BudgetSummaryCompiledDetails = BudgetSummaryService.GetCompiledDetails(currentUserId);
             return BudgetSummaryCompiledDetails;
         }
     }

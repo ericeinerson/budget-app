@@ -14,6 +14,8 @@ namespace budget_app.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<ItemType> ItemTypes => Set<ItemType>();
         public DbSet<Category> Categories => Set<Category>();
+        public DbSet<BalancedTotalsTrackingLog> BalancedTotalsTrackingLogs => Set<BalancedTotalsTrackingLog>();
+        public DbSet<Week> Weeks => Set<Week>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,7 +34,7 @@ namespace budget_app.Data
                     UserId = 45,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 2,
                     Name = "Expense2",
@@ -44,7 +46,7 @@ namespace budget_app.Data
                     UserId = 45,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 3,
                     Name = "ThirdExpense",
@@ -55,7 +57,7 @@ namespace budget_app.Data
                     UserId = 45,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 4,
                     Name = "Expense7Rent",
@@ -67,7 +69,7 @@ namespace budget_app.Data
                     UserId = 49,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 5,
                     Name = "5.0",
@@ -79,7 +81,7 @@ namespace budget_app.Data
                     UserId = 49,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 6,
                     Name = "Expense",
@@ -90,7 +92,7 @@ namespace budget_app.Data
                     UserId = 49,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 7,
                     Name = "Music",
@@ -102,7 +104,7 @@ namespace budget_app.Data
                     UserId = 49,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 8,
                     Name = "Caffeine",
@@ -114,7 +116,7 @@ namespace budget_app.Data
                     UserId = 49,
                     CreatedDate = DateTime.Now
                 },
-                new BudgetItem 
+                new BudgetItem
                 {
                     Id = 9,
                     Name = "Nine",
@@ -128,21 +130,21 @@ namespace budget_app.Data
             );
 
             modelBuilder.Entity<User>().HasData(
-                new User 
+                new User
                 {
                     Id = 50002,
                     Name = "Sir Floofsigus",
                     Balance = 10.01M,
                     CreatedDate = DateTime.Now
                 },
-                new User 
+                new User
                 {
                     Id = 45,
                     Name = "Sir Jaxolantern",
                     Balance = 110.01M,
                     CreatedDate = DateTime.Now
                 },
-                new User 
+                new User
                 {
                     Id = 49,
                     Name = "Tacoramadan",
@@ -152,25 +154,25 @@ namespace budget_app.Data
             );
 
             modelBuilder.Entity<ItemType>().HasData(
-                new ItemType 
+                new ItemType
                 {
                     Id = 1,
                     Name = "Expense",
                     CreatedDate = DateTime.Now
                 },
-                new ItemType 
+                new ItemType
                 {
                     Id = 2,
                     Name = "Income",
                     CreatedDate = DateTime.Now
                 },
-                new ItemType 
+                new ItemType
                 {
                     Id = 3,
                     Name = "Wishlist",
                     CreatedDate = DateTime.Now
                 },
-                new ItemType 
+                new ItemType
                 {
                     Id = 4,
                     Name = "Adjustment",
@@ -179,31 +181,31 @@ namespace budget_app.Data
             );
 
             modelBuilder.Entity<Category>().HasData(
-                new Category 
+                new Category
                 {
                     Id = 1,
                     Name = "Rent",
                     CreatedDate = DateTime.Now
                 },
-                new Category 
+                new Category
                 {
                     Id = 2,
                     Name = "Food",
                     CreatedDate = DateTime.Now
                 },
-                new Category 
+                new Category
                 {
                     Id = 3,
                     Name = "Medical",
                     CreatedDate = DateTime.Now
                 },
-                new Category 
+                new Category
                 {
                     Id = 4,
                     Name = "Miscellaneous",
                     CreatedDate = DateTime.Now
                 },
-                new Category 
+                new Category
                 {
                     Id = 5,
                     Name = "Gym",

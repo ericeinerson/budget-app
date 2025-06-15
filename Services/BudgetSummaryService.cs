@@ -11,10 +11,8 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
 {
     private readonly IDbContextFactory<BudgetAppDbContext> _contextFactory = contextFactory;
     private readonly DateTime _currentYearEnd = new(DateTime.Now.Year, 12, 31, 23, 59, 59);
-    public async Task<BudgetSummaryCompiledDetails> GetCompiledDetails(int currentUserId)
+    public BudgetSummaryCompiledDetails GetCompiledDetails(int currentUserId)
     {
-        await Task.Delay(1000);
-
         var context = _contextFactory.CreateDbContext();
 
         var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
