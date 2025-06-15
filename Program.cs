@@ -19,6 +19,7 @@ builder.Services.AddDbContextFactory<BudgetAppDbContext>(options => options.UseM
 builder.Services.AddSingleton<BudgetSummaryService>();
 builder.Services.AddScoped<BudgetItemService>();
 builder.Services.AddScoped<StateContainer>();
+builder.Services.AddScoped<DateService>();
 var app = builder.Build();
 
 //Do not do this in production, just development

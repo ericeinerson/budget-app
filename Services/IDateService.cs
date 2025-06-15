@@ -5,6 +5,6 @@ namespace budget_app.Services
 {
     public interface IDateService
     {
-        void WriteCurrentYearWeeksToDataBase();
+        Task WriteCurrentYearWeeksToDataBase();
     }
 }

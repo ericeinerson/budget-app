@@ -1,0 +1,14 @@
+@page "/admin"
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@inject StateContainer StateContainer
+@inject DateService DateService
+@inject IJSRuntime JS
+
+<PageTitle>Archive</PageTitle>
+
+<h2>Admin</h2>
+
+<button class="btn btn-outline-danger"
+                    @onclick="() => DateService.WriteCurrentYearWeeksToDataBase()">
+                        Write Weeks to Database
+                    </button>
