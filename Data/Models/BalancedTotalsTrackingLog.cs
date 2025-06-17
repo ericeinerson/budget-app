@@ -10,7 +10,7 @@ namespace budget_app.Data.Models
         public decimal? WeeklyTotalsBalancedBase { get; set; }
         public decimal? MonthlyTotalsBalancedBase { get; set; }
         public decimal? YearlyTotalsBalancedBase { get; set; }
-        public DateTime? CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }
 

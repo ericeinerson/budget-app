@@ -15,6 +15,9 @@ namespace budget_app.Pages;
         protected override void OnInitialized()
         {
             ConstructBudgetSummaryCompiledDetails();
+            BudgetSummaryCompiledDetails ??= new BudgetSummaryCompiledDetails();
+            
+            StateContainer.TotalsBalanced = BudgetSummaryCompiledDetails.TotalsBalanced;
             var currentUserId = StateContainer.GetCurrentUserId();
 
             BudgetItemService.PromptIsCompletedWhenDateArrives(currentUserId);

@@ -16,7 +16,7 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         var context = _contextFactory.CreateDbContext();
 
         var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
-        var currentBalance = currentUser?.Balance;
+        var currentBalance = currentUser == null ? 0.00M : currentUser.Balance;
 
         var remainingIncomes = CalculateRemainingIncomes(currentUserId);
         var remainingExpenses = CalculateRemainingExpenses(currentUserId);
