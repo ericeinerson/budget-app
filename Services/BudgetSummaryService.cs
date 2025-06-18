@@ -37,6 +37,78 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         return budgetSummaryCompiledDetails;
     }
 
+    public BudgetSummaryTotalsTracking GetTrackedTotals(int currentUserId, BudgetSummaryCompiledDetails budgetCompiledDetails)
+    {
+        var context = _contextFactory.CreateDbContext();
+        
+        var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
+
+        var year = DateTime.Now.Year;
+        var month = DateTime.Now.Month;
+        var week = context.Weeks.First(w => w.DateStart <= DateTime.Now && w.DateEnd >= DateTime.Now);
+
+        var yearStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
+        var yearCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+
+        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
+        var monthCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+
+        var weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
+        if (weekStartTotalsBalanced == null)
+        {
+            weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate <= week.DateStart && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+        }
+        var weekCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+
+        if (weekCurrentTotalsBalanced == null)
+        {
+            weekCurrentTotalsBalanced = weekStartTotalsBalanced;
+        }
+
+        var budgetSummaryTotalsTracked = new BudgetSummaryTotalsTracking()
+        {
+            TotalsBalanced = budgetCompiledDetails.TotalsBalanced,
+            CurrentYearDifference = yearCurrentTotalsBalanced - yearStartTotalsBalanced,
+            CurrentMonthDifference = monthCurrentTotalsBalanced - monthStartTotalsBalanced,
+            CurrentWeekDifference = weekCurrentTotalsBalanced - weekStartTotalsBalanced,
+            CurrentDayDifference = 0,
+            JanuaryDifference = CalculateMonthDifferences(currentUserId, 1),
+            FebruarayDifference = CalculateMonthDifferences(currentUserId, 2),
+            MarchDifference = CalculateMonthDifferences(currentUserId, 3),
+            AprilDifference = CalculateMonthDifferences(currentUserId, 4),
+            MayDifference = CalculateMonthDifferences(currentUserId, 5),
+            JuneDifference = CalculateMonthDifferences(currentUserId, 6),
+            JulyDifference = CalculateMonthDifferences(currentUserId, 7),
+            AugustDifference = CalculateMonthDifferences(currentUserId, 8),
+            SeptemberDifference = CalculateMonthDifferences(currentUserId, 9),
+            OctoberDifference = CalculateMonthDifferences(currentUserId, 10),
+            NovemberDifference = CalculateMonthDifferences(currentUserId, 11),
+            DecemberDifference = CalculateMonthDifferences(currentUserId, 12)
+        };
+
+        return budgetSummaryTotalsTracked;
+    }
+
+    public decimal CalculateMonthDifferences(int currentUserId, int month)
+    {
+        var context = _contextFactory.CreateDbContext();
+
+        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
+        b.CreatedDate.Year == DateTime.Now.Year
+        && b.CreatedDate.Month == month
+        && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
+        
+        var monthEndOrCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
+        b.CreatedDate.Year == DateTime.Now.Year
+        && b.CreatedDate.Month == month
+        && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+
+        var difference = monthStartTotalsBalanced - monthEndOrCurrentTotalsBalanced;
+        difference ??= 0;
+
+        return (decimal)difference;
+    }
+
     public decimal CalculateRemainingIncomes(int userId)
     {
         decimal incomesTotaled;

@@ -42,6 +42,8 @@ public class DateService(IDbContextFactory<BudgetAppDbContext> contextFactory
         var context = _contextFactory.CreateDbContext();
         var dayStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
         var dayEnd = dayStart.AddDays(1).AddSeconds(-1);
+        var currentUserId = StateContainer.CurrentUserId;
+        currentUserId ??= -3;
 
         StateContainer.CurrentWeek = context.Weeks.FirstOrDefault(w => w.DateStart <= DateTime.Now && w.DateEnd >= DateTime.Now);
         StateContainer.CurrentMonth = StateContainer?.CurrentWeek?.DateStart.Month;
@@ -57,6 +59,7 @@ public class DateService(IDbContextFactory<BudgetAppDbContext> contextFactory
             CurrentTotalsBalanced = 0,
             CreatedDate = DateTime.Now,
             DailyTotalsBalancedBase = 0,
+            UserId = (int)currentUserId
         };
 
         if (lastTrackingLog?.CreatedDate.Month < StateContainer?.CurrentMonth)
