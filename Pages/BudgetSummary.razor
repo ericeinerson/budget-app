@@ -21,38 +21,38 @@ else{
                 <td>Current Balance</td>
             </tr>
             <tr>
-                <td>@BudgetSummaryCompiledDetails?.CurrentBalance</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.CurrentBalance, 2)</td>
             </tr>
             <tr>
                 <td>Remaining Expenses</td>
             </tr>
             <tr>
-                <td>@BudgetSummaryCompiledDetails?.RemainingExpenses</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.RemainingExpenses, 2)</td>
             </tr>
             <tr>
                 <td>Remaining Incomes</td>
             </tr>
             <tr>
-                <td>@BudgetSummaryCompiledDetails?.RemainingIncomes</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.RemainingIncomes, 2)</td>
             </tr>
             <tr>
                 <td>Future Adjustments Positive</td>
             </tr>
             <tr>
-                <td>@BudgetSummaryCompiledDetails?.AdjustmentsPositive</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.AdjustmentsPositive, 2)</td>
             </tr>
             <tr>
                 <td>Future Adjustments Negative</td>
             </tr>
             <tr>
-                <td>@BudgetSummaryCompiledDetails?.AdjustmentsNegative</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.AdjustmentsNegative, 2)</td>
             </tr>
             <tr>
                 <td>Totals Balanced</td>
             </tr>
             <tr>
             </tr>
-                <td>@BudgetSummaryCompiledDetails?.TotalsBalanced</td>
+                <td>@Math.Round(BudgetSummaryCompiledDetails.TotalsBalanced, 2)</td>
         </tbody>
     </table>
 
@@ -66,51 +66,51 @@ else{
         <tbody>
             <tr>
                 <td>January</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.JanuaryDifference, 2)</td>
             </tr>
             <tr>
                 <td>February</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.FebruarayDifference, 2)</td>
             </tr>
             <tr>
                 <td>March</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.MarchDifference, 2)</td>
             </tr>
             <tr>
                 <td>April</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.AprilDifference, 2)</td>
             </tr>
             <tr>
                 <td>May</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.MayDifference, 2)</td>
             </tr>
             <tr>
                 <td>June</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.JuneDifference, 2)</td>
             </tr>
             <tr>
                 <td>July</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.JulyDifference, 2)</td>
             </tr>
             <tr>
                 <td>August</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.AugustDifference, 2)</td>
             </tr>
             <tr>
                 <td>September</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.SeptemberDifference, 2)</td>
             </tr>
             <tr>
                 <td>October</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.OctoberDifference, 2)</td>
             </tr>
             <tr>
                 <td>November</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.NovemberDifference, 2)</td>
             </tr>
             <tr>
                 <td>December</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.DecemberDifference, 2)</td>
             </tr>
             <tr>
                 <td>Total</td>
@@ -122,7 +122,6 @@ else{
     <table class="table table-light w-auto">
         <thead class="table-primary">
             <tr>
-                <th></th>
                 <th>Changes to Projected Balance</th>
                 <th></th>
                 <th></th>
@@ -130,7 +129,6 @@ else{
         </thead>
         <tbody>
             <tr>
-                <td>Copied Projected Balance (day)</td>
                 <td>Copied Projected Balance (week)</td>
                 <td>Copied Projected Balance (month)</td>
                 <td>Copied Projected Balance (year)</td>
@@ -139,19 +137,16 @@ else{
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
             </tr>
             <tr>
-                <td>Difference (day)</td>
                 <td>Difference (week)</td>
                 <td>Difference (month)</td>
                 <td>Difference (year)</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.CurrentWeekDifference, 2)</td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.CurrentMonthDifference, 2)</td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.CurrentYearDifference, 2)</td>
             </tr>
         </tbody>
     </table>

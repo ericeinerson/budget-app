@@ -13,7 +13,7 @@ public class BudgetItemService(IDbContextFactory<BudgetAppDbContext> contextFact
 {
     private readonly IDbContextFactory<BudgetAppDbContext> _contextFactory = contextFactory;
     private readonly IJSRuntime _JS = JS;
-    public async void PromptIsCompletedWhenDateArrives(int userId)
+    public async Task PromptIsCompletedWhenDateArrives(int userId)
     {
         await Task.Delay(1000);
 

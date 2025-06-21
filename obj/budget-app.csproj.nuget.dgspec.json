@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj": {}
+    "c:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj": {}
   },
   "projects": {
-    "C:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj": {
+    "c:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj",
+        "projectUniqueName": "c:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj",
         "projectName": "budget-app",
-        "projectPath": "C:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj",
+        "projectPath": "c:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\budget-app.csproj",
         "packagesPath": "C:\\Users\\eaein\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\obj\\",
+        "outputPath": "c:\\Users\\eaein\\Development\\Projects\\BudgetApp\\budget-app\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

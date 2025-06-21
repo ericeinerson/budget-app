@@ -11,32 +11,44 @@ namespace budget_app.Pages;
 public partial class BudgetSummary
 {
 
-    public BudgetSummaryCompiledDetails? BudgetSummaryCompiledDetails { get; set; }
-    public BudgetSummaryTotalsTracking? BudgetSummaryTotalsTracking { get; set; }
+    public BudgetSummaryCompiledDetails BudgetSummaryCompiledDetails { get; set; } = new();
+    public BudgetSummaryTotalsTracking BudgetSummaryTotalsTracking { get; set; } = new();
 
     protected override void OnInitialized()
     {
+        var currentUserId = StateContainer.GetCurrentUserId();
         ConstructBudgetSummaryCompiledDetails();
-
-        BudgetSummaryCompiledDetails ??= new BudgetSummaryCompiledDetails();
-        BudgetSummaryTotalsTracking ??= new BudgetSummaryTotalsTracking();
+        ConstructBudgetSummaryTotalsTracking();
 
         StateContainer.TotalsBalanced = BudgetSummaryCompiledDetails.TotalsBalanced;
-        var currentUserId = StateContainer.GetCurrentUserId();
-
-        BudgetItemService.PromptIsCompletedWhenDateArrives(currentUserId);
+        
+        if (BudgetSummaryCompiledDetails is not null)
+        {
+            WriteBalancedTotalsTrackingLog(BudgetSummaryCompiledDetails, currentUserId);
+        }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var currentUserId = StateContainer.GetCurrentUserId();
+
+            await BudgetItemService.PromptIsCompletedWhenDateArrives(currentUserId);
+        }
+    }
+
     public BudgetSummaryCompiledDetails ConstructBudgetSummaryCompiledDetails()
     {
         var currentUserId = StateContainer.GetCurrentUserId();
         BudgetSummaryCompiledDetails = BudgetSummaryService.GetCompiledDetails(currentUserId);
         return BudgetSummaryCompiledDetails;
     }
-        
+
     public BudgetSummaryTotalsTracking ConstructBudgetSummaryTotalsTracking()
     {
         var currentUserId = StateContainer.GetCurrentUserId();
-        
+
         if (BudgetSummaryCompiledDetails == null)
         {
             return new BudgetSummaryTotalsTracking();
@@ -44,5 +56,10 @@ public partial class BudgetSummary
 
         BudgetSummaryTotalsTracking = BudgetSummaryService.GetTrackedTotals(currentUserId, BudgetSummaryCompiledDetails);
         return BudgetSummaryTotalsTracking;
+    }
+
+    public void WriteBalancedTotalsTrackingLog(BudgetSummaryCompiledDetails compiledDetails, int userId)
+    {
+        BudgetSummaryService.EnterBalancedTotalsTrackingLog(compiledDetails, userId);
     }
 }

@@ -40,30 +40,27 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
     public BudgetSummaryTotalsTracking GetTrackedTotals(int currentUserId, BudgetSummaryCompiledDetails budgetCompiledDetails)
     {
         var context = _contextFactory.CreateDbContext();
-        
+
         var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
 
         var year = DateTime.Now.Year;
         var month = DateTime.Now.Month;
         var week = context.Weeks.First(w => w.DateStart <= DateTime.Now && w.DateEnd >= DateTime.Now);
 
-        var yearStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
-        var yearCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+        var yearStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Min();
+        var yearCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
 
-        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
-        var monthCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Min();
+        var monthCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
 
-        var weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
-        if (weekStartTotalsBalanced == null)
-        {
-            weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate <= week.DateStart && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
-        }
-        var weekCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+        var weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Min();
 
-        if (weekCurrentTotalsBalanced == null)
-        {
-            weekCurrentTotalsBalanced = weekStartTotalsBalanced;
-        }
+        // weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate <= week.DateStart && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
+
+        var weekCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
+
+        // weekCurrentTotalsBalanced = weekStartTotalsBalanced;
+        
 
         var budgetSummaryTotalsTracked = new BudgetSummaryTotalsTracking()
         {
@@ -93,20 +90,29 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
     {
         var context = _contextFactory.CreateDbContext();
 
-        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
-        b.CreatedDate.Year == DateTime.Now.Year
-        && b.CreatedDate.Month == month
-        && b.UserId == currentUserId).Min()?.CurrentTotalsBalanced;
-        
-        var monthEndOrCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
-        b.CreatedDate.Year == DateTime.Now.Year
-        && b.CreatedDate.Month == month
-        && b.UserId == currentUserId).Max()?.CurrentTotalsBalanced;
+        if (context.BalancedTotalsTrackingLogs.Where(b =>
+            b.CreatedDate.Year == DateTime.Now.Year
+            && b.CreatedDate.Month == month
+            && b.UserId == currentUserId).Any())
+        {
+            var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
+            b.CreatedDate.Year == DateTime.Now.Year
+            && b.CreatedDate.Month == month
+            && b.UserId == currentUserId).ToList().Select(t => t.MonthlyTotalsBalancedBase).Min();
 
-        var difference = monthStartTotalsBalanced - monthEndOrCurrentTotalsBalanced;
-        difference ??= 0;
+            var monthEndOrCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
+            b.CreatedDate.Year == DateTime.Now.Year
+            && b.CreatedDate.Month == month
+            && b.UserId == currentUserId).ToList().Select(t => t.MonthlyTotalsBalancedBase).Max();
 
-        return (decimal)difference;
+            var difference = monthStartTotalsBalanced - monthEndOrCurrentTotalsBalanced;
+
+            return difference;
+        }
+        else
+        {
+            return 0.00M;
+        }
     }
 
     public decimal CalculateRemainingIncomes(int userId)
@@ -182,7 +188,7 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
 
         return futureAdjustmentsNegative;
     }
-    
+
     public decimal CalculateTotalsBalanced(int userId)
     {
         decimal futureAdjustmentsNegative;
@@ -200,5 +206,53 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         futureAdjustmentsNegative = adjustments.Sum(i => i.Amount);
 
         return futureAdjustmentsNegative;
+    }
+
+    public void EnterBalancedTotalsTrackingLog(BudgetSummaryCompiledDetails compiledDetails, int userId)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var totalsBalanced = compiledDetails.TotalsBalanced;
+        var lastTrackingLog = new BalancedTotalsTrackingLog();
+        var currentWeek = context.Weeks.First(w => w.DateStart <= DateTime.Now && w.DateEnd >= DateTime.Now);
+        var currentMonth = DateTime.Now.Month;
+        var currentYear = DateTime.Now.Year;
+        var balancedTotalsTrackingLog = new BalancedTotalsTrackingLog()
+        {
+            CurrentTotalsBalanced = totalsBalanced,
+            DailyTotalsBalancedBase = totalsBalanced,
+            WeeklyTotalsBalancedBase = totalsBalanced,
+            MonthlyTotalsBalancedBase = totalsBalanced,
+            YearlyTotalsBalancedBase = totalsBalanced,
+            CreatedDate = DateTime.Now,
+            UserId = userId
+        };
+
+        if (context.BalancedTotalsTrackingLogs.Where(b => b.UserId == userId).Any())
+        {
+            var lastTrackingLogDate = context.BalancedTotalsTrackingLogs.ToList().Select(t => t.CreatedDate).Max();
+
+            lastTrackingLog = context.BalancedTotalsTrackingLogs.First(t => t.CreatedDate == lastTrackingLogDate);
+
+            if (lastTrackingLog is not null)
+            {
+                if (lastTrackingLog.CreatedDate <= currentWeek.DateEnd)
+                {
+                    balancedTotalsTrackingLog.WeeklyTotalsBalancedBase = lastTrackingLog.WeeklyTotalsBalancedBase;
+                }
+
+                if (lastTrackingLog.CreatedDate.Month == currentMonth && lastTrackingLog.CreatedDate.Year == currentYear)
+                {
+                    balancedTotalsTrackingLog.MonthlyTotalsBalancedBase = lastTrackingLog.MonthlyTotalsBalancedBase;
+                }
+
+                if (lastTrackingLog.CreatedDate.Year == currentYear)
+                {
+                    balancedTotalsTrackingLog.YearlyTotalsBalancedBase = lastTrackingLog.YearlyTotalsBalancedBase;
+                }
+            }
+        }
+
+        context.BalancedTotalsTrackingLogs.Add(balancedTotalsTrackingLog);
+        context.SaveChanges();
     }
 }

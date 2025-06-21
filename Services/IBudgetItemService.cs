@@ -5,6 +5,6 @@ namespace budget_app.Services
 {
     public interface IBudgetItemService
     {
-        void PromptIsCompletedWhenDateArrives(int currentUserId);
+        Task PromptIsCompletedWhenDateArrives(int currentUserId);
     }
 }
