@@ -5,6 +5,6 @@ namespace budget_app.Services
 {
     public interface IBudgetSummaryService
     {
-        BudgetSummaryCompiledDetails GetCompiledDetails(int currentUserId);
+        Task<BudgetSummaryCompiledDetails> GetCompiledDetails(int currentUserId);
     }
 }

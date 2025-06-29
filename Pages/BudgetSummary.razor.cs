@@ -14,17 +14,18 @@ public partial class BudgetSummary
     public BudgetSummaryCompiledDetails BudgetSummaryCompiledDetails { get; set; } = new();
     public BudgetSummaryTotalsTracking BudgetSummaryTotalsTracking { get; set; } = new();
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         var currentUserId = StateContainer.GetCurrentUserId();
-        ConstructBudgetSummaryCompiledDetails();
-        ConstructBudgetSummaryTotalsTracking();
+
+        await ConstructBudgetSummaryCompiledDetails();
 
         StateContainer.TotalsBalanced = BudgetSummaryCompiledDetails.TotalsBalanced;
-        
+
         if (BudgetSummaryCompiledDetails is not null)
         {
             WriteBalancedTotalsTrackingLog(BudgetSummaryCompiledDetails, currentUserId);
+            await ConstructBudgetSummaryTotalsTracking();
         }
     }
 
@@ -38,14 +39,15 @@ public partial class BudgetSummary
         }
     }
 
-    public BudgetSummaryCompiledDetails ConstructBudgetSummaryCompiledDetails()
+    public async Task<BudgetSummaryCompiledDetails> ConstructBudgetSummaryCompiledDetails()
     {
         var currentUserId = StateContainer.GetCurrentUserId();
-        BudgetSummaryCompiledDetails = BudgetSummaryService.GetCompiledDetails(currentUserId);
+
+        BudgetSummaryCompiledDetails = await BudgetSummaryService.GetCompiledDetails(currentUserId);
         return BudgetSummaryCompiledDetails;
     }
 
-    public BudgetSummaryTotalsTracking ConstructBudgetSummaryTotalsTracking()
+    public async Task<BudgetSummaryTotalsTracking> ConstructBudgetSummaryTotalsTracking()
     {
         var currentUserId = StateContainer.GetCurrentUserId();
 
@@ -54,7 +56,7 @@ public partial class BudgetSummary
             return new BudgetSummaryTotalsTracking();
         }
 
-        BudgetSummaryTotalsTracking = BudgetSummaryService.GetTrackedTotals(currentUserId, BudgetSummaryCompiledDetails);
+        BudgetSummaryTotalsTracking = await BudgetSummaryService.GetTrackedTotals(currentUserId, BudgetSummaryCompiledDetails);
         return BudgetSummaryTotalsTracking;
     }
 

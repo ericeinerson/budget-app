@@ -11,9 +11,9 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
 {
     private readonly IDbContextFactory<BudgetAppDbContext> _contextFactory = contextFactory;
     private readonly DateTime _currentYearEnd = new(DateTime.Now.Year, 12, 31, 23, 59, 59);
-    public BudgetSummaryCompiledDetails GetCompiledDetails(int currentUserId)
+    public async Task<BudgetSummaryCompiledDetails> GetCompiledDetails(int currentUserId)
     {
-        var context = _contextFactory.CreateDbContext();
+        var context = await _contextFactory.CreateDbContextAsync();
 
         var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
         var currentBalance = currentUser == null ? 0.00M : currentUser.Balance;
@@ -37,9 +37,9 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         return budgetSummaryCompiledDetails;
     }
 
-    public BudgetSummaryTotalsTracking GetTrackedTotals(int currentUserId, BudgetSummaryCompiledDetails budgetCompiledDetails)
+    public async Task<BudgetSummaryTotalsTracking> GetTrackedTotals(int currentUserId, BudgetSummaryCompiledDetails budgetCompiledDetails)
     {
-        var context = _contextFactory.CreateDbContext();
+        var context = await _contextFactory.CreateDbContextAsync();
 
         var currentUser = context.Users.FirstOrDefault(u => u.Id == currentUserId);
 
@@ -72,9 +72,9 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         var budgetSummaryTotalsTracked = new BudgetSummaryTotalsTracking()
         {
             TotalsBalanced = budgetCompiledDetails.TotalsBalanced,
-            CurrentYearDifference = yearCurrentTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
-            CurrentMonthDifference = monthCurrentTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
-            CurrentWeekDifference = weekCurrentTotalsBalancedMax - budgetCompiledDetails.TotalsBalanced,
+            CurrentYearDifference = yearStartTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
+            CurrentMonthDifference = monthStartTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
+            CurrentWeekDifference = weekStartTotalsBalancedMin - budgetCompiledDetails.TotalsBalanced,
             CurrentDayDifference = 0,
             JanuaryDifference = CalculateMonthDifferences(currentUserId, 1),
             FebruarayDifference = CalculateMonthDifferences(currentUserId, 2),
@@ -107,10 +107,13 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
             && b.CreatedDate.Month == month
             && b.UserId == currentUserId).ToList().Select(t => t.MonthlyTotalsBalancedBase).Min();
 
-            var monthEndOrCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b =>
+            var lastOrCurrentMonthTrackingLogDate = context.BalancedTotalsTrackingLogs.Where(b =>
             b.CreatedDate.Year == DateTime.Now.Year
             && b.CreatedDate.Month == month
-            && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
+            && b.UserId == currentUserId).ToList().Select(t => t.CreatedDate).Max();
+
+            var monthEndOrCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.First(b =>
+            b.CreatedDate == lastOrCurrentMonthTrackingLogDate).CurrentTotalsBalanced;
 
             var difference = monthStartTotalsBalanced - monthEndOrCurrentTotalsBalanced;
 
