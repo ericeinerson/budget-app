@@ -47,34 +47,49 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         var month = DateTime.Now.Month;
         var week = context.Weeks.First(w => w.DateStart <= DateTime.Now && w.DateEnd >= DateTime.Now);
 
-        var yearStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Min();
-        var yearCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
+        var yearTrackingLogs = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Year == year && b.UserId == currentUserId).ToList();
+        var yearStartTotalsBalanced = 0.00M;
+        var yearEarliestDate = DateTime.Now;
+        var yearLatestDate = DateTime.Now;
 
-        var monthStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Min();
-        var monthCurrentTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
-
-        var weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced);
-        var weekStartTotalsBalancedMin = 0.00M;
-        var weekCurrentTotalsBalancedMax = 0.00M;
-
-        if (weekStartTotalsBalanced.Any())
+        if (yearTrackingLogs.Count > 0)
         {
-            weekStartTotalsBalancedMin = weekStartTotalsBalanced.Min();
+            yearEarliestDate = yearTrackingLogs.Select(m => m.CreatedDate).Min();
+            yearStartTotalsBalanced = yearTrackingLogs.First(m => m.CreatedDate == yearEarliestDate).YearlyTotalsBalancedBase;
         }
-        // weekStartTotalsBalanced = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate <= week.DateStart && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
-        if (weekStartTotalsBalanced.Any())
+
+        var monthTrackingLogs = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate.Month == month && b.UserId == currentUserId).ToList();
+        var monthStartTotalsBalanced = 0.00M;
+        var monthEarliestDate = DateTime.Now;
+        var monthLatestDate = DateTime.Now;
+
+        if (monthTrackingLogs.Count > 0)
         {
-            weekCurrentTotalsBalancedMax = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).ToList().Select(t => t.CurrentTotalsBalanced).Max();
+            monthEarliestDate = monthTrackingLogs.Select(m => m.CreatedDate).Min();
+            monthStartTotalsBalanced = monthTrackingLogs.First(m => m.CreatedDate == monthEarliestDate).MonthlyTotalsBalancedBase;
         }
-        // weekCurrentTotalsBalanced = weekStartTotalsBalanced;
-        
+
+        var weekTrackingLogs = context.BalancedTotalsTrackingLogs.Where(b => b.CreatedDate >= week.DateStart && b.CreatedDate <= week.DateEnd && b.UserId == currentUserId).ToList();
+        var weekStartTotalsBalanced = 0.00M;
+        var weekCurrentOrEarliestDate = DateTime.Now;
+        var weekCurrentOrLatestDate = DateTime.Now;
+
+        if (weekTrackingLogs.Count > 0)
+        {
+            weekCurrentOrEarliestDate = weekTrackingLogs.Select(w => w.CreatedDate).Min();
+            weekStartTotalsBalanced = weekTrackingLogs.First(w => w.CreatedDate == weekCurrentOrEarliestDate).WeeklyTotalsBalancedBase;
+        }
+        else
+        {
+            weekStartTotalsBalanced = budgetCompiledDetails.CurrentBalance;
+        }
 
         var budgetSummaryTotalsTracked = new BudgetSummaryTotalsTracking()
         {
             TotalsBalanced = budgetCompiledDetails.TotalsBalanced,
-            CurrentYearDifference = yearStartTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
-            CurrentMonthDifference = monthStartTotalsBalanced - budgetCompiledDetails.TotalsBalanced,
-            CurrentWeekDifference = weekStartTotalsBalancedMin - budgetCompiledDetails.TotalsBalanced,
+            CurrentYearDifference = budgetCompiledDetails.TotalsBalanced - yearStartTotalsBalanced ,
+            CurrentMonthDifference = budgetCompiledDetails.TotalsBalanced - monthStartTotalsBalanced,
+            CurrentWeekDifference = budgetCompiledDetails.TotalsBalanced - weekStartTotalsBalanced,
             CurrentDayDifference = 0,
             JanuaryDifference = CalculateMonthDifferences(currentUserId, 1),
             FebruarayDifference = CalculateMonthDifferences(currentUserId, 2),
