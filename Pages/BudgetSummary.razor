@@ -51,8 +51,8 @@ else{
                 <td>Totals Balanced</td>
             </tr>
             <tr>
-            </tr>
                 <td>@Math.Round(BudgetSummaryCompiledDetails.TotalsBalanced, 2)</td>
+            </tr>
         </tbody>
     </table>
 
@@ -114,7 +114,7 @@ else{
             </tr>
             <tr>
                 <td>Total</td>
-                <td></td>
+                <td>@Math.Round(BudgetSummaryTotalsTracking.SumOfMonthsDifferences, 2)</td>
             </tr>
         </tbody>
     </table>
@@ -129,19 +129,9 @@ else{
         </thead>
         <tbody>
             <tr>
-                <td>Copied Projected Balance (week)</td>
-                <td>Copied Projected Balance (month)</td>
-                <td>Copied Projected Balance (year)</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Difference (week)</td>
-                <td>Difference (month)</td>
-                <td>Difference (year)</td>
+                <td>Difference (from start of week)</td>
+                <td>Difference (from start of month)</td>
+                <td>Difference (from start of year)</td>
             </tr>
             <tr>
                 <td>@Math.Round(BudgetSummaryTotalsTracking.CurrentWeekDifference, 2)</td>

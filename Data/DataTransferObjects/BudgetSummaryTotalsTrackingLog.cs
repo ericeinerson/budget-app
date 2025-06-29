@@ -14,6 +14,7 @@ namespace budget_app.Data.DataTransferObjects
         public decimal OctoberDifference { get; set; }
         public decimal NovemberDifference { get; set; }
         public decimal DecemberDifference { get; set; }
+        public decimal SumOfMonthsDifferences { get; set; }
         public decimal CurrentYearDifference { get; set; }
         public decimal CurrentMonthDifference { get; set; }
         public decimal CurrentWeekDifference { get; set; }

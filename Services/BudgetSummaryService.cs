@@ -87,7 +87,7 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
         var budgetSummaryTotalsTracked = new BudgetSummaryTotalsTracking()
         {
             TotalsBalanced = budgetCompiledDetails.TotalsBalanced,
-            CurrentYearDifference = budgetCompiledDetails.TotalsBalanced - yearStartTotalsBalanced ,
+            CurrentYearDifference = budgetCompiledDetails.TotalsBalanced - yearStartTotalsBalanced,
             CurrentMonthDifference = budgetCompiledDetails.TotalsBalanced - monthStartTotalsBalanced,
             CurrentWeekDifference = budgetCompiledDetails.TotalsBalanced - weekStartTotalsBalanced,
             CurrentDayDifference = 0,
@@ -104,6 +104,20 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
             NovemberDifference = CalculateMonthDifferences(currentUserId, 11),
             DecemberDifference = CalculateMonthDifferences(currentUserId, 12)
         };
+        
+        budgetSummaryTotalsTracked.SumOfMonthsDifferences =
+        budgetSummaryTotalsTracked.JanuaryDifference +
+        budgetSummaryTotalsTracked.FebruarayDifference +
+        budgetSummaryTotalsTracked.MarchDifference +
+        budgetSummaryTotalsTracked.AprilDifference +
+        budgetSummaryTotalsTracked.MayDifference +
+        budgetSummaryTotalsTracked.JuneDifference +
+        budgetSummaryTotalsTracked.JulyDifference +
+        budgetSummaryTotalsTracked.AugustDifference +
+        budgetSummaryTotalsTracked.SeptemberDifference +
+        budgetSummaryTotalsTracked.OctoberDifference +
+        budgetSummaryTotalsTracked.NovemberDifference +
+        budgetSummaryTotalsTracked.DecemberDifference;
 
         return budgetSummaryTotalsTracked;
     }
