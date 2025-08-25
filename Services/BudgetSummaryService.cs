@@ -104,7 +104,7 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
             NovemberDifference = CalculateMonthDifferences(currentUserId, 11),
             DecemberDifference = CalculateMonthDifferences(currentUserId, 12)
         };
-        
+
         budgetSummaryTotalsTracked.SumOfMonthsDifferences =
         budgetSummaryTotalsTracked.JanuaryDifference +
         budgetSummaryTotalsTracked.FebruarayDifference +
@@ -290,6 +290,57 @@ public class BudgetSummaryService(IDbContextFactory<BudgetAppDbContext> contextF
                 }
             }
         }
+
+        context.BalancedTotalsTrackingLogs.Add(balancedTotalsTrackingLog);
+        context.SaveChanges();
+    }
+
+    public void ResetYearBalancedBase(BudgetSummaryCompiledDetails compiledDetails, int userId)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var totalsBalanced = compiledDetails.TotalsBalanced;
+
+        var balancedTotalsTrackingLog = new BalancedTotalsTrackingLog()
+        {
+            CurrentTotalsBalanced = totalsBalanced,
+            YearlyTotalsBalancedBase = totalsBalanced,
+            CreatedDate = DateTime.Now,
+            UserId = userId
+        };
+
+        context.BalancedTotalsTrackingLogs.Add(balancedTotalsTrackingLog);
+        context.SaveChanges();
+    }
+
+    public void ResetMonthBalancedBase(BudgetSummaryCompiledDetails compiledDetails, int userId)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var totalsBalanced = compiledDetails.TotalsBalanced;
+
+        var balancedTotalsTrackingLog = new BalancedTotalsTrackingLog()
+        {
+            CurrentTotalsBalanced = totalsBalanced,
+            MonthlyTotalsBalancedBase = totalsBalanced,
+            CreatedDate = DateTime.Now,
+            UserId = userId
+        };
+
+        context.BalancedTotalsTrackingLogs.Add(balancedTotalsTrackingLog);
+        context.SaveChanges();
+    }
+    
+    public void ResetWeeklyBalancedBase(BudgetSummaryCompiledDetails compiledDetails, int userId)
+    {
+        var context = _contextFactory.CreateDbContext();
+        var totalsBalanced = compiledDetails.TotalsBalanced;
+        
+        var balancedTotalsTrackingLog = new BalancedTotalsTrackingLog()
+        {
+            CurrentTotalsBalanced = totalsBalanced,
+            WeeklyTotalsBalancedBase = totalsBalanced,
+            CreatedDate = DateTime.Now,
+            UserId = userId
+        };
 
         context.BalancedTotalsTrackingLogs.Add(balancedTotalsTrackingLog);
         context.SaveChanges();

@@ -1,0 +1,42 @@
+@page "/edit"
+@inject BudgetSummaryService BudgetSummaryService
+@inject BudgetItemService BudgetItemService
+@inject IDbContextFactory<BudgetAppDbContext> ContextFactory;
+@inject StateContainer StateContainer;
+
+@using budget_app.Shared
+
+<h2>Budget Edit</h2>
+
+@if(StateContainer.CurrentUserId is null){
+    <p><em>Loading...</em></p>
+}
+else{
+    <table class="table table-light">
+        <thead class="table-primary">
+            <tr>
+                <th>Edit Budget</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Reset Year Difference</td>
+                <td>
+                    <button>Reset</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Reset Month Difference</td>
+                <td>
+                    <button>Reset</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Reset Week Difference</td>
+                <td>
+                    <button>Reset</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
